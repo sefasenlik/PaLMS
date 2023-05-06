@@ -1,0 +1,29 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+student_faculty_supervisor,Faculty for Supervisor,model_student_faculty,student.group_supervisor,1,1,1,1
+student_faculty_professor,Faculty for Professor,model_student_faculty,student.group_professor,1,0,0,0
+student_faculty_student,Faculty for Student,model_student_faculty,student.group_student,1,0,0,0
+
+student_program_supervisor,Program for Supervisor,model_student_program,student.group_supervisor,1,1,1,1
+student_program_professor,Program for Professor,model_student_program,student.group_professor,1,0,0,0
+student_program_student,Program for Student,model_student_program,student.group_student,1,0,0,0
+
+student_professor_supervisor,Professor for Supervisor,model_student_professor,student.group_supervisor,1,1,1,1
+
+student_student_supervisor,Student for Supervisor,model_student_student,student.group_supervisor,1,1,1,1
+student_student_professor,Student for Professor,model_student_student,student.group_professor,1,0,0,0
+student_student_student,Student for Student,model_student_student,student.group_student,1,0,0,0
+
+student_utils_supervisor,Utilities for Supervisor,model_student_utils,student.group_supervisor,1,1,1,1
+
+student_degree_supervisor,Degree for Supervisor,model_student_degree,student.group_supervisor,1,1,1,1
+student_degree_professor,Degree for Professor,model_student_degree,student.group_professor,1,0,0,0
+student_degree_student,Degree for Student,model_student_degree,student.group_student,1,0,0,0
+
+student_project_supervisor,Project for Supervisor,model_student_project,student.group_supervisor,1,1,1,1
+student_project_professor,Project for Professor,model_student_project,student.group_professor,1,1,1,0
+student_project_student,Project for Student,model_student_project,student.group_student,1,1,0,0
+
+student_application_supervisor,Application for Supervisor,model_student_application,student.group_supervisor,1,1,1,1
+student_application_professor,Application for Professor,model_student_application,student.group_professor,1,1,1,0
+student_application_student,Application for Student,model_student_application,student.group_student,1,1,1,0

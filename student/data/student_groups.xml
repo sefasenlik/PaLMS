@@ -1,0 +1,22 @@
+<odoo>
+    <data>
+        <!-- Define a new user group -->
+        <record id="student.group_professor" model="res.groups">
+            <field name="category_id">77</field>
+            <field name="name">Professors</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="student.group_student" model="res.groups">
+            <field name="category_id">77</field>
+            <field name="name">Students</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="student.group_supervisor" model="res.groups">
+            <field name="category_id">77</field>
+            <field name="name">Supervisors</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+    </data>
+</odoo>

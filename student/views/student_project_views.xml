@@ -1,0 +1,249 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <record id="student_project_list_view" model="ir.ui.view">
+            <field name="name">Projects - List View</field>
+            <field name="model">student.project</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="professor_id"/>
+                    <field name="applications"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="student_project_view_form" model="ir.ui.view">
+            <field name="name">student.project.form</field>
+            <field name="model">student.project</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_view_project_submit"
+                            string="Submit Project"
+                            type="object"
+                            class="oe_highlight"
+                            confirm="Are you sure you want to submit this project?"
+                            groups="student.group_professor"/>
+                        <button name="action_view_project_cancel"
+                            string="Cancel Submission"
+                            type="object"
+                            class="oe_highlight"
+                            confirm="Are you sure you want to cancel your project submission?"
+                            groups="student.group_professor"/>
+                        
+                        <button name="action_view_project_approve"
+                            string="APPROVE PROJECT"
+                            type="object"
+                            class="btn-success"
+                            confirm="Are you sure you want to accept this project?"
+                            groups="student.group_supervisor"/>
+                        <button name="action_view_project_reject"
+                            string="REJECT PROJECT"
+                            type="object"
+                            class="btn-danger"
+                            confirm="Are you sure you want to reject this project?"
+                            groups="student.group_supervisor"/>
+                        <button name="action_view_project_return"
+                            string="RETURN PROJECT"
+                            type="object"
+                            class="oe_highlight"
+                            confirm="Are you sure you want to return this project?"
+                            groups="student.group_supervisor"/>
+                        <button name="action_view_project_reset"
+                            string="RESET PROJECT"
+                            type="object"
+                            class="btn-warning"
+                            confirm="WARNING! This is a development command. Are you sure that you want reset the project?"
+                            groups="student.group_supervisor"/>
+
+                        <button name="action_view_project_apply"
+                            string="Apply"
+                            type="object"
+                            class="oe_highlight"
+                            groups="student.group_student"
+                            attrs="{'invisible': ['&amp;', ('state', '!=', 'approved'), ('state', '!=', 'applied')]}"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="locked" invisible="1"/>
+                            
+                            <group string="Basic Info">
+                                <field name="name" attrs="{'readonly': [('locked', '=', True)]}" />
+                                <field name="name_ru" attrs="{'readonly': [('locked', '=', True)]}" />
+                                <field name="professor_id"/>
+                                <field name="creation_date"/>
+                            </group>
+                            <group string="Availability">
+                                <field name="state"/>
+                                <field name="assigned"/>
+                                <field name="student_elected" widget="many2many_tags"/>
+                            </group>
+                            <group string="Eligibility" colspan="2">
+                                <group>
+                                    <field name="faculty_ids" widget="many2many_tags"/>
+                                    <field name="program_ids" widget="many2many_tags"/>
+                                </group>
+                                <group>
+                                    <field name="type"/>
+                                    <field name="format"/>
+                                    <field name="degree_ids" widget="many2many_tags"/>
+                                </group>
+                            </group>
+                            <notebook>
+                                <page string="Detailed Description">
+                                    <field name="description" style="margin-bottom:20 px" attrs="{'readonly': [('locked', '=', True)]}"/>
+                                    
+                                    <field name="additional_files" widget="many2many_binary" string="Attach a file" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                </page>
+                                <page string="Applications" attrs="{'invisible': ['&amp;', ('state', '!=', 'applied'), ('state', '!=', 'approved'), ('state', '!=', 'assigned')]}">
+                                    <p>
+                                        <label for="applications" class="oe_inline"/>
+                                        <field name="applications" style="margin-left:10px" class="oe_inline"/>
+                                    </p>
+                                    <field name="application_ids">
+                                        <tree>
+                                            <field name="applicant"/>
+                                            <field name="email"/>
+                                            <field name="student_program"/>
+                                            <field name="student_degree"/>
+                                            <button name="action_view_application_accept" 
+                                                    string="Accept ✔"
+                                                    type="object"
+                                                    class="btn-success"
+                                                    groups="student.group_professor"
+                                                    attrs="{'invisible': [('state', '!=', 'sent')]}"/>  
+                                            <button name="action_view_application_reject" 
+                                                    string="Reject ✘"
+                                                    type="object"
+                                                    class="btn-danger"
+                                                    groups="student.group_professor"
+                                                    attrs="{'invisible': [('state', '!=', 'sent')]}"/>  
+                                            <field name="state"/>
+                                        </tree>
+                                    </field>
+                                </page>
+                                <page string="Supervisor Feedback" attrs="{'invisible': ['&amp;', ('state', '!=', 'pending'), ('state', '!=', 'returned'), ('state', '!=', 'rejected')]}" groups="student.group_supervisor,student.group_professor">
+                                    <field name="reason" placeholder="Please specify the reason if you will reject or return the project." attrs="{'readonly': ['|', ('state', '=', 'rejected'), ('state', '=', 'returned')]}"/>
+                                </page>
+                            </notebook>
+                        </group>
+                    </sheet>
+                
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- The basic view that student_menus.xml refers to -->
+        <record id="student_project_view_action_kanban" model="ir.actions.act_window">
+            <field name="name">Project Board</field>
+            <field name="res_model">student.project</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="view_id" ref="student_project_kanban_view"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    There are no projects yet. You can create the first one. Yay!
+                </p>
+            </field>
+        </record>
+
+        <!-- The basic view that student_menus.xml refers to -->
+        <record id="student_project_view_action_list" model="ir.actions.act_window">
+            <field name="name">Available Projects</field>
+            <field name="res_model">student.project</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="student_project_list_view"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    There are no projects yet. You can create the first one. Yay!
+                </p>
+            </field>
+            <field name="domain">[('state', 'in', ['approved','assigned','applied'])]</field>
+        </record>
+
+        <!-- Define the action to open the list view of projects -->
+        <record id="action_project" model="ir.actions.act_window">
+            <field name="name">Projects</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">student.project</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_professor_id': active_id}</field>
+            <field name="domain">[('professor_id', '=', active_id)]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    There are no projects yet. You can create the first one. Yay!
+                </p>
+            </field>
+        </record>
+    </data>
+
+    <record id="student_project_kanban_view" model="ir.ui.view">
+        <field name="name">Projects - Kanban View</field>
+        <field name="model">student.project</field>
+        <field name="arch" type="xml">
+            <kanban quick_create="false" 
+                    records_draggable="false" 
+                    default_group_by="state" 
+                    class="o_res_partner_kanban o_kanban_small_column" 
+                    name="student_project_kanban">
+                <field name="state"/>
+                <field name="name"/>
+                <field name="professor_id"/>
+                <field name="applications"/>
+
+                <templates>
+                    <field name="color"/>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <strong class="oe_kanban_title">
+                                    <field name="state"/>
+                                </strong>
+                                <div class="oe_kanban_subtitle">
+                                    <i>Project Name:  </i>
+                                    <field name="name"/>
+                                </div>
+                                <div class="oe_kanban_content">
+                                    <div t-if="record.professor_id.value">
+                                        <i>Professor:  </i>
+                                        <t t-esc="record.professor_id.value"/>
+                                    </div>
+                                    <div t-if="record.applications.value">
+                                        <i>Applications:  </i>
+                                        <t t-esc="record.applications.value"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="student_project_view_search" model="ir.ui.view">
+        <field name="name">student.project.search</field>
+        <field name="model">student.project</field>
+        <field name="arch" type="xml">
+            <search string="Professor List">
+                <field name="name" string="Project" />
+                <field name="state" string="Project State"/>
+                <filter string="My Projects" groups="student.group_professor" name="my_projects" domain="[('professor_account', '=', uid)]"/>
+                <filter string="Available for application" groups="student.group_student" name="available" domain="[('state', 'in', ['approved','applied'])]"/>
+                <filter string="Requires attention" groups="student.group_professor" name="attention_professor" domain="['&amp;', ('professor_account', '=', uid), ('state', 'in', ['returned', 'applied'])]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Professor" name="professor" context="{'group_by':'professor_id'}"/>
+                    <filter string="Project Type" name="project_type" context="{'group_by':'type'}"/>
+                    <filter string="Project Format" name="project_format" context="{'group_by':'format'}"/>
+                    <filter string="Target Degree" name="target_degree" context="{'group_by':'degree_ids'}"/>
+                    <filter string="Faculty" name="faculty" context="{'group_by':'faculty_ids'}"/>
+                    <filter string="Program" name="program" context="{'group_by':'program_ids'}"/>
+                </group>
+            </search>
+        </field>
+    </record>   
+</odoo>

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="student_degree_view_action" model="ir.actions.act_window">
+        <field name="name">Degrees of Education</field>
+        <field name="res_model">student.degree</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Define a new degree of education.
+            </p>
+        </field>
+    </record>
+
+    <record id="student_degree_view_form" model="ir.ui.view">
+        <field name="name">student.degree.form</field>
+        <field name="model">student.degree</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group string="Degree Details">
+                        <field name="name"/>
+                        <field name="level"/>
+                        <field name="year"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

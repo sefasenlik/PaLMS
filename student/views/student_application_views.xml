@@ -1,0 +1,212 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="student_application_view_public" model="ir.actions.act_window">
+        <field name="name">Application List</field>
+        <field name="res_model">student.application</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add a new application!
+            </p>
+        </field>
+    </record>
+
+    <record id="student_application_kanban_view" model="ir.ui.view">
+        <field name="name">Applications - Kanban View</field>
+        <field name="model">student.application</field>
+        <field name="arch" type="xml">
+            <kanban quick_create="false" 
+                    records_draggable="false" 
+                    default_group_by="state" 
+                    class="o_res_partner_kanban" 
+                    name="student_application_kanban">
+                <field name="state"/>
+                <field name="project_id"/>
+                <field name="email"/>
+                <templates>
+                    <field name="color"/>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <strong class="oe_kanban_title">
+                                    <field name="state"/>
+                                </strong>
+                                <div class="oe_kanban_subtitle">
+                                    <i>Project Name:  </i>
+                                    <field name="project_id"/>
+                                </div>
+                                <div class="oe_kanban_content">
+                                    <div t-if="record.email.value">
+                                        <i>E-mail:  </i>
+                                        <t t-esc="record.email.value"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="student_application_view_professor" model="ir.actions.act_window">
+        <field name="name">Applications Received</field>
+        <field name="res_model">student.application</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="view_id" ref="student_application_kanban_view"/>
+        <field name="domain">[('application_professor','=',uid)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                You have no pending applications.
+            </p>
+        </field>
+    </record>
+    
+    <record id="student_application_view_personal" model="ir.actions.act_window">
+        <field name="name">My Applications</field>
+        <field name="res_model">student.application</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="view_id" ref="student_application_kanban_view"/>
+        <field name="domain">[('applicant_account','=',uid)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Send your first application to one of the available projects!
+            </p>
+            <!-- ♦ The link doesn't work! -->
+            <a t-attf-href="/web#action={{ env.ref('student_project_view_action_list').id }} ">View projects</a>
+        </field>
+    </record>
+
+    <record id="student_application_view_tree" model="ir.ui.view">
+        <field name="name">student.application.tree</field>
+        <field name="model">student.application</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="applicant"/>
+                <field name="project_id"/>
+                <!-- ♦ How to change the color of the field value? -->
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="student_application_view_form" model="ir.ui.view">
+        <field name="name">student.application.form</field>
+        <field name="model">student.application</field>
+        <field name="arch" type="xml">
+            <form string="Application" on_load="trigger_func()">
+                <header>
+                    <button name="action_view_application_send"
+                        string="Send Application"
+                        type="object"
+                        confirm="Are you sure you want to send your application for the chosen project?"
+                        groups="student.group_student,student.group_supervisor"
+                        class="oe_highlight"/>
+                    <button name="action_view_application_cancel"
+                        string="Cancel Application"
+                        type="object"
+                        confirm="Are you sure you want to cancel your application?"
+                        groups="student.group_student,student.group_supervisor"
+                        class="oe_highlight"/>
+
+                    <button name="action_view_application_accept"
+                        string="ACCEPT APPLICATION"
+                        type="object"
+                        confirm="Are you sure you want to accept this application?"
+                        groups="student.group_professor,student.group_supervisor"
+                        class="btn-success"/>
+                    <button name="action_view_application_reject"
+                        string="REJECT APPLICATION"
+                        type="object"
+                        confirm="Are you sure you want to reject this application?"
+                        groups="student.group_professor,student.group_supervisor"
+                        class="btn-danger"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Overview">
+                            <field name="state"/>
+                            <field name="project_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="applicant"/>
+                        </group>
+                        <group string="Contacts">
+                            <field name="email"/>
+                            <field name="phone"/>
+                        </group>
+                        <notebook>
+                            <page string="Application Details">
+                                <label for="message"/>
+                                <field name="message" style="margin-bottom:20 px" attrs="{'readonly':[('state','!=','draft')]}"/>
+
+                                <label for="additional_files"/>
+                                <!-- ♦ For some reason, file fix method does not work automatically like it does in project model. So, I added this button as a temporary solution. -->
+                                <field name="additional_files" widget="many2many_binary" string="Additional Files" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <button name="action_view_application_save_files" 
+                                        string="UPLOAD FILES"
+                                        class="btn-warning"
+                                        type="object"
+                                        attrs="{'invisible':[('state','!=','draft')]}"/>  
+                            </page>
+                            <page string="Student Info">
+                                <group string="Academic">
+                                    <field name="student_id"/>
+                                    <field name="student_program"/>
+                                    <field name="student_degree"/>
+                                </group>
+                                <group string="Additional Contacts">
+                                    <field name="telegram" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <field name="additional_email" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <field name="additional_phone" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                </group>
+                            </page>
+                            <page string="Feedback" attrs="{'invisible':[('state','=','draft')]}">
+                                <label for="feedback"/>
+                                <field name="feedback"/>
+                            </page>
+                            <page string="Technical Log" groups="student.group_supervisor">
+                                <field name="message_follower_ids" widget="mail_followers"/>
+                                <field name="message_ids" widget="mail_thread"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+                
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="student_application_view_search" model="ir.ui.view">
+        <field name="name">student.application.search</field>
+        <field name="model">student.application</field>
+        <field name="arch" type="xml">
+            <!-- Now search will work not only for 'name', but also for the fields mentioned below -->
+            <search string="Application List">
+                <field name="applicant" string="Applicant"/>
+                <field name="state"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="telegram"/>
+                <field name="student_degree"/>
+                <field name="student_program"/>
+                <field name="student_id"/>
+                <field name="project_id"/>
+                <separator/>
+                <!-- Only values satisfying the filter below will be shown because of 'domain' -->
+                <filter string="Sent" name="sent_applications" domain="[('state', '=', 'sent')]"/>
+                <filter string="Rejected" name="rejected_applications" domain="[('state', '=', 'rejected')]"/>
+                <filter string="Accepted" name="accepted_applications" domain="[('state', '=', 'accepted')]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Project" name="project" context="{'group_by':'project_id'}"/>
+                    <filter string="Applicant" name="applicant" context="{'group_by':'applicant'}"/>
+                    <filter string="Professor" name="professor" context="{'group_by':'application_professor'}"/>
+                    <filter string="Program" name="program" context="{'group_by':'student_program'}"/>
+                    <filter string="Degree" name="degree" context="{'group_by':'student_degree'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

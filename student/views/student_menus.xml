@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<odoo>
+    <menuitem id="student_menu_root" name="𝕆ℙ𝔼ℕ🅻🅼🆂">
+        <menuitem sequence="1" id="personal_first_level_menu" name="My🅻🅼🆂">
+
+                <menuitem id="faculty_application_private" action="student_application_view_personal" groups="student.group_student"/>
+                <menuitem id="faculty_application_professor" action="student_application_view_professor" groups="student.group_professor"/>
+                
+        </menuitem>
+
+        <menuitem sequence="2" id="faculty_first_level_menu" name="Faculty">
+
+            <menuitem id="faculty_first_department_menu" name="Departments">
+                <menuitem id="faculty_model_menu_action" action="student_faculty_view_action"/>
+                <menuitem id="program_model_menu_action" action="student_program_view_action"/>
+            </menuitem>
+
+            <menuitem id="faculty_first_membet_menu" name="Users">
+                <menuitem id="faculty_professor_menu_action" action="student_professor_view_action"/>
+                <menuitem id="faculty_student_menu_action" action="student_student_view_action"/>
+            </menuitem>
+            
+            <menuitem id="faculty_first_project_menu" name="Project" >
+                <menuitem id="faculty_project_kanban" action="student_project_view_action_kanban" groups="student.group_supervisor,student.group_professor"/>
+                <menuitem id="faculty_project__list" action="student_project_view_action_list"/>
+            </menuitem>
+
+            <menuitem id="faculty_first_application_menu" name="Application" >
+                <menuitem id="faculty_application_public" action="student_application_view_public" groups="student.group_supervisor,student.group_professor"/>
+            </menuitem>
+
+        </menuitem>
+
+        <menuitem sequence="3" id="util_first_level_menu" name="Utility" groups="student.group_supervisor">
+
+            <menuitem id="degree_model_menu_action" action="student_degree_view_action"/>
+
+        </menuitem>
+    </menuitem>
+</odoo>

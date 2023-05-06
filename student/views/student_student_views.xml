@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="student_student_view_action" model="ir.actions.act_window">
+        <field name="name">Students</field>
+        <field name="res_model">student.student</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Define a new student registry.
+            </p>
+        </field>
+    </record>
+
+    <record id="student_student_view_tree" model="ir.ui.view">
+        <field name="name">student.student.tree</field>
+        <field name="model">student.student</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="student_program"/>
+                <field name="progress"/>
+                <field name="application_number"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="student_student_view_form" model="ir.ui.view">
+        <field name="name">student.student.form</field>
+        <field name="model">student.student</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group string="Basic Info">
+                            <field name="student_account"/>
+                            <field name="name" readonly="True"/>
+                            <field name="student_id" readonly="True"/>
+                            <field name="student_email" readonly="True"/>
+                            <field name="student_phone" placeholder="+7 XXX XXX XXXX"/>
+                        </group>
+                        <group string="Academic Info">
+                            <field name="student_program"/>
+                            <field name="enrolled"/>
+                            <field name="progress"/>
+                            <field name="graduation"/>
+                        </group>
+                        <notebook>
+                            <page string="Applications">
+                                <p>
+                                    <label for="application_number" class="oe_inline"/>
+                                    <field name="application_number" style="margin-left:10px" class="oe_inline"/>
+                                </p>
+                                    <label for="current_project" class="oe_inline"/>
+                                    <field name="current_project" style="margin-left:10px" readonly="True" class="oe_inline"/>
+                                <p>
+                                </p>
+                                <field name="application_ids"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
