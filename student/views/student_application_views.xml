@@ -139,13 +139,7 @@
                                 <field name="message" style="margin-bottom:20 px" attrs="{'readonly':[('state','!=','draft')]}"/>
 
                                 <label for="additional_files"/>
-                                <!-- ♦ For some reason, file fix method does not work automatically like it does in project model. So, I added this button as a temporary solution. -->
                                 <field name="additional_files" widget="many2many_binary" string="Additional Files" attrs="{'readonly':[('state','!=','draft')]}"/>
-                                <button name="action_view_application_save_files" 
-                                        string="UPLOAD FILES"
-                                        class="btn-warning"
-                                        type="object"
-                                        attrs="{'invisible':[('state','!=','draft')]}"/>  
                             </page>
                             <page string="Student Info">
                                 <group string="Academic">

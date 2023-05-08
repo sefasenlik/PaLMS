@@ -65,21 +65,13 @@ class Application(models.Model):
 		}
 
 	_sql_constraints = [
-        ('check_uniqueness', 'UNIQUE(applicant, project_id)', 'You have alteady applied to this project.')
+        ('check_uniqueness', 'UNIQUE(applicant, project_id)', 'You have already applied to this project.')
 	]
-
-	# Updates the ownership of files for users to access them | ♦ Need to get rid of the button trigger
-	# @api.model
-	# @api.onchange("additional_files")
-	def action_view_application_save_files(self):
-		for attachment in self.additional_files:
-			attachment.write({'res_model': self._name, 'res_id': self.id})
-
-		return self.message_display('Upload successful', 'Your files have been uploaded.', False)
 
 	# Handle the coloring of application
 	color = fields.Integer(string="Box Color", default=4, compute='_compute_color_value', store=True)
 
+    # Updates color based on the state
 	@api.depends('state')
 	def _compute_color_value(self):
 		if self.state == 'draft':
@@ -95,7 +87,7 @@ class Application(models.Model):
 
 	@api.constrains('feedback')
 	def _feedback_control(self):
-		if self.env.user.has_group('student.group_student'):
+		if self.env.user.has_group('student.group_student') and self.state != 'draft':
 			raise AccessError("You don't have permission to edit the feedback. Please use the log or send a message to the project creator.")
 
 	@api.depends('project_id')
@@ -107,7 +99,7 @@ class Application(models.Model):
 			raise UserError("You have to provide a reason for rejection.")
 		if len(self.feedback) < 20:
 			raise UserError("Please provide a more detailed feedback (at least 20 characters).")
-
+		
 	# Prevent the creation of the default log message
 	@api.model
 	def create(self, vals):
@@ -136,6 +128,10 @@ class Application(models.Model):
 		else:
 			self.write({'state': 'sent'})
 			self.application_professor = self.project_id.professor_account
+
+			# Updates the ownership of files for other users to access them
+			for attachment in self.additional_files:
+				attachment.write({'res_model': self._name, 'res_id': self.id})
 
 			# Log the action
 			body = _('The application is sent to the professor, %s, for evaluation.', self.project_id.professor_account.name)
@@ -185,7 +181,8 @@ class Application(models.Model):
 
 		if self.state == 'sent':
 			self.write({'state': 'accepted'})
-			self.project_id.write({'state': 'assigned', 'assigned': True, 'student_elected': self.applicant})
+			# self.project_id.write({'state': 'assigned', 'assigned': True, 'student_elected': self.applicant})
+			self.project_id.write({'state': 'assigned', 'assigned': True})
 
 			# Log the action
 			body = _('This application is accepted by the professor.')

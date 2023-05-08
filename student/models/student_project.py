@@ -31,17 +31,11 @@ class Project(models.Model):
                               group_expand='_expand_groups', default='draft', string='State', readonly=True, store=True)
     reason = fields.Text(string='Return/Rejection Reason')
     additional_files = fields.Many2many(comodel_name="ir.attachment", string="Attachments") 
-
-	# Updates the ownership of files for users to access them
-    @api.model
-    @api.onchange("additional_files")
-    def _fix_files(self):
-        for attachment in self.additional_files:
-            attachment.write({'res_model': self._name, 'res_id': self.id})
                         
     # Handle the coloring of the project
     color = fields.Integer(string="Box Color", default=4, compute='_compute_color_value', store=True)
 
+    # Updates color based on the state
     @api.depends('state')
     def _compute_color_value(self):
         if self.state == 'draft':
@@ -63,6 +57,11 @@ class Project(models.Model):
     @api.model
     def _expand_groups(self, states, domain, order):
         return ['draft', 'pending', 'returned', 'approved', 'applied', 'assigned', 'rejected']
+    
+    @api.constrains("reason")
+    def _check_reason_modified(self):
+        if not self.env.user.has_group("student.group_supervisor") and self.state == 'returned':
+            raise UserError("Only academic supervisors can modify the feedback!")
 
     program_supervisors = fields.Many2many('res.users', compute='_compute_program_supervisors', string='Program Supervisors', readonly=True)
 
@@ -130,10 +129,15 @@ class Project(models.Model):
             }
         }
 
+    # You may send different messages submission and re-submission.
     def action_view_project_submit(self):
         if self.state in ['draft', 'returned']:
             self.locked = True
             self.write({'state': 'pending'})
+
+            # Updates the ownership of files for other users to access them
+            for attachment in self.additional_files:
+                attachment.write({'res_model': self._name, 'res_id': self.id})
 
             # Log the action
             for supervisor in self.program_supervisors:
@@ -182,6 +186,8 @@ class Project(models.Model):
             self.env['student.utils'].send_message(False, message_text, [self.professor_account], odoobot)
 
             return self.message_display('Approval', 'The project is successfully approved.', False)
+        else:
+            raise UserError("You can only approve projects submissions in 'Pending' status.")
 	
     def _check_reason(self):
         if not self.reason:
@@ -209,6 +215,8 @@ class Project(models.Model):
             self.env['student.utils'].send_message(False, message_text, [self.professor_account], odoobot)
 
             return self.message_display('Rejection', 'The project is rejected.', False)
+        else:
+            raise UserError("You can only reject projects submissions in 'Pending' status.")
     
     def action_view_project_return(self):
         if self.state == 'pending':

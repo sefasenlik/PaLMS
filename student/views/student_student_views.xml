@@ -62,4 +62,26 @@
             </form>
         </field>
     </record>
+
+    <record id="student_student_view_search" model="ir.ui.view">
+        <field name="name">student.student.search</field>
+        <field name="model">student.student</field>
+        <field name="arch" type="xml">
+            <search string="Student List">
+                <field name="name" string="Name" />
+                <field name="student_id" string="ID"/>
+                <field name="student_email" string="Email" />
+                <field name="student_phone" string="Phone"/>
+                <field name="current_project" string="Assigned Project"/>
+                <filter string="Assigned to a Project" name="my_projects" domain="[('current_project', '!=', False)]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Program" name="student_program" context="{'group_by':'student_program'}"/>
+                    <filter string="Year of Enrollment" name="enrolled" context="{'group_by':'enrolled'}"/>
+                    <filter string="Current Academic Year" name="progress" context="{'group_by':'progress'}"/>
+                    <!-- <filter string="Year of Graduation" name="graduation" context="{'group_by':'graduation'}"/> -->
+                    <filter string="Assigned Project" name="enrolled" context="{'group_by':'current_project'}"/>
+                </group>
+            </search>
+        </field>
+    </record>   
 </odoo>

@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 <odoo>
     <menuitem id="student_menu_root" name="𝕆ℙ𝔼ℕ🅻🅼🆂">
-        <menuitem sequence="1" id="personal_first_level_menu" name="My🅻🅼🆂">
+        <menuitem sequence="1" id="personal_first_level_menu" name="MyLMS">
 
-                <menuitem id="faculty_application_private" action="student_application_view_personal" groups="student.group_student"/>
-                <menuitem id="faculty_application_professor" action="student_application_view_professor" groups="student.group_professor"/>
+                <menuitem id="personal_application_private" action="student_application_view_personal" groups="student.group_student"/>
+                <menuitem id="personal_application_professor" action="student_application_view_professor" groups="student.group_professor"/>
+                <menuitem id="personal_project_supervisor" action="student_project_view_supervisor" groups="student.group_supervisor"/>
                 
         </menuitem>
 

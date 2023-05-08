@@ -94,7 +94,7 @@
                                 <page string="Detailed Description">
                                     <field name="description" style="margin-bottom:20 px" attrs="{'readonly': [('locked', '=', True)]}"/>
                                     
-                                    <field name="additional_files" widget="many2many_binary" string="Attach a file" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <field name="additional_files" widget="many2many_binary" string="Attach a file" attrs="{'readonly':['&amp;', ('state','!=','draft'), ('state','!=','returned')]}"/>
                                 </page>
                                 <page string="Applications" attrs="{'invisible': ['&amp;', ('state', '!=', 'applied'), ('state', '!=', 'approved'), ('state', '!=', 'assigned')]}">
                                     <p>
@@ -246,4 +246,18 @@
             </search>
         </field>
     </record>   
+
+    <!-- Make it program-specific! -->
+    <record id="student_project_view_supervisor" model="ir.actions.act_window">
+        <field name="name">Pending Project Submissions</field>
+        <field name="res_model">student.project</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="student_project_list_view"/>
+        <field name="domain">[('state','=','pending')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                There are no pending projects.
+            </p>
+        </field>
+    </record>
 </odoo>
