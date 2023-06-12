@@ -11,6 +11,42 @@
         </field>
     </record>
 
+    <record id="student_faculty_view_tree" model="ir.ui.view">
+        <field name="name">student.faculty.tree</field>
+        <field name="model">student.faculty</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="city"/>
+                <field name="dean"/>
+                <field name="manager"/>
+                <field name="program_number"/>
+                <field name="staff_number"/>
+                <field name="project_number"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="student_faculty_view_search" model="ir.ui.view">
+        <field name="name">student.faculty.search</field>
+        <field name="model">student.faculty</field>
+        <field name="arch" type="xml">
+            <search string="Faculty List">
+                <field name="name" string="Faculty Name"/>
+                <field name="dean" string="Dean"/>
+                <field name="manager" string="manager"/>
+                <filter string="Has programs" name="has_programs" domain="[('program_number', '>', 0)]"/>
+                <filter string="Has academic staff" name="has_staff" domain="[('staff_number', '>', 0)]"/>
+                <filter string="Has projects  " name="has_students" domain="[('project_number', '>', 0)]"/>
+                <group expand="1" string="Group By">
+                    <filter name="city" context="{'group_by':'city'}"/>
+                    <filter name="dean" context="{'group_by':'dean'}"/>
+                    <filter name="manager" context="{'group_by':'manager'}"/>
+                </group>
+            </search>
+        </field>
+    </record>  
+
     <record id="student_faculty_view_form" model="ir.ui.view">
         <field name="name">student.faculty.form</field>
         <field name="model">student.faculty</field>

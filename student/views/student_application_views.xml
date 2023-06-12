@@ -84,6 +84,12 @@
             <tree>
                 <field name="applicant"/>
                 <field name="project_id"/>
+                <field name="student_degree"/>
+                <field name="student_program"/>
+                <field name="student_id"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="telegram"/>
                 <!-- ♦ How to change the color of the field value? -->
                 <field name="state"/>
             </tree>
@@ -100,26 +106,26 @@
                         string="Send Application"
                         type="object"
                         confirm="Are you sure you want to send your application for the chosen project?"
-                        groups="student.group_student,student.group_supervisor"
+                        groups="student.group_student"
                         class="oe_highlight"/>
                     <button name="action_view_application_cancel"
                         string="Cancel Application"
                         type="object"
                         confirm="Are you sure you want to cancel your application?"
-                        groups="student.group_student,student.group_supervisor"
+                        groups="student.group_student"
                         class="oe_highlight"/>
 
                     <button name="action_view_application_accept"
                         string="ACCEPT APPLICATION"
                         type="object"
                         confirm="Are you sure you want to accept this application?"
-                        groups="student.group_professor,student.group_supervisor"
+                        groups="student.group_professor"
                         class="btn-success"/>
                     <button name="action_view_application_reject"
                         string="REJECT APPLICATION"
                         type="object"
                         confirm="Are you sure you want to reject this application?"
-                        groups="student.group_professor,student.group_supervisor"
+                        groups="student.group_professor"
                         class="btn-danger"/>
                 </header>
                 <sheet>
@@ -157,7 +163,7 @@
                                 <label for="feedback"/>
                                 <field name="feedback"/>
                             </page>
-                            <page string="Technical Log" groups="student.group_supervisor">
+                            <page string="Technical Log" groups="student.group_administrator">
                                 <field name="message_follower_ids" widget="mail_followers"/>
                                 <field name="message_ids" widget="mail_thread"/>
                             </page>

@@ -18,5 +18,11 @@
             <field name="name">Supervisors</field>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
+
+        <record id="student.group_administrator" model="res.groups">
+            <field name="category_id">77</field>
+            <field name="name">Administrators</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
     </data>
 </odoo>

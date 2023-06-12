@@ -70,7 +70,8 @@ class StudentDegree(models.Model):
             "3": "3rd Year",
             "4": "4th Year",
             "5": "5th Year",
-            "6": "6th Year"
+            "6": "6th Year",
+            "prep": "Preparatory Year"
         }
 
         self.name = text_dictionary[self.level] + ' - ' + text_dictionary[self.year]

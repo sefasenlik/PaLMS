@@ -5,7 +5,7 @@ class Program(models.Model):
     _description = "OpenLMS - Programs"
 
     name = fields.Char('Program Name', required=True, translate=True)
-    degree = fields.Selection([('ba', "Bachelor's"),('ma', "Master's"),('ph', 'PhD')], default='ba', string='Program Degree', required=True)
+    degree = fields.Selection([('ba', "Bachelor's"),('ms', "Master's"),('phd', 'PhD')], default='ba', string='Program Degree', required=True)
     language = fields.Selection([('en', 'English'),('ru', 'Russian')], default='ru', string='Language', required=True)
     length = fields.Selection([('1', '1'),('2', '2'),('3', '3'),('4', '4'),('5', '5'),('6', '6')], default='4', string='Program Length', required=True)
     type = fields.Selection([('on','Online'),('off','Offline'),('hrd','Hybrid')], default='off', string='Mode of Education', required=True)
@@ -21,7 +21,7 @@ class Program(models.Model):
         self.student_number = len(self.student_ids)
 
     project_number = fields.Integer(string='Number of Projects', compute='_compute_project_count', store=True, readonly=True)
-    project_ids = fields.Many2many('student.project', string='Faculty Projects')
+    project_ids = fields.Many2many('student.project', string='Faculty Projects', domain=[('state','in',['approved','applied','assigned'])])
 
     @api.depends('project_ids')
     @api.model

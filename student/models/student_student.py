@@ -7,8 +7,8 @@ class Student(models.Model):
     _name = "student.student"
     _description = "OpenLMS - Students"
 
-    name = fields.Char('Student Name', default="N/A", compute="_get_from_account", store=True, required=True)
-    student_id = fields.Char(string='Student ID', default="N/A", compute="_get_from_account", store=True, required=True)
+    name = fields.Char('Student Name', default="N/A", compute="_get_from_account", store=True)
+    student_id = fields.Char(string='Student ID', default="N/A", compute="_get_from_account", store=True)
 
     student_account = fields.Many2one('res.users', store=True, string='User Account', required=True)
     student_email = fields.Char("Email", default="N/A", compute="_get_from_account", store=True, required=True)
@@ -24,6 +24,13 @@ class Student(models.Model):
                                  ('6', 'Sixth Year')], string="Progress", required=True)
     graduation = fields.Char("Expected Graduation Year", compute='_compute_graduation', store=False, readonly=True)
     current_project = fields.Many2one('student.project', string="Assigned Project")
+
+    # ♦ Why can I not add 'required' attribute to this field?
+    degree = fields.Many2one('student.degree', string='Student Academic Degree', compute="_compute_degree", store=True)
+
+    @api.depends('student_program', 'progress')
+    def _compute_degree(self):
+        self.degree = self.env['student.degree'].sudo().search(['&',('year', '=', self.progress), ('level', '=', self.student_program.degree)], limit=1)
 
     @api.onchange('current_project')
     def _onchange_current_project(self):

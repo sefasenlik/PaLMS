@@ -1,23 +1,29 @@
 from odoo import fields, models, api, _ #_ is for translations
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, AccessError
 
 class Project(models.Model):
     _name = "student.project"
     _description = "OpenLMS - Projects"
-    _inherit = ['mail.thread', 'student.utils']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'student.utils']
 
+    # Locks fields upon submitting
     locked = fields.Boolean(default=False)
 
     name = fields.Char('Project Name', required=True, translate=True)
     name_ru = fields.Char('Название проекта', required=True, translate=True)
     creation_date = fields.Date("Creation Date", default=lambda self: fields.Datetime.now(), readonly=True)
     description = fields.Text('Detailed Description', required=True)
-    faculty_ids = fields.Many2many('student.faculty', string='Applicable Faculties', required=True)
-    program_ids = fields.Many2many('student.program', string='Applicable Programs', required=True)
+    requirements = fields.Text('Application Requirements')
+    results = fields.Text('Expected Results')
+    faculty_ids = fields.Many2many('student.faculty', 
+                                   string='Applicable Faculties', 
+                                   help='Select the faculties relevant for this project. Programs of this faculty will be automatically added to the applicable programs.',
+                                   required=True)
+    program_ids = fields.Many2many('student.program', string='Applicable Programs', compute="_find_programs", store=True, readonly=False, required=True)
     type = fields.Selection([('cw', 'Course Work (Курсовая работа)'), ('fqw', 'Final Qualifying Work (ВКР)')], string="Project Type")
-    format = fields.Selection([('research', 'Research'), ('project', 'Project'), ('startup', 'Start-up')], string="Project Format")
+    format = fields.Selection([('research', 'Research'), ('project', 'Project'), ('startup', 'Start-up')], string="Format")
+    language = fields.Selection([('en', 'English'), ('ru', 'Russian')], default="en", string="Language", required=True)
     degree_ids = fields.Many2many('student.degree', string='Available for', required=True)
-    applications = fields.Integer('Number of Applications', compute='_compute_application_count', readonly=True)
     assigned = fields.Boolean('Assigned to a student?', default=False, readonly=True)
     student_elected = fields.One2many('student.student', 'current_project', string='Elected Student', readonly=True)
     active = fields.Boolean(default=True)
@@ -28,10 +34,54 @@ class Project(models.Model):
                               ('returned','Returned'),
                               ('applied', 'Application Received'),  
                               ('assigned', 'Assigned')],           
-                              group_expand='_expand_groups', default='draft', string='State', readonly=True, store=True)
+                              group_expand='_expand_groups', default='draft', string='State', readonly=True, store=True, tracking=False)
     reason = fields.Text(string='Return/Rejection Reason')
+    project_events = fields.Many2many('student.event', string="Project Events")
+
     additional_files = fields.Many2many(comodel_name="ir.attachment", string="Attachments") 
-                        
+    file_count = fields.Integer('Number of attached files', compute='_compute_file_count', readonly=True)
+
+    @api.depends('additional_files')
+    def _compute_file_count(self):
+        self.file_count = len(self.additional_files)
+
+    # notification_ids = fields.One2many('mail.message', 'res_id', string='Notifications', domain=[('message_type', '!=', 'email')], auto_join=True)
+
+    program_supervisors = fields.Many2many('res.users', compute='_compute_program_supervisors', string='Program Supervisors', store=True, readonly=True)
+
+    @api.depends('program_ids')
+    def _compute_program_supervisors(self):
+        for record in self:
+            supervisor_ids = record.program_ids.mapped('supervisor.id')
+            record.program_supervisors = [(6, 0, supervisor_ids)]
+
+    # Assigns the professor account created for this user
+    @api.model
+    def _default_professor(self):
+        professor = self.env['student.professor'].sudo().search([('professor_account.id', '=', self.env.uid)], limit=1)
+        return professor.id if professor else False
+
+    # ♦ What if an administrator creates a project?
+    professor_id = fields.Many2one('student.professor', default=_default_professor, string='Professor', readonly=True, required=True)
+    professor_account= fields.Many2one('res.users', string="Professor Account", compute='_compute_professor_account', store=True)
+
+    @api.depends('professor_id')
+    def _compute_professor_account(self):
+        for project in self:
+            project.professor_account = project.professor_id.professor_account
+    
+    applications = fields.Integer('Number of Applications', compute='_compute_application_count', readonly=True)
+    application_ids = fields.One2many('student.application', 'project_id', string='Applications', domain=[('state','in',['sent','accepted','rejected'])])
+
+    @api.depends('application_ids')
+    @api.model
+    def _compute_application_count(self):
+        for project in self:
+            project.applications = len(project.application_ids)
+            if project.applications > 0 and project.state == 'approved':
+                project.state = 'applied'
+
+    # COLORING #        
     # Handle the coloring of the project
     color = fields.Integer(string="Box Color", default=4, compute='_compute_color_value', store=True)
 
@@ -58,35 +108,13 @@ class Project(models.Model):
     def _expand_groups(self, states, domain, order):
         return ['draft', 'pending', 'returned', 'approved', 'applied', 'assigned', 'rejected']
     
+    # RESTRICTIONS #
     @api.constrains("reason")
     def _check_reason_modified(self):
         if not self.env.user.has_group("student.group_supervisor") and self.state == 'returned':
             raise UserError("Only academic supervisors can modify the feedback!")
 
-    program_supervisors = fields.Many2many('res.users', compute='_compute_program_supervisors', string='Program Supervisors', readonly=True)
-
-    @api.depends('program_ids')
-    def _compute_program_supervisors(self):
-        for record in self:
-            supervisor_ids = record.program_ids.mapped('supervisor.id')
-            record.program_supervisors = [(6, 0, supervisor_ids)]
-
-    # Assigns the professor account created for this user
-    @api.model
-    def _default_professor(self):
-        professor = self.env['student.professor'].sudo().search([('professor_account.id', '=', self.env.uid)], limit=1)
-        return professor.id if professor else False
-
-    # ♦ What if a supervisor creates a project?
-    professor_id = fields.Many2one('student.professor', default=_default_professor, string='Professor', readonly=True, required=True)
-    
-    professor_account= fields.Many2one('res.users', string="Professor Account", compute='_compute_professor_account', store=True)
-
-    @api.depends('professor_id')
-    def _compute_professor_account(self):
-        for project in self:
-            project.professor_account = project.professor_id.professor_account
-
+    # UTILITY #
     # Prevents the creation of the default log message
     @api.model
     def create(self, vals):
@@ -98,23 +126,7 @@ class Project(models.Model):
 
         return project
     
-    application_ids = fields.One2many('student.application', 'project_id', string='Applications', domain=[('state','in',['sent','accepted','rejected'])])
-
-    @api.depends('application_ids')
-    @api.model
-    def _compute_application_count(self):
-        for project in self:
-            project.applications = len(project.application_ids)
-            if project.applications > 0 and project.state == 'approved':
-                project.state = 'applied'
-
-    # Set the default filter to show only projects for the current user
-    # @api.model
-    # def default_get(self, fields):
-    #     res = super(Project, self).default_get(fields)
-    #     res['domain'] = [('professor_id', '=', self.env.user.id)]
-    #     return res
-    
+    # Displays notification messages
     def message_display(self, title, message, sticky_bool):
         return {
             'type': 'ir.actions.client',
@@ -129,8 +141,16 @@ class Project(models.Model):
             }
         }
 
+    # BUTTON LOGIC #
+    def _check_professor_identity(self):
+        if not self.env.user.has_group('student.group_administrator') and not self.env.user.has_group('student.group_supervisor'):
+            if self.professor_account != self.env.user:
+                raise AccessError("You can only modify your projects.")
+
     # You may send different messages submission and re-submission.
     def action_view_project_submit(self):
+        self._check_professor_identity()
+                
         if self.state in ['draft', 'returned']:
             self.locked = True
             self.write({'state': 'pending'})
@@ -139,16 +159,23 @@ class Project(models.Model):
             for attachment in self.additional_files:
                 attachment.write({'res_model': self._name, 'res_id': self.id})
 
-            # Log the action
-            for supervisor in self.program_supervisors:
-                body = _("The project is submitted for %s's approval.", supervisor.name)
-                self.message_post(body=body)
+            # Log the action --------------------
+            supervisor_name_list = [supervisor.name for supervisor in self.program_supervisors]
+            body = f"The project is submitted for the approval of supervisor(s). <br> <i><b>Supervisor(s):</b> {', '.join(supervisor_name_list)}</i>"
+            self.message_post(body=body)
+            
+            # Send the email --------------------
+            template = self.env.ref('student.email_template_project_submission')
+            template.send_mail(self.id, 
+                               email_values={'email_to': ','.join([supervisor.email for supervisor in self.program_supervisors])}, 
+                               force_send=False)
+            # -----------------------------------
 
             # Get the Odoo Bot user
             odoobot = self.env.ref('base.partner_root')
 
             # Construct the message that is to be sent to the user
-            message_text = f'<strong>Project Proposal Received</strong><p> ' + self.professor_account.name + " sent a project proposal: <b>" + self.name + "</b></p><p><i>Please evaluate the submission.</i></p>"
+            message_text = f'<strong>Project Proposal Received</strong><p> {self.professor_account.name} sent a project proposal: <b><a href="/web#id={self.id}&model=student.project">{self.name}</a></b></p> <p><i>Please evaluate the submission.</i></p>'
 
             # Use the send_message utility function to send the message
             self.env['student.utils'].send_message(False, message_text, self.program_supervisors, odoobot)
@@ -157,6 +184,8 @@ class Project(models.Model):
             # ♦ This strangely prevents the project status to be immediately updated in the UI.
     
     def action_view_project_cancel(self):
+        self._check_professor_identity()
+
         if self.state == 'pending':
             self.locked = False
             self.write({'state': 'draft'})
@@ -166,15 +195,27 @@ class Project(models.Model):
             self.message_post(body=body)
 
             return self.message_display('Cancellation', 'The project submission is cancelled.', False)
-    
+        
+    def _check_supervisor_identity(self):
+        if not self.env.user.has_group('student.group_administrator'):
+            if self.env.user not in self.program_supervisors:
+                raise AccessError("You can only react to projects sent to the program that you are supervising.")
+
     # ♦ What if supervisors make different decisions?
     def action_view_project_approve(self):
+        self._check_supervisor_identity()
+
         if self.state == 'pending':
             self.write({'state': 'approved'})
 
-            # Log the action
+            # Log the action --------------------
             body = _('The project is approved by ' + self.env.user.name + '.')
             self.message_post(body=body)
+
+            # Send the email --------------------
+            template = self.env.ref('student.email_template_project_approval')
+            template.send_mail(self.id, force_send=False)
+            # -----------------------------------
 
             # Get the Odoo Bot user
             odoobot = self.env.ref('base.partner_root')
@@ -196,14 +237,21 @@ class Project(models.Model):
             raise UserError("Please provide a more detailed reason (at least 20 characters).")
         
     def action_view_project_reject(self):
+        self._check_supervisor_identity()
+
         if self.state == 'pending':
             self._check_reason()
 
             self.write({'state': 'rejected'})
 
-            # Log the action
+            # Log the action --------------------
             body = _('The project is rejected by ' + self.env.user.name + '.')
             self.message_post(body=body)
+
+            # Send the email --------------------
+            template = self.env.ref('student.email_template_project_rejection')
+            template.send_mail(self.id, force_send=False)
+            # -----------------------------------
 
             # Get the Odoo Bot user
             odoobot = self.env.ref('base.partner_root')
@@ -219,15 +267,22 @@ class Project(models.Model):
             raise UserError("You can only reject projects submissions in 'Pending' status.")
     
     def action_view_project_return(self):
+        self._check_supervisor_identity()
+
         if self.state == 'pending':
             self._check_reason()
 
             self.locked = False
             self.write({'state': 'returned'})
 
-            # Log the action
+            # Log the action --------------------
             body = _('The project is returned by ' + self.env.user.name + '. Resubmission after applying requested modifications is possible.')
             self.message_post(body=body)
+
+            # Send the email --------------------
+            template = self.env.ref('student.email_template_project_return')
+            template.send_mail(self.id, force_send=False)
+            # -----------------------------------
 
             # Get the Odoo Bot user
             odoobot = self.env.ref('base.partner_root')
@@ -240,6 +295,7 @@ class Project(models.Model):
 
             return self.message_display('Return', 'The project is returned.', False)
 
+    # The reset button functionality for development purposes
     def action_view_project_reset(self):
         self.state = "draft"
         self.student_elected = None
@@ -250,19 +306,40 @@ class Project(models.Model):
         applications = self.env['student.application'].search([('project_id', '=', project_id)])
         applications.unlink()
 
-
     # Creates an application upon clicking "Apply"
     def action_view_project_apply(self):
-        self.ensure_one()
-        
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'Create Application',
-            'res_model': 'student.application',
-            'view_mode': 'form',
-            'view_type': 'form',
-            'target': 'new',
-            'context': {
-                'default_project_id': self.id
-            }
-        }
+        student_record = self.env['student.student'].sudo().search([('student_account.id', '=', self.env.uid)], limit=1)
+        if not student_record:
+            raise AccessError("You are not registered as a student in the system, please contact your academic supervisor.")
+        else:
+            if student_record.student_program not in self.program_ids:
+                raise UserError("This project is not applicable for your program, please use filters to find another one.")
+            elif student_record.degree not in self.degree_ids:
+                raise UserError("This project is not applicable for your level of education, please use filters to find another one.")
+            else:
+                self.ensure_one()
+                
+                return {
+                    'type': 'ir.actions.act_window',
+                    'name': 'Create Application',
+                    'res_model': 'student.application',
+                    'view_mode': 'form',
+                    'view_type': 'form',
+                    'target': 'new',
+                    'context': {
+                        'default_project_id': self.id
+                    }
+                }
+    
+    # Navigates to events of this project
+    def action_view_project_events(self):
+        action = self.env.ref('student.action_event').read()[0]
+        action['domain'] = [('related_projects', 'in', self.ids)]
+        return action
+
+    # UI ASSIST # 
+    # Makes adding/removing programs in bulk easier for the user
+    @api.depends('faculty_ids')
+    def _find_programs(self):
+        program_ids = self.faculty_ids.mapped('program_ids')
+        self.program_ids = program_ids

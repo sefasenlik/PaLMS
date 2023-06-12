@@ -17,11 +17,32 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
+                <field name="professor_faculty"/>
                 <field name="visiting_professor"/>
                 <field name="offered_projects"/>
                 <field name="state"/>
                 <field name="last_seen"/>
             </tree>
+        </field>
+    </record>
+
+    <record id="student_professor_view_search" model="ir.ui.view">
+        <field name="name">student.professor.search</field>
+        <field name="model">student.professor</field>
+        <field name="arch" type="xml">
+            <!-- Now search will work not only for 'name', but also for the fields mentioned below -->
+            <search string="Professor List">
+                <field name="name" string="Professor"/>
+                <field name="state"/>
+                <field name="professor_faculty" string="Faculty"/>
+                <field name="project_ids" string="Projects"/>
+                <separator/>
+                <!-- Only values satisfying the filter below will be shown because of 'domain' -->
+                <filter string="Permanent Faculty Member" name="visiting_professor" domain="[('visiting_professor', '=', False)]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Active" name="active" context="{'group_by':'active', 'residual_visible':True}"/>
+                </group>
+            </search>
         </field>
     </record>
 
@@ -51,7 +72,6 @@
                         <notebook>
                             <page string="Projects">
                                 <p>
-                                    <!-- You need to add a space between these two!  -->
                                     <label for="offered_projects" class="oe_inline"/>
                                     <field name="offered_projects" style="margin-left:10px" class="oe_inline"/>
                                 </p>
@@ -65,26 +85,6 @@
                     </group>
                 </sheet>
             </form>
-        </field>
-    </record>
-
-    <record id="student_professor_view_search" model="ir.ui.view">
-        <field name="name">student.professor.search</field>
-        <field name="model">student.professor</field>
-        <field name="arch" type="xml">
-            <!-- Now search will work not only for 'name', but also for the fields mentioned below -->
-            <search string="Professor List">
-                <field name="name" string="Professor"/>
-                <field name="state"/>
-                <field name="professor_faculty" string="Faculty"/>
-                <field name="project_ids" string="Projects"/>
-                <separator/>
-                <!-- Only values satisfying the filter below will be shown because of 'domain' -->
-                <filter string="Permanent Faculty Member" name="visiting_professor" domain="[('visiting_professor', '=', False)]"/>
-                <group expand="1" string="Group By">
-                    <filter string="Active" name="active" context="{'group_by':'active', 'residual_visible':True}"/>
-                </group>
-            </search>
         </field>
     </record>
 </odoo>

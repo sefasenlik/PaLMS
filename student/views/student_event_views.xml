@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="student_event_view_tree" model="ir.ui.view">
+        <field name="name">student.event.tree</field>
+        <field name="model">student.event</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="type"/>
+                <field name="due_date"/>
+                <field name="initiator"/>
+                <field name="assignee"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="student_event_view_search" model="ir.ui.view">
+        <field name="name">student.event.search</field>
+        <field name="model">student.event</field>
+        <field name="arch" type="xml">
+            <search string="Event List">
+                <field name="name" string="Event Name"/>
+                <field name="initiator" string="Initiator"/>
+                <field name="assignee" string="Assignee"/>
+                <field name="watchers" string="Watchers"/>
+                <filter string="Initiated by me" name="has_programs" domain="[('initiator', '=', uid)]"/>
+                <filter string="Assigned to me" name="has_staff" domain="[('assignee', '=', uid)]"/>
+                <filter string="Watching" name="has_students" domain="[('watchers', 'in', uid)]"/>
+                <group expand="1" string="Group By">
+                    <filter name="complete" context="{'group_by':'complete'}"/>
+                    <filter name="common" context="{'group_by':'common'}"/>
+                    <filter name="type" context="{'group_by':'type'}"/>
+                    <filter name="related_projects" context="{'group_by':'related_projects'}"/>
+                    <filter name="creation_date" context="{'group_by':'creation_date'}"/>
+                    <filter name="due_date" context="{'group_by':'due_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>  
+
+    <record id="student_event_view_form" model="ir.ui.view">
+        <field name="name">student.event.form</field>
+        <field name="model">student.event</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_view_event_complete" 
+                            string="Complete"
+                            type="object"
+                            class="oe_highlight"
+                            confirm="Are you sure you want to complete this event?"/>  
+                </header>
+                <sheet>
+                    <group string="Event Details">
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="creation_date"/>
+                        <field name="due_date"/>
+                        <field name="type"/>
+                    </group>
+                    <group string="Participants">
+                        <field name="initiator"/>
+                        <field name="assignee"/>
+                        <field name="watchers" widget="many2many_tags"/>
+                    </group>
+                    <notebook>
+                        <page string="Related Projects">
+                            <field name="related_projects">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="name_ru"/>
+                                    <field name="professor_id"/>
+                                    <field name="format"/>
+                                    <field name="language"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Attachments">
+                            <field name="additional_files" widget="many2many_binary" string="Attach a file"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="student_event_view_calendar" model="ir.ui.view">
+        <field name="name">student.event.calendar</field>
+        <field name="model">student.event</field>
+        <field name="arch" type="xml">
+            <!-- Define the view with the calendar widget -->
+            <calendar string="Event Calendar" date_start="due_date" mode="month" 
+                      hide_time="true" event_open_popup="true" quick_add="false"> 
+                <field name="name"/>
+                <field name="description"/>
+                <field name="creation_date"/>
+                <field name="due_date"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="student_event_view_action" model="ir.actions.act_window">
+        <field name="name">Events</field>
+        <field name="res_model">student.event</field>
+        <field name="view_mode">calendar,tree,form</field>
+        <field name="view_id" ref="student_event_view_calendar"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                There are no events yet. You can create the first one!
+            </p>
+        </field>
+    </record>
+
+    <record id="student_event_view_personal" model="ir.actions.act_window">
+        <field name="name">My Calendar</field>
+        <field name="res_model">student.event</field>
+        <field name="view_mode">calendar,tree,form</field>
+        <field name="view_id" ref="student_event_view_calendar"/>
+        <field name="domain">['|', '|', ('initiator','=',uid),('assignee','=',uid), ('watchers','in',uid)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                You have no events or assignments. Hooray!
+            </p>
+        </field>
+    </record>
+
+    <!-- Define the action to open the list view of events from the project form-->
+    <record id="action_event" model="ir.actions.act_window">
+        <field name="name">Events</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">student.event</field>
+        <field name="view_mode">calendar,tree,form</field>
+        <field name="domain">[('related_projects', 'in', active_id)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                There are no projects yet. You can create the first one. Yay!
+            </p>
+        </field>
+    </record>
+</odoo>

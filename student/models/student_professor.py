@@ -6,7 +6,7 @@ class Professor(models.Model):
     _name = "student.professor"
     _description = "OpenLMS - Professors"
 
-    name = fields.Char('Professor Name', required=True, default=lambda self: self.env.user.name, compute="_compute_name", store=True, readonly=True, translate=True)
+    name = fields.Char('Professor Name', required=True, default=lambda self: self.env.user.name, compute="_compute_name", store=True, readonly=True)
     active = fields.Boolean(default=True)
     state = fields.Selection([('online', 'Online'),('offline', 'Offline'),('on_vacation', 'On vacation')], default='online', string='State')
     last_seen = fields.Datetime("Last Seen", default=lambda self: fields.Datetime.now())

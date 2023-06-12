@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <!-- PROJECT -->
+        <record id="email_template_project_submission" model="mail.template">
+            <field name="name">Project Submission Notification</field>
+            <field name="model_id" ref="student.model_student_project"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="email_from">{{object.professor_account.email}}</field>
+            <field name="subject">«{{object.name}}» is submitted for to review!</field>
+            <field name="body_html">
+                &lt;h2&gt;Hello there!&lt;/h2&gt;
+                &lt;p&gt;The program you are supervising has received a new project proposal. Please examine and decide on the eligibility of this proposal.
+                &lt;br&gt;
+                Best wishes,&lt;br&gt;
+                OpenLMS Notification Service
+                &lt;/p&gt;
+            </field>
+        </record>
+
+        <record id="email_template_project_approval" model="mail.template">
+            <field name="name">Project Approval Notification</field>
+            <field name="model_id" ref="student.model_student_project"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="email_from">{{user.email}}</field>
+            <field name="email_to">{{object.professor_account.email}}</field>
+            <field name="subject">«{{object.name}}» is approved!</field>
+            <field name="body_html">
+                &lt;h2&gt;Hello, &lt;t t-out="object.professor_account.name"/&gt;!&lt;/h2&gt;
+                &lt;p&gt;The following project you have submitted is approved. Now students can view it and send applications.&lt;br&gt;
+                &lt;b&gt;Project name: &lt;/b&gt;&lt;t t-out="object.name"/&gt;&lt;br&gt;
+                &lt;b&gt;Approved by: &lt;/b&gt;&lt;t t-out="user.email"/&gt;&lt;br&gt;
+                &lt;br&gt;
+                Best wishes,&lt;br&gt;
+                OpenLMS Notification Service
+                &lt;/p&gt;
+            </field>
+        </record>
+
+        <record id="email_template_project_rejection" model="mail.template">
+            <field name="name">Project Rejection Notification</field>
+            <field name="model_id" ref="student.model_student_project"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="email_from">{{user.email}}</field>
+            <field name="email_to">{{object.professor_account.email}}</field>
+            <field name="subject">«{{object.name}}» is rejected</field>
+            <field name="body_html">
+                &lt;h2&gt;Hello, &lt;t t-out="object.professor_account.name"/&gt;!&lt;/h2&gt;
+                &lt;p&gt;The following project you have submitted is rejected. You can see the reason for this decision below. Additional details can be found in project details.&lt;br&gt;
+                &lt;b&gt;Project name: &lt;/b&gt;&lt;t t-out="object.name"/&gt;&lt;br&gt;
+                &lt;b&gt;Rejected by: &lt;/b&gt;&lt;t t-out="user.email"/&gt;&lt;br&gt;
+                &lt;b&gt;Rejection reason: &lt;/b&gt;&lt;t t-out="object.reason"/&gt;&lt;br&gt;
+                &lt;br&gt;
+                Best wishes,&lt;br&gt;
+                OpenLMS Notification Service
+                &lt;/p&gt;
+            </field>
+        </record>
+
+        <record id="email_template_project_return" model="mail.template">
+            <field name="name">Project Return Notification</field>
+            <field name="model_id" ref="student.model_student_project"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="email_from">{{user.email}}</field>
+            <field name="email_to">{{object.professor_account.email}}</field>
+            <field name="subject">«{{object.name}}» is returned</field>
+            <field name="body_html">
+                &lt;h2&gt;Hello, &lt;t t-out="object.professor_account.name"/&gt;!&lt;/h2&gt;
+                &lt;p&gt;The following project you have submitted is returned. You can see the reason for this decision below. Additional details can be found in project details.&lt;br&gt;
+                &lt;b&gt;Project name: &lt;/b&gt;&lt;t t-out="object.name"/&gt;&lt;br&gt;
+                &lt;b&gt;Returned by: &lt;/b&gt;&lt;t t-out="user.email"/&gt;&lt;br&gt;
+                &lt;b&gt;Return reason: &lt;/b&gt;&lt;t t-out="object.reason"/&gt;&lt;br&gt;
+                &lt;br&gt;
+                Best wishes,&lt;br&gt;
+                OpenLMS Notification Service
+                &lt;/p&gt;
+            </field>
+        </record>
+
+        <!-- APPLICATION -->
+        <record id="email_template_application_send" model="mail.template">
+            <field name="name">Application Send Notification</field>
+            <field name="model_id" ref="student.model_student_application"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="email_from">{{user.email}}</field>
+            <field name="email_to">{{object.application_professor.email}}</field>
+            <field name="subject">{{object.applicant_account.name}} sent a an application for «{{object.project_id.name}}»!</field>
+            <field name="body_html">
+                &lt;h2&gt;Hello, &lt;t t-out="object.application_professor.name"/&gt;!&lt;/h2&gt;
+                &lt;p&gt;You have received an application for one of your projects. Please log in to your OpenLMS account to review it.&lt;br&gt;
+                &lt;b&gt;Project name: &lt;/b&gt;&lt;t t-out="object.project_id.name"/&gt;&lt;br&gt;
+                &lt;b&gt;Applicant name: &lt;/b&gt;&lt;t t-out="object.applicant_account.name"/&gt;&lt;br&gt;
+                &lt;br&gt;
+                Best wishes,&lt;br&gt;
+                OpenLMS Notification Service
+                &lt;/p&gt;
+            </field>
+        </record>
+
+        <record id="email_template_application_accept" model="mail.template">
+            <field name="name">Application Accepted Notification</field>
+            <field name="model_id" ref="student.model_student_application"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="email_from">{{user.email}}</field>
+            <field name="email_to">{{object.applicant_account.email}}</field>
+            <field name="subject">Your application for «{{object.project_id.name}}» is accepted!</field>
+            <field name="body_html">
+                &lt;h2&gt;Hello, &lt;t t-out="object.applicant_account.name"/&gt;!&lt;/h2&gt;
+                &lt;p&gt;Your application for the following project is accepted. Your OpenLMS is now assigned to this project, you can contact the supervising professor and start working on it.&lt;br&gt;
+                &lt;b&gt;Professor name: &lt;/b&gt;&lt;t t-out="object.application_professor.name"/&gt;&lt;br&gt;
+                &lt;b&gt;Project name: &lt;/b&gt;&lt;t t-out="object.project_id.name"/&gt;&lt;br&gt;
+                &lt;br&gt;
+                Best wishes,&lt;br&gt;
+                OpenLMS Notification Service
+                &lt;/p&gt;
+            </field>
+        </record>
+
+        <record id="email_template_application_reject" model="mail.template">
+            <field name="name">Application Rejected Notification</field>
+            <field name="model_id" ref="student.model_student_application"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="email_from">{{user.email}}</field>
+            <field name="email_to">{{object.applicant_account.email}}</field>
+            <field name="subject">Your application for «{{object.project_id.name}}» is rejected</field>
+            <field name="body_html">
+                &lt;h2&gt;Hello, &lt;t t-out="object.applicant_account.name"/&gt;!&lt;/h2&gt;
+                &lt;p&gt;Your application for the following project is rejected. You can apply to other available applications and provide more details next time. Good luck!&lt;br&gt;
+                &lt;b&gt;Professor name: &lt;/b&gt;&lt;t t-out="object.application_professor.name"/&gt;&lt;br&gt;
+                &lt;b&gt;Project name: &lt;/b&gt;&lt;t t-out="object.project_id.name"/&gt;&lt;br&gt;
+                &lt;br&gt;
+                Best wishes,&lt;br&gt;
+                OpenLMS Notification Service
+                &lt;/p&gt;
+            </field>
+        </record>
+    </data>
+</odoo>

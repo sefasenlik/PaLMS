@@ -16,7 +16,7 @@ class Application(models.Model):
 		self.student_degree = self.applicant.progress
 		self.student_id = self.applicant.student_id
 
-	# Assigns the professor account created for this user
+	# Assigns the student account created for this user
 	def _default_applicant(self):
 		student = self.env['student.student'].sudo().search([('student_account.id', '=', self.env.uid)], limit=1)
 		self._compute_student_details()
@@ -33,7 +33,7 @@ class Application(models.Model):
 	phone = fields.Char('Phone', compute="_compute_student_details", store=True, readonly=True)
 	additional_phone = fields.Char('Additional Phone', required=False)
 	telegram = fields.Char('Telegram ID', required=False)
-	student_program = fields.Char("Applicant's Track", compute="_compute_student_details", store=True, readonly=True)
+	student_program = fields.Char("Student Track", compute="_compute_student_details", store=True, readonly=True)
 	student_degree = fields.Char("Academic Year", compute="_compute_student_details", store=True, readonly=True)
 	student_id = fields.Char("Student ID", compute="_compute_student_details", store=True, readonly=True)
 
@@ -41,7 +41,7 @@ class Application(models.Model):
 	feedback = fields.Text('Professor Feedback')
 	additional_files = fields.Many2many(comodel_name="ir.attachment", string="Additional Files") 
 
-	state = fields.Selection([('draft', 'Draft'),('sent', 'Sent'),('accepted', 'Accepted'),('rejected', 'Rejected')], default='draft', readonly=True, string='State', store=True)
+	state = fields.Selection([('draft', 'Draft'),('sent', 'Sent'),('accepted', 'Accepted'),('rejected', 'Rejected')], default='draft', readonly=True, string='Application State', store=True)
 	
 	project_id = fields.Many2one('student.project', string='Project', required=True, domain=[('state','in',['approved','applied'])])
 
@@ -136,6 +136,11 @@ class Application(models.Model):
 			# Log the action
 			body = _('The application is sent to the professor, %s, for evaluation.', self.project_id.professor_account.name)
 			self.message_post(body=body)
+            
+			# Send the email --------------------
+			template = self.env.ref('student.email_template_application_send')
+			template.send_mail(self.id, force_send=True)
+			# -----------------------------------
 
 			# Get the Odoo Bot user
 			odoobot = self.env.ref('base.partner_root')
@@ -146,6 +151,8 @@ class Application(models.Model):
 			# Use the send_message utility function to send the message
 			self.env['student.utils'].send_message(False, message_text, [self.project_id.professor_account], odoobot)
 
+			return self.message_display('Sent', 'The application is submitted for review.', False)
+
 	def action_view_application_cancel(self):
 		self._check_user_identity()
 
@@ -155,6 +162,8 @@ class Application(models.Model):
 			# Log the action
 			body = _('The application submission is cancelled.')
 			self.message_post(body=body)
+
+			return self.message_display('Cancellation', 'The application submission is cancelled.', False)
 		else:
 			raise UserError("The application is already processed!")
 
@@ -187,6 +196,11 @@ class Application(models.Model):
 			# Log the action
 			body = _('This application is accepted by the professor.')
 			self.message_post(body=body)
+            
+			# Send the email --------------------
+			template = self.env.ref('student.email_template_application_accept')
+			template.send_mail(self.id, force_send=True)
+			# -----------------------------------
 
 			# Get the Odoo Bot user
 			odoobot = self.env.ref('base.partner_root')
@@ -198,6 +212,8 @@ class Application(models.Model):
 			self.env['student.utils'].send_message(False, message_text, self.applicant_account, odoobot)
 
 			self.mark_other_applications()
+
+			return self.message_display('Accepted', 'The selected application is chosen for the project, remaining ones are automatically rejected.', False)
 		else:
 			raise UserError("The application is already processed or still a draft!")
 
@@ -212,6 +228,11 @@ class Application(models.Model):
 			# Log the action
 			body = _('This application is rejected by the professor.')
 			self.message_post(body=body)
+            
+			# Send the email --------------------
+			template = self.env.ref('student.email_template_application_reject')
+			template.send_mail(self.id, force_send=True)
+			# -----------------------------------
 
 			# Get the Odoo Bot user
 			odoobot = self.env.ref('base.partner_root')
@@ -221,6 +242,8 @@ class Application(models.Model):
 
 			# Use the send_message utility function to send the message
 			self.env['student.utils'].send_message(False, message_text, self.applicant_account, odoobot)
+
+			return self.message_display('Rejection', 'The application is rejected.', False)
 		else:
 			raise UserError("The application is already processed or still a draft!")
 
