@@ -1,4 +1,4 @@
-<img src="https://github.com/sefasenlik/OpenLMS/assets/43667807/84c2c3ef-25b9-4296-aad1-ce881bdefa12" width="200px">
+<img src="https://github.com/sefasenlik/PaLMS/assets/43667807/a27ff24d-6e9c-4a50-bf22-e925e7257683" alt="PaLMS" width="300"/>
 
 # Short Description
 An Odoo application to handle the submission, acknowledgement and publishing of student projects (course work).
