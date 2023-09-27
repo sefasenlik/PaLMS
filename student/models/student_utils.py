@@ -6,7 +6,6 @@ class StudentUtils(models.AbstractModel):
 
     @api.model
     def send_message(context, source, id, message_text, recipients, author):
-
         if len(recipients) > 1:
             channel_type = 'group'
         else:
@@ -31,10 +30,10 @@ class StudentUtils(models.AbstractModel):
                 'display_name': channel_name
             })
 
-        # ♦ For some reason, I need to add 1 to all user ids. Strange...
-        channel.write({
-            'channel_partner_ids': [(4, recipient.id+1) for recipient in recipients]
-        })
+            # ♦ For some reason, I need to add 1 to all user ids. Strange...
+            channel.write({
+                'channel_partner_ids': [(4, recipient.id+1) for recipient in recipients]
+            })
 
         # Send a message to the related user
         channel.sudo().message_post(
