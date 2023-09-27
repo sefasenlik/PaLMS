@@ -20,7 +20,6 @@
                 <field name="professor_faculty"/>
                 <field name="visiting_professor"/>
                 <field name="offered_projects"/>
-                <field name="state"/>
                 <field name="last_seen"/>
             </tree>
         </field>
@@ -33,7 +32,6 @@
             <!-- Now search will work not only for 'name', but also for the fields mentioned below -->
             <search string="Professor List">
                 <field name="name" string="Professor"/>
-                <field name="state"/>
                 <field name="professor_faculty" string="Faculty"/>
                 <field name="project_ids" string="Projects"/>
                 <separator/>
@@ -60,14 +58,14 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="name"/>
-                            <field name="state"/>
-                            <field name="last_seen"/>
-                        </group>
-                        <group>
                             <field name="professor_account"/>
                             <field name="professor_faculty"/>
                             <field name="visiting_professor"/>
+                        </group>
+                        <group>
+                            <field name="name"/>
+                            <field name="last_seen" readonly="True"/>
+                            <field name="active"/>
                         </group>
                         <notebook>
                             <page string="Projects">

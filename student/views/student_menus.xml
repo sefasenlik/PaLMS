@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <odoo>
-    <menuitem id="student_menu_root" name="𝕆ℙ𝔼ℕ🅻🅼🆂">
+    <menuitem id="student_menu_root" name="𝗣𝗮𝗟𝗠𝗦">
         <menuitem sequence="1" id="personal_first_level_menu" name="MyLMS">
 
                 <menuitem id="personal_application_private" action="student_application_view_personal" groups="student.group_student"/>
@@ -18,6 +18,7 @@
             </menuitem>
 
             <menuitem id="faculty_first_membet_menu" name="Users">
+                <menuitem id="faculty_supervisor_menu_action" action="student_supervisor_view_action"/>
                 <menuitem id="faculty_professor_menu_action" action="student_professor_view_action"/>
                 <menuitem id="faculty_student_menu_action" action="student_student_view_action"/>
             </menuitem>
@@ -36,6 +37,7 @@
         <menuitem sequence="3" id="util_first_level_menu" name="Utility" groups="student.group_administrator">
 
             <menuitem id="degree_model_menu_action" action="student_degree_view_action"/>
+            <menuitem id="campus_model_menu_action" action="student_campus_view_action"/>
             <menuitem id="event_model_menu_action" action="student_event_view_action"/>
 
         </menuitem>

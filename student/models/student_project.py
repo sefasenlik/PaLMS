@@ -3,7 +3,7 @@ from odoo.exceptions import UserError, AccessError
 
 class Project(models.Model):
     _name = "student.project"
-    _description = "OpenLMS - Projects"
+    _description = "PaLMS - Projects"
     _inherit = ['mail.thread', 'mail.activity.mixin', 'student.utils']
 
     # Locks fields upon submitting
@@ -11,22 +11,26 @@ class Project(models.Model):
 
     name = fields.Char('Project Name', required=True, translate=True)
     name_ru = fields.Char('Название проекта', required=True, translate=True)
-    creation_date = fields.Date("Creation Date", default=lambda self: fields.Datetime.now(), readonly=True)
+    create_date = fields.Datetime("Created", readonly=True)
+    create_date_date = fields.Date("Creation Date", default=lambda self: fields.Datetime.now(), readonly=True)
+    write_date = fields.Datetime("Last Update", readonly=True)
+    write_date_date = fields.Date("Last Update Date", compute="_compute_write_date", store=True, readonly=True)
     description = fields.Text('Detailed Description', required=True)
     requirements = fields.Text('Application Requirements')
     results = fields.Text('Expected Results')
+
+    campus_ids = fields.Many2many('student.campus', string='Campus', default=lambda self: self.env['student.campus'].search([], limit=1), required=True)
     faculty_ids = fields.Many2many('student.faculty', 
                                    string='Applicable Faculties', 
-                                   help='Select the faculties relevant for this project. Programs of this faculty will be automatically added to the applicable programs.',
                                    required=True)
     program_ids = fields.Many2many('student.program', string='Applicable Programs', compute="_find_programs", store=True, readonly=False, required=True)
+    degree_ids = fields.Many2many('student.degree', string='Available for', required=True)
+    
     type = fields.Selection([('cw', 'Course Work (Курсовая работа)'), ('fqw', 'Final Qualifying Work (ВКР)')], string="Project Type")
     format = fields.Selection([('research', 'Research'), ('project', 'Project'), ('startup', 'Start-up')], string="Format")
     language = fields.Selection([('en', 'English'), ('ru', 'Russian')], default="en", string="Language", required=True)
-    degree_ids = fields.Many2many('student.degree', string='Available for', required=True)
     assigned = fields.Boolean('Assigned to a student?', default=False, readonly=True)
     student_elected = fields.One2many('student.student', 'current_project', string='Elected Student', readonly=True)
-    active = fields.Boolean(default=True)
     state = fields.Selection([('draft', 'Draft'),       
                               ('pending', 'Pending'),
                               ('approved', 'Approved'),
@@ -41,6 +45,30 @@ class Project(models.Model):
     additional_files = fields.Many2many(comodel_name="ir.attachment", string="Attachments") 
     file_count = fields.Integer('Number of attached files', compute='_compute_file_count', readonly=True)
 
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        pass_filters = False
+        user_faculty = False
+
+        # Get the current user's faculty_id
+        if self.env.user.has_group('student.group_administrator'):
+            pass_filters = True
+        elif self.env.user.has_group('student.group_supervisor'):
+            user_faculty = self.env['student.supervisor'].sudo().search([('supervisor_account', '=', self.env.user.id)], limit=1).supervisor_faculty
+        elif self.env.user.has_group('student.group_professor'):
+            user_faculty = self.env['student.professor'].sudo().search([('professor_account', '=', self.env.user.id)], limit=1).professor_faculty
+        elif self.env.user.has_group('student.group_student'):
+            user_faculty = self.env['student.student'].sudo().search([('student_account', '=', self.env.user.id)], limit=1).student_faculty
+
+        # If the user has a faculty, add a domain to filter projects
+        if not pass_filters:
+            if user_faculty:
+                args.append(('faculty_ids', 'in', [user_faculty.id]))
+            else:
+                raise AccessError("The user is not correctly registered in any of the faculties. Contact the manager for the fix.")
+
+        return super(Project, self).search(args, offset=offset, limit=limit, order=order, count=count)
+
     @api.depends('additional_files')
     def _compute_file_count(self):
         self.file_count = len(self.additional_files)
@@ -52,7 +80,7 @@ class Project(models.Model):
     @api.depends('program_ids')
     def _compute_program_supervisors(self):
         for record in self:
-            supervisor_ids = record.program_ids.mapped('supervisor.id')
+            supervisor_ids = record.program_ids.mapped('supervisor.supervisor_account.id')
             record.program_supervisors = [(6, 0, supervisor_ids)]
 
     # Assigns the professor account created for this user
@@ -80,6 +108,11 @@ class Project(models.Model):
             project.applications = len(project.application_ids)
             if project.applications > 0 and project.state == 'approved':
                 project.state = 'applied'
+
+    @api.depends('write_date')
+    def _compute_write_date(self):
+        for record in self:
+            record.write_date_date = record.write_date.date()
 
     # COLORING #        
     # Handle the coloring of the project
@@ -159,26 +192,27 @@ class Project(models.Model):
             for attachment in self.additional_files:
                 attachment.write({'res_model': self._name, 'res_id': self.id})
 
+
             # Log the action --------------------
+            subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
             supervisor_name_list = [supervisor.name for supervisor in self.program_supervisors]
             body = f"The project is submitted for the approval of supervisor(s). <br> <i><b>Supervisor(s):</b> {', '.join(supervisor_name_list)}</i>"
-            self.message_post(body=body)
+            self.message_post(body=body, subtype_id=subtype_id.id)
             
             # Send the email --------------------
+            subtype_id = self.env.ref('student.student_message_subtype_email')
             template = self.env.ref('student.email_template_project_submission')
             template.send_mail(self.id, 
-                               email_values={'email_to': ','.join([supervisor.email for supervisor in self.program_supervisors])}, 
-                               force_send=False)
+                               email_values={'email_to': ','.join([supervisor.email for supervisor in self.program_supervisors]),
+                                             'subtype_id': subtype_id.id}, 
+                               force_send=True)
             # -----------------------------------
-
-            # Get the Odoo Bot user
-            odoobot = self.env.ref('base.partner_root')
 
             # Construct the message that is to be sent to the user
             message_text = f'<strong>Project Proposal Received</strong><p> {self.professor_account.name} sent a project proposal: <b><a href="/web#id={self.id}&model=student.project">{self.name}</a></b></p> <p><i>Please evaluate the submission.</i></p>'
 
             # Use the send_message utility function to send the message
-            self.env['student.utils'].send_message(False, message_text, self.program_supervisors, odoobot)
+            self.env['student.utils'].send_message('project', str(self.id), message_text, self.program_supervisors, self.professor_account)
 
             return self.message_display('Confirmation', 'Project is successfully submitted.', False)
             # ♦ This strangely prevents the project status to be immediately updated in the UI.
@@ -190,9 +224,10 @@ class Project(models.Model):
             self.locked = False
             self.write({'state': 'draft'})
 
-            # Log the action
+            # Log the action --------------------
+            subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
             body = _('The project submission is cancelled.')
-            self.message_post(body=body)
+            self.message_post(body=body, subtype_id=subtype_id.id)
 
             return self.message_display('Cancellation', 'The project submission is cancelled.', False)
         
@@ -209,22 +244,21 @@ class Project(models.Model):
             self.write({'state': 'approved'})
 
             # Log the action --------------------
+            subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
             body = _('The project is approved by ' + self.env.user.name + '.')
-            self.message_post(body=body)
+            self.message_post(body=body, subtype_id=subtype_id.id)
 
             # Send the email --------------------
+            subtype_id = self.env.ref('student.student_message_subtype_email')
             template = self.env.ref('student.email_template_project_approval')
-            template.send_mail(self.id, force_send=False)
+            template.send_mail(self.id, email_values={'subtype_id': subtype_id.id}, force_send=True)
             # -----------------------------------
-
-            # Get the Odoo Bot user
-            odoobot = self.env.ref('base.partner_root')
 
             # Construct the message that is to be sent to the user
             message_text = f'<strong>Project Proposal Approved</strong><p> ' + self.env.user.name + ' has accepted your project "' + self.name + '".</p><p>Eligible students can now see and apply for the project.</p>'
 
             # Use the send_message utility function to send the message
-            self.env['student.utils'].send_message(False, message_text, [self.professor_account], odoobot)
+            self.env['student.utils'].send_message('project', str(self.id), message_text, self.professor_account, self.env.user)
 
             return self.message_display('Approval', 'The project is successfully approved.', False)
         else:
@@ -245,22 +279,21 @@ class Project(models.Model):
             self.write({'state': 'rejected'})
 
             # Log the action --------------------
+            subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
             body = _('The project is rejected by ' + self.env.user.name + '.')
-            self.message_post(body=body)
+            self.message_post(body=body, subtype_id=subtype_id.id)
 
             # Send the email --------------------
+            subtype_id = self.env.ref('student.student_message_subtype_email')
             template = self.env.ref('student.email_template_project_rejection')
-            template.send_mail(self.id, force_send=False)
+            template.send_mail(self.id, email_values={'subtype_id': subtype_id.id}, force_send=True)
             # -----------------------------------
-
-            # Get the Odoo Bot user
-            odoobot = self.env.ref('base.partner_root')
 
             # Construct the message that is to be sent to the user
             message_text = f'<strong>Project Proposal Rejected</strong><p> ' + self.env.user.name + ' has rejected your project "' + self.name + '".</p><p>You can check the <b>Supervisor Feedback</b> section on the project page to learn about the reason.</p>'
 
             # Use the send_message utility function to send the message
-            self.env['student.utils'].send_message(False, message_text, [self.professor_account], odoobot)
+            self.env['student.utils'].send_message('project', str(self.id), message_text, self.professor_account, self.env.user)
 
             return self.message_display('Rejection', 'The project is rejected.', False)
         else:
@@ -276,22 +309,21 @@ class Project(models.Model):
             self.write({'state': 'returned'})
 
             # Log the action --------------------
+            subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
             body = _('The project is returned by ' + self.env.user.name + '. Resubmission after applying requested modifications is possible.')
-            self.message_post(body=body)
+            self.message_post(body=body, subtype_id=subtype_id.id)
 
             # Send the email --------------------
+            subtype_id = self.env.ref('student.student_message_subtype_email')
             template = self.env.ref('student.email_template_project_return')
-            template.send_mail(self.id, force_send=False)
+            template.send_mail(self.id, email_values={'subtype_id': subtype_id.id}, force_send=True)
             # -----------------------------------
-
-            # Get the Odoo Bot user
-            odoobot = self.env.ref('base.partner_root')
 
             # Construct the message that is to be sent to the user
             message_text = f'<strong>Project Proposal Returned</strong><p> ' + self.env.user.name + ' has returned your proposal "' + self.name + '".</p><p>You can check the <b>Supervisor Feedback</b> section on the project page to learn about the reason. After making necessary changes, you can resubmit the project.</p>'
 
             # Use the send_message utility function to send the message
-            self.env['student.utils'].send_message(False, message_text, [self.professor_account], odoobot)
+            self.env['student.utils'].send_message('project', str(self.id), message_text, self.professor_account, self.env.user)
 
             return self.message_display('Return', 'The project is returned.', False)
 

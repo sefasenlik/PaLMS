@@ -5,14 +5,18 @@ from unidecode import unidecode
 
 class Student(models.Model):
     _name = "student.student"
-    _description = "OpenLMS - Students"
+    _description = "PaLMS - Students"
 
     name = fields.Char('Student Name', default="N/A", compute="_get_from_account", store=True)
     student_id = fields.Char(string='Student ID', default="N/A", compute="_get_from_account", store=True)
+    active = fields.Boolean(default=True)
 
     student_account = fields.Many2one('res.users', store=True, string='User Account', required=True)
     student_email = fields.Char("Email", default="N/A", compute="_get_from_account", store=True, required=True)
     student_phone = fields.Char("Phone")
+
+    # ♦ Why can I not add 'required' attribute to computed fields?
+    student_faculty = fields.Many2one('student.faculty', compute="_compute_faculty", store=True, string='Faculty')
     student_program = fields.Many2one('student.program', string='Enrolled Program', required=True)
     enrolled = fields.Char(string='Year of Enrollment', help='Enter year in yyyy format.')
     progress = fields.Selection([('prep', 'Preparatory Year'), 
@@ -25,8 +29,12 @@ class Student(models.Model):
     graduation = fields.Char("Expected Graduation Year", compute='_compute_graduation', store=False, readonly=True)
     current_project = fields.Many2one('student.project', string="Assigned Project")
 
-    # ♦ Why can I not add 'required' attribute to this field?
     degree = fields.Many2one('student.degree', string='Student Academic Degree', compute="_compute_degree", store=True)
+
+    @api.depends('student_program')
+    def _compute_faculty(self):
+        # Use id to correctly assign the value to Many2one field
+        self.student_faculty = self.student_program.program_faculty_id.id
 
     @api.depends('student_program', 'progress')
     def _compute_degree(self):
@@ -36,6 +44,10 @@ class Student(models.Model):
     def _onchange_current_project(self):
         for application in self.application_ids:
             application.action_view_application_cancel()
+
+    @api.onchange("student_account")
+    def _set_student_faculty(self):
+        self.student_account.faculty = self.student_faculty
 
     _sql_constraints = [
         ('check_uniqueness', 'UNIQUE(student_id, student_account)', 'This student is already registered.'),

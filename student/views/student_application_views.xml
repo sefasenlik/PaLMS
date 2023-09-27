@@ -132,7 +132,7 @@
                     <group>
                         <group string="Overview">
                             <field name="state"/>
-                            <field name="project_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="project_id" readonly="True"/>
                             <field name="applicant"/>
                         </group>
                         <group string="Contacts">

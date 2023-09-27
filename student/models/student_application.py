@@ -4,7 +4,7 @@ from odoo.exceptions import UserError, ValidationError, AccessError
 
 class Application(models.Model):
 	_name = 'student.application'
-	_description = 'OpenLMS - Application for Project'
+	_description = 'PaLMS - Application for Project'
 	_rec_name = 'applicant'
 	_inherit = ['mail.thread', 'student.utils']
 		
@@ -133,23 +133,21 @@ class Application(models.Model):
 			for attachment in self.additional_files:
 				attachment.write({'res_model': self._name, 'res_id': self.id})
 
-			# Log the action
+			# Log the action --------------------
 			body = _('The application is sent to the professor, %s, for evaluation.', self.project_id.professor_account.name)
 			self.message_post(body=body)
             
 			# Send the email --------------------
+			subtype_id = self.env.ref('student.student_message_subtype_email')
 			template = self.env.ref('student.email_template_application_send')
-			template.send_mail(self.id, force_send=True)
+			template.send_mail(self.id, email_values={'subtype_id': subtype_id.id}, force_send=True)
 			# -----------------------------------
-
-			# Get the Odoo Bot user
-			odoobot = self.env.ref('base.partner_root')
 
 			# Construct the message that is to be sent to the user
 			message_text = f'<strong>Application Received</strong><p> ' + self.applicant_account.name + " sent an application for " + self.project_id.name + ". Please evaluate the application.</p>"
 
 			# Use the send_message utility function to send the message
-			self.env['student.utils'].send_message(False, message_text, [self.project_id.professor_account], odoobot)
+			self.env['student.utils'].send_message('application', str(self.id), message_text, self.application_professor, self.applicant_account)
 
 			return self.message_display('Sent', 'The application is submitted for review.', False)
 
@@ -159,7 +157,7 @@ class Application(models.Model):
 		if self.state == 'sent':
 			self.write({'state': 'draft'})
 
-			# Log the action
+			# Log the action --------------------
 			body = _('The application submission is cancelled.')
 			self.message_post(body=body)
 
@@ -190,26 +188,24 @@ class Application(models.Model):
 
 		if self.state == 'sent':
 			self.write({'state': 'accepted'})
-			# self.project_id.write({'state': 'assigned', 'assigned': True, 'student_elected': self.applicant})
+			# ♦ self.project_id.write({'state': 'assigned', 'assigned': True, 'student_elected': self.applicant})
 			self.project_id.write({'state': 'assigned', 'assigned': True})
 
-			# Log the action
+			# Log the action --------------------
 			body = _('This application is accepted by the professor.')
 			self.message_post(body=body)
             
 			# Send the email --------------------
+			subtype_id = self.env.ref('student.student_message_subtype_email')
 			template = self.env.ref('student.email_template_application_accept')
-			template.send_mail(self.id, force_send=True)
+			template.send_mail(self.id, email_values={'subtype_id': subtype_id.id}, force_send=True)
 			# -----------------------------------
-
-			# Get the Odoo Bot user
-			odoobot = self.env.ref('base.partner_root')
 
 			# Construct the message that is to be sent to the user
 			message_text = f'<strong>Application Accepted</strong><p> This application submitted for <i>' + self.project_id.name + '</i> is accepted by the professor. You can contact the project professor to start working on it.</p>'
 
 			# Use the send_message utility function to send the message
-			self.env['student.utils'].send_message(False, message_text, self.applicant_account, odoobot)
+			self.env['student.utils'].send_message('application', str(self.id), message_text, self.applicant_account, self.application_professor)
 
 			self.mark_other_applications()
 
@@ -225,23 +221,21 @@ class Application(models.Model):
 
 			self.write({'state': 'rejected'})
 
-			# Log the action
+			# Log the action --------------------
 			body = _('This application is rejected by the professor.')
 			self.message_post(body=body)
             
 			# Send the email --------------------
+			subtype_id = self.env.ref('student.student_message_subtype_email')
 			template = self.env.ref('student.email_template_application_reject')
-			template.send_mail(self.id, force_send=True)
+			template.send_mail(self.id, email_values={'subtype_id': subtype_id.id}, force_send=True)
 			# -----------------------------------
-
-			# Get the Odoo Bot user
-			odoobot = self.env.ref('base.partner_root')
 
 			# Construct the message that is to be sent to the user
 			message_text = f'<strong>Application Rejected</strong><p> This application submitted for <i>' + self.project_id.name + '</i> is rejected by the professor. Please check the <b>Feedback</b> section to learn about the reason.</p>'
 
 			# Use the send_message utility function to send the message
-			self.env['student.utils'].send_message(False, message_text, self.applicant_account, odoobot)
+			self.env['student.utils'].send_message('application', str(self.id), message_text, self.applicant_account, self.application_professor)
 
 			return self.message_display('Rejection', 'The application is rejected.', False)
 		else:
@@ -262,4 +256,4 @@ class Application(models.Model):
 			message_text = f'<strong>Application Rejected</strong><p> This application submitted for <i>' + self.project_id.name + '</i> is automatically rejected since another one is chosen by the professor.</p>'
 
 			# Use the send_message utility function to send the message
-			self.env['student.utils'].send_message(False, message_text, self.applicant_account, odoobot)
+			self.env['student.utils'].send_message('Auto Reject', str(self.project_id.id), message_text, self.applicant_account, odoobot)

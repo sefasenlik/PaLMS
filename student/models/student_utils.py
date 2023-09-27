@@ -2,51 +2,51 @@ from odoo import api, fields, models
 
 class StudentUtils(models.AbstractModel):
     _name = 'student.utils'
-    _description = 'OpenLMS - Utility Methods'
+    _description = 'PaLMS - Utility Methods'
 
     @api.model
-    def send_message(context, send_email, message_text, recipients, author):
-        # If send_email is True, send an email to recipients!
+    def send_message(context, source, id, message_text, recipients, author):
 
-        for recipient in recipients:
-            # Find if a channel was opened for this user before
-            channel = context.env['mail.channel'].sudo().search([
-                ('name', '=', 'Application Notifications'),
-                ('channel_partner_ids', 'in', [recipient.partner_id.id])
-            ],
-                limit=1,
-            )
+        if len(recipients) > 1:
+            channel_type = 'group'
+        else:
+            channel_type = 'chat'
 
-            if not channel:
-                # Create a new channel
-                channel = context.env['mail.channel'].with_context(mail_create_nosubscribe=True).sudo().create({
-                    'channel_partner_ids': [(4, recipient.partner_id.id)],
-                    'channel_type': 'chat',
-                    'name': f'Application Notifications',
-                    'display_name': f'Application Notifications',
-                })
+        if source == 'project':
+            channel_name = "Project №" + id
+        elif source == 'application':
+            channel_name = "Applicaton №" + id
+        else:
+            channel_name = source + " №" + id
 
-            # Get the current partner IDs in the channel
-            partner_ids = channel.channel_partner_ids.ids
+        # Search the channel to avoid duplicates
+        channel = context.env['mail.channel'].sudo().search([('name', '=', channel_name)],limit=1,)
 
-            # Add the ID of the new partner to the list
-            if recipient.partner_id.id not in partner_ids:
-                partner_ids.append(recipient.partner_id.id)
+        # If no suitable channel is found, create a new channel
+        if not channel:
+            channel = context.env['mail.channel'].with_context(mail_create_nosubscribe=True).sudo().create({
+                'channel_partner_ids': [(6, 0, author.id+1)],
+                'channel_type': channel_type,
+                'name': channel_name,
+                'display_name': channel_name
+            })
 
-            # Update the channel with the new partner IDs
-            channel.write({'channel_partner_ids': [(6, 0, partner_ids)]})
+        # ♦ For some reason, I need to add 1 to all user ids. Strange...
+        channel.write({
+            'channel_partner_ids': [(4, recipient.id+1) for recipient in recipients]
+        })
 
-            # Send a message to the related user
-            channel.sudo().message_post(
-                body=message_text,
-                author_id=author.id,
-                message_type="comment",
-                subtype_xmlid='mail.mt_comment'
-            )
+        # Send a message to the related user
+        channel.sudo().message_post(
+            body=message_text,
+            author_id=author.id+1,
+            message_type="comment",
+            subtype_xmlid='mail.mt_comment'
+        )
 
 class StudentDegree(models.Model):
     _name = 'student.degree'
-    _description = 'OpenLMS - Degrees of Education'
+    _description = 'PaLMS - Degrees of Education'
 
     name = fields.Char('Degree Description', readonly=True, compute="_form_name", store=True)
     level = fields.Selection([('ba', "Bachelor's"),('ms', "Master's"),('phd', 'PhD')], default="ba", string='Level of Education', required=True)
@@ -75,3 +75,37 @@ class StudentDegree(models.Model):
         }
 
         self.name = text_dictionary[self.level] + ' - ' + text_dictionary[self.year]
+
+class StudentCampus(models.Model):
+    _name = 'student.campus'
+    _description = 'PaLMS - Campuses'
+
+    name = fields.Char('City Name')
+    university_name = fields.Char('University Name')
+    legal_address = fields.Text('Legal Address')
+
+    faculty_ids = fields.One2many('student.faculty', 'campus', string='Faculties', readonly=True)
+    project_ids = fields.Many2many('student.project', string='Projects', readonly=True)
+
+class CustomMessageSubtype(models.Model):
+    _name = 'student.message.subtype'
+    _description = 'Student - Message Subtype'
+    _inherit = 'mail.message.subtype'
+
+class ResUsers(models.Model):
+    _inherit = 'res.users'
+
+    faculty = fields.Many2one('student.faculty', string='Faculty', compute='_compute_faculty', store=True)
+
+    # Distributed this operation to professor, student and supervisor models
+    @api.depends('groups_id')
+    def _compute_faculty(self):
+        for user in self:
+            self.faculty = False
+
+            if user.has_group('student.group_supervisor'):
+                self.faculty = self.env['student.faculty'].sudo().search([('supervisor_ids', 'in', user.id)], limit=1)
+            elif user.has_group('student.group_professor'):
+                self.faculty = self.env['student.faculty'].sudo().search([('professor_ids', 'in', user.id)], limit=1)
+            elif user.has_group('student.group_student'):
+                self.faculty = self.env['student.faculty'].sudo().search([('student_ids', 'in', user.id)], limit=1)

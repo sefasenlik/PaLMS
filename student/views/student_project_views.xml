@@ -77,7 +77,8 @@
                                 <field name="name" attrs="{'readonly': [('locked', '=', True)]}" />
                                 <field name="name_ru" attrs="{'readonly': [('locked', '=', True)]}" />
                                 <field name="professor_id"/>
-                                <field name="creation_date"/>
+                                <field name="create_date"/>
+                                <field name="write_date"/>
                             </group>
                             <group string="Availability">
                                 <field name="state"/>
@@ -86,8 +87,9 @@
                             </group>
                             <group string="Eligibility" colspan="2">
                                 <group>
-                                    <field name="faculty_ids" widget="many2many_tags" attrs="{'readonly': [('locked', '=', True)]}"/>
-                                    <field name="program_ids" widget="many2many_tags" attrs="{'readonly': [('locked', '=', True)]}"/>
+                                    <field name="campus_ids" widget="many2many_tags" attrs="{'readonly': [('locked', '=', True)]}"/>
+                                    <field name="faculty_ids" help="You can only choose faculties from the campuses above." widget="many2many_tags" attrs="{'readonly': [('locked', '=', True)]}" domain="[('campus', 'in', campus_ids)]"/>
+                                    <field name="program_ids" help="You can only choose programs from the faculties above." widget="many2many_tags" attrs="{'readonly': [('locked', '=', True)]}" domain="[('program_faculty_id', 'in', faculty_ids)]"/>
                                     <field name="degree_ids" widget="many2many_tags" attrs="{'readonly': [('locked', '=', True)]}"/>
                                 </group>
                                 <group>
@@ -169,10 +171,10 @@
                         </group>
                     </sheet>
                 
-                    <div class="oe_chatter">
+                    <div class="oe_chatter" groups="student.group_administrator, student.group_supervisor, student.group_professor">
                         <field name="message_follower_ids" widget="mail_followers"/>
                         <field name="activity_ids"/>
-                        <field name="message_ids"/>
+                        <field name="message_ids" widget="mail_thread"/>
                     </div>
                 </form>
             </field>
@@ -186,34 +188,37 @@
                         records_draggable="false" 
                         default_group_by="state" 
                         class="o_res_partner_kanban o_kanban_small_column" 
-                        name="student_project_kanban">
+                        name="student_project_kanban"
+                        order="write_date">
                     <field name="state"/>
                     <field name="name"/>
                     <field name="professor_id"/>
                     <field name="applications"/>
+                    <field name="write_date"/>
 
                     <templates>
                         <field name="color"/>
                         <t t-name="kanban-box">
                             <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click">
                                 <div class="oe_kanban_details">
-                                    <strong class="oe_kanban_title">
-                                        <field name="state"/>
-                                    </strong>
+                                    <div class="oe_kanban_title">
+                                        <strong><field name="state"/></strong>
+                                         (<field name="write_date_date"/>)
+                                    </div>
                                     <div class="oe_kanban_subtitle">
-                                        <i>Project Name:  </i>
+                                        Project Name:
                                         <field name="name"/>
                                     </div>
-                                    <div class="oe_kanban_content">
+                                    <i class="oe_kanban_content">
                                         <div t-if="record.professor_id.value">
-                                            <i>Professor:  </i>
+                                            Professor:
                                             <t t-esc="record.professor_id.value"/>
                                         </div>
                                         <div t-if="record.applications.value">
-                                            <i>Applications:  </i>
+                                            Applications:
                                             <t t-esc="record.applications.value"/>
                                         </div>
-                                    </div>
+                                    </i>
                                 </div>
                             </div>
                         </t>

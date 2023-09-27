@@ -4,11 +4,10 @@ from datetime import datetime, timedelta
 
 class Professor(models.Model):
     _name = "student.professor"
-    _description = "OpenLMS - Professors"
+    _description = "PaLMS - Professors"
 
     name = fields.Char('Professor Name', required=True, default=lambda self: self.env.user.name, compute="_compute_name", store=True, readonly=True)
     active = fields.Boolean(default=True)
-    state = fields.Selection([('online', 'Online'),('offline', 'Offline'),('on_vacation', 'On vacation')], default='online', string='State')
     last_seen = fields.Datetime("Last Seen", default=lambda self: fields.Datetime.now())
     visiting_professor = fields.Boolean('Visiting professor?', default=False)
 
@@ -22,6 +21,10 @@ class Professor(models.Model):
 
     # Computed Fields
     offered_projects = fields.Integer(string='Number of Offered Projects', compute='_compute_project_count', store=True, readonly=True)
+
+    @api.onchange("professor_account")
+    def _set_professor_faculty(self):
+        self.professor_account.faculty = self.professor_faculty
 
     _sql_constraints = [
         ('check_offered_projects', 'CHECK(offered_projects >= 0)', 'The number of offered projects can\'t be negative.'),

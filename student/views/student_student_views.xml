@@ -62,9 +62,11 @@
                             <field name="student_id" readonly="True"/>
                             <field name="student_email" readonly="True"/>
                             <field name="student_phone" placeholder="+7 XXX XXX XXXX"/>
+                            <field name="active"/>
                         </group>
                         <group string="Academic Info">
                             <field name="student_program"/>
+                            <field name="student_faculty" readonly="True"/>
                             <field name="enrolled"/>
                             <field name="progress"/>
                             <field name="graduation"/>

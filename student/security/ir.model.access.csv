@@ -7,7 +7,14 @@ student_degree_supervisor,Degree for Supervisor,model_student_degree,student.gro
 student_degree_professor,Degree for Professor,model_student_degree,student.group_professor,1,0,0,0
 student_degree_student,Degree for Student,model_student_degree,student.group_student,1,0,0,0
 
+student_campus_admin,Campus for Administrator,model_student_campus,student.group_administrator,1,1,1,1
+student_campus_supervisor,Campus for Supervisor,model_student_campus,student.group_supervisor,1,0,0,0
+student_campus_professor,Campus for Professor,model_student_campus,student.group_professor,1,0,0,0
+student_campus_student,Campus for Student,model_student_campus,student.group_student,1,0,0,0
 
+
+
+student_supervisor_admin,Supervisor for Administrator,model_student_supervisor,student.group_administrator,1,1,1,1
 
 student_professor_admin,Professor for Administrator,model_student_professor,student.group_administrator,1,1,1,1
 student_professor_supervisor,Professor for Supervisor,model_student_professor,student.group_supervisor,1,1,0,0
@@ -36,10 +43,12 @@ student_project_student,Project for Student,model_student_project,student.group_
 
 student_application_admin,Application for Administrator,model_student_application,student.group_administrator,1,1,1,1
 student_application_supervisor,Application for Supervisor,model_student_application,student.group_supervisor,1,1,1,1
-student_application_professor,Application for Professor,model_student_application,student.group_professor,1,1,1,0
+student_application_professor,Application for Professor,model_student_application,student.group_professor,1,1,0,0
 student_application_student,Application for Student,model_student_application,student.group_student,1,1,1,0
 
 student_event_admin,Event for Administrator,model_student_event,student.group_administrator,1,1,1,1
 student_event_supervisor,Event for Supervisor,model_student_event,student.group_supervisor,1,1,1,1
 student_event_professor,Event for Professor,model_student_event,student.group_professor,1,1,1,1
 student_event_student,Event for Student,model_student_event,student.group_student,1,1,1,1
+
+student_subtype_admin,Subtype for Administrator,model_student_message_subtype,student.group_administrator,1,0,0,0

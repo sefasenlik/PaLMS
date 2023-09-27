@@ -135,7 +135,7 @@
         <field name="domain">[('related_projects', 'in', active_id)]</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                There are no projects yet. You can create the first one. Yay!
+                There are no events yet. You can create the first one. Yay!
             </p>
         </field>
     </record>

@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<odoo>
+    <!-- Add a message subtype for students to not see-->
+    <record id="student_message_subtype_professor_supervisor" model="mail.message.subtype">
+        <field name="name">Student - Professor/Supervisor Conversation</field>
+        <field name="res_model">student.utils</field>
+        <field name="default" eval="False"/>
+    </record>
+
+    <!-- Add a message subtype for no one to see emails-->
+    <record id="student_message_subtype_email" model="mail.message.subtype">
+        <field name="name">Student - Email</field>
+        <field name="res_model">student.utils</field>
+        <field name="default" eval="False"/>
+    </record>
+
+    <!-- Add a restriction rule for the message subtype -->
+    <record model="ir.rule" id="student_professor_supervisor_rule">
+        <field name="name">Student - Hide professor/supervisor messages</field>
+        <field name="model_id" ref="mail.model_mail_message"/>
+        <field name="domain_force">[('subtype_id.name', '!=', 'Student - Professor/Supervisor Conversation')]</field>
+        <field name="groups" eval="[(4, ref('student.group_student'))]"/> 
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="perm_create" eval="False"/>
+    </record>
+
+    <!-- Add a restriction rule to hide emails -->
+    <record model="ir.rule" id="student_email_hide_rule">
+        <field name="name">Student - Hide emails in the Log</field>
+        <field name="model_id" ref="mail.model_mail_mail"/>
+        <field name="domain_force">[('subtype_id.name', '!=', 'Student - Email')]</field>
+        <field name="groups" eval="[(4, ref('student.group_student')), (4, ref('student.group_supervisor')), (4, ref('student.group_professor'))]"/> 
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="perm_create" eval="False"/>
+    </record>
+
+    <!-- Add a restriction rule to hide email messages -->
+    <record model="ir.rule" id="student_email_message_hide_rule">
+        <field name="name">Student - Hide emails (messages) in the Log</field>
+        <field name="model_id" ref="mail.model_mail_message"/>
+        <field name="domain_force">[('subtype_id.name', '!=', 'Student - Email')]</field>
+        <field name="groups" eval="[(4, ref('student.group_student')), (4, ref('student.group_supervisor')), (4, ref('student.group_professor'))]"/> 
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="perm_create" eval="False"/>
+    </record>
+
+    <!-- Action Window access rights for users to view the calendar -->
+    <record id="access_ir_actions_act_window_administrator" model="ir.model.access">
+        <field name="name">Access to Act Window for Administrators</field>
+        <field name="model_id" ref="base.model_ir_actions_act_window"/>
+        <field name="group_id" ref="student.group_administrator"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="access_ir_actions_act_window_supervisor" model="ir.model.access">
+        <field name="name">Access to Act Window for Supervisors</field>
+        <field name="model_id" ref="base.model_ir_actions_act_window"/>
+        <field name="group_id" ref="student.group_supervisor"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="access_ir_actions_act_window_professor" model="ir.model.access">
+        <field name="name">Access to Act Window for Professors</field>
+        <field name="model_id" ref="base.model_ir_actions_act_window"/>
+        <field name="group_id" ref="student.group_professor"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="access_ir_actions_act_window_student" model="ir.model.access">
+        <field name="name">Access to Act Window for Students</field>
+        <field name="model_id" ref="base.model_ir_actions_act_window"/>
+        <field name="group_id" ref="student.group_student"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+
+    <record id="access_ir_actions_act_window_view_administrator" model="ir.model.access">
+        <field name="name">Access to Act Window View for Administrators</field>
+        <field name="model_id" ref="base.model_ir_actions_act_window_view"/>
+        <field name="group_id" ref="student.group_administrator"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="access_ir_actions_act_window_view_supervisor" model="ir.model.access">
+        <field name="name">Access to Act Window View for Supervisors</field>
+        <field name="model_id" ref="base.model_ir_actions_act_window_view"/>
+        <field name="group_id" ref="student.group_supervisor"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="access_ir_actions_act_window_view_professor" model="ir.model.access">
+        <field name="name">Access to Act Window View for Professors</field>
+        <field name="model_id" ref="base.model_ir_actions_act_window_view"/>
+        <field name="group_id" ref="student.group_professor"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <record id="access_ir_actions_act_window_view_student" model="ir.model.access">
+        <field name="name">Access to Act Window View for Students</field>
+        <field name="model_id" ref="base.model_ir_actions_act_window_view"/>
+        <field name="group_id" ref="student.group_student"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+</odoo>

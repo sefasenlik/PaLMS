@@ -3,7 +3,7 @@ from datetime import date
 
 class Event(models.Model):
     _name = "student.event"
-    _description = "OpenLMS - Events"
+    _description = "PaLMS - Events"
 
     _current_date = fields.Date.today()
 

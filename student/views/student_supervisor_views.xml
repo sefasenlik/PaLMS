@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="student_supervisor_view_action" model="ir.actions.act_window">
+        <field name="name">Supervisors</field>
+        <field name="res_model">student.supervisor</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Define a new supervisor registry.
+            </p>
+        </field>
+    </record>
+
+    <record id="student_supervisor_view_tree" model="ir.ui.view">
+        <field name="name">student.supervisor.tree</field>
+        <field name="model">student.supervisor</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="supervisor_faculty"/>
+                <field name="program_ids"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="student_supervisor_view_search" model="ir.ui.view">
+        <field name="name">student.supervisor.search</field>
+        <field name="model">student.supervisor</field>
+        <field name="arch" type="xml">
+            <search string="Supervisor List">
+                <field name="name" string="Supervisor"/>
+                <field name="supervisor_faculty" string="Faculty"/>
+                <!-- <field name="project_ids" string="Projects"/>
+                <separator/> 
+                <filter string="Permanent Faculty Member" name="visiting_professor" domain="[('visiting_professor', '=', False)]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Active" name="active" context="{'group_by':'active', 'residual_visible':True}"/>
+                </group> -->
+            </search>
+        </field>
+    </record>
+
+    <record id="student_supervisor_view_form" model="ir.ui.view">
+        <field name="name">student.supervisor.form</field>
+        <field name="model">student.supervisor</field>
+        <field name="arch" type="xml">
+            <form string="Test">
+                <!-- <header>
+                    <button name="action_view_supervisor_projects"
+                        string="Pending projects"
+                        type="object"
+                        class="oe_highlight"/>
+                </header> -->
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="supervisor_account"/>
+                            <field name="supervisor_faculty"/>
+                        </group>
+                        <notebook>
+                            <page string="Programs">
+                                <field name="program_ids">
+                                    <tree>    
+                                        <field name="name"/>
+                                        <field name="degree"/>
+                                        <field name="program_faculty_id"/>
+                                        <field name="length"/>
+                                        <field name="language"/>
+                                        <field name="student_number"/>
+                                        <field name="project_number"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
