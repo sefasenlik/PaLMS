@@ -6,11 +6,6 @@ class StudentUtils(models.AbstractModel):
 
     @api.model
     def send_message(context, source, id, message_text, recipients, author):
-        if len(recipients) > 1:
-            channel_type = 'group'
-        else:
-            channel_type = 'chat'
-
         if source == 'project':
             channel_name = "Project №" + id
         elif source == 'application':
@@ -24,21 +19,22 @@ class StudentUtils(models.AbstractModel):
         # If no suitable channel is found, create a new channel
         if not channel:
             channel = context.env['mail.channel'].with_context(mail_create_nosubscribe=True).sudo().create({
-                'channel_partner_ids': [(6, 0, author.id+1)],
-                'channel_type': channel_type,
+                'channel_partner_ids': [(6, 0, author.id)],
+                'channel_type': 'channel',
                 'name': channel_name,
                 'display_name': channel_name
             })
 
             # ♦ For some reason, I need to add 1 to all user ids. Strange...
             channel.write({
-                'channel_partner_ids': [(4, recipient.id+1) for recipient in recipients]
+                'channel_partner_ids': [(4, recipient.id) for recipient in recipients]
             })
 
+        print("Test:", author.id)
         # Send a message to the related user
         channel.sudo().message_post(
             body=message_text,
-            author_id=author.id+1,
+            author_id=author.id,
             message_type="comment",
             subtype_xmlid='mail.mt_comment'
         )
