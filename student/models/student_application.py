@@ -1,6 +1,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError, AccessError
-# from .student_utils import StudentUtils
+from dateutil.relativedelta import relativedelta
 
 class Application(models.Model):
 	_name = 'student.application'
@@ -42,7 +42,28 @@ class Application(models.Model):
 	additional_files = fields.Many2many(comodel_name="ir.attachment", string="Additional Files") 
 
 	state = fields.Selection([('draft', 'Draft'),('sent', 'Sent'),('accepted', 'Accepted'),('rejected', 'Rejected')], default='draft', readonly=True, string='Application State', store=True)
-	
+	sent_date = fields.Date(string='Sent Date')
+    
+    # Computed field to categorize records into groups
+	urgency_category = fields.Selection([
+        ('pending', 'Pending'),
+        ('urgent', 'Urgent'),
+        ('missed', 'Missed'),
+		('handled', 'Handled')
+    ], string='Urgency', compute='_compute_urgency_category', store=True)
+
+	def _compute_urgency_category(self):
+		today = fields.Date.today()
+		for record in self:
+			if record.state == 'accepted' or record.state == 'rejected':
+				record.urgency_category = 'handled'
+			elif (record.sent_date + relativedelta(days=3)) > today:
+				record.urgency_category = 'pending'
+			elif (record.sent_date + relativedelta(days=3)) == today:
+				record.urgency_category = 'urgent'
+			else:
+				record.urgency_category = 'missed'
+
 	project_id = fields.Many2one('student.project', string='Project', required=True, domain=[('state','in',['approved','applied'])])
 
 	@api.depends('applicant')
@@ -147,7 +168,9 @@ class Application(models.Model):
 			message_text = f'<strong>Application Received</strong><p> ' + self.applicant_account.name + " sent an application for " + self.project_id.name + ". Please evaluate the application.</p>"
 
 			# Use the send_message utility function to send the message
-			self.env['student.utils'].send_message('application', str(self.id), message_text, self.application_professor, self.applicant_account)
+			self.env['student.utils'].send_message('application', message_text, self.application_professor, self.applicant_account, str(self.project_id.id), str(self.id))
+
+			self.sent_date = fields.Date.today()
 
 			return self.message_display('Sent', 'The application is submitted for review.', False)
 
@@ -205,7 +228,7 @@ class Application(models.Model):
 			message_text = f'<strong>Application Accepted</strong><p> This application submitted for <i>' + self.project_id.name + '</i> is accepted by the professor. You can contact the project professor to start working on it.</p>'
 
 			# Use the send_message utility function to send the message
-			self.env['student.utils'].send_message('application', str(self.id), message_text, self.applicant_account, self.application_professor)
+			self.env['student.utils'].send_message('application', message_text, self.applicant_account, self.application_professor, str(self.project_id.id), str(self.id))
 
 			self.mark_other_applications()
 
@@ -235,7 +258,7 @@ class Application(models.Model):
 			message_text = f'<strong>Application Rejected</strong><p> This application submitted for <i>' + self.project_id.name + '</i> is rejected by the professor. Please check the <b>Feedback</b> section to learn about the reason.</p>'
 
 			# Use the send_message utility function to send the message
-			self.env['student.utils'].send_message('application', str(self.id), message_text, self.applicant_account, self.application_professor)
+			self.env['student.utils'].send_message('application', message_text, self.applicant_account, self.application_professor, str(self.project_id.id), str(self.id))
 
 			return self.message_display('Rejection', 'The application is rejected.', False)
 		else:
@@ -256,4 +279,4 @@ class Application(models.Model):
 			message_text = f'<strong>Application Rejected</strong><p> This application submitted for <i>' + self.project_id.name + '</i> is automatically rejected since another one is chosen by the professor.</p>'
 
 			# Use the send_message utility function to send the message
-			self.env['student.utils'].send_message('Auto Reject', str(self.project_id.id), message_text, self.applicant_account, odoobot)
+			self.env['student.utils'].send_message('Auto Reject', message_text, self.applicant_account, odoobot, str(self.project_id.id))

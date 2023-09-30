@@ -19,15 +19,15 @@ class Project(models.Model):
     requirements = fields.Text('Application Requirements')
     results = fields.Text('Expected Results')
 
-    campus_ids = fields.Many2many('student.campus', string='Campus', default=lambda self: self.env['student.campus'].search([], limit=1), required=True)
+    campus_ids = fields.Many2many('student.campus', string='Campus', required=True)
     faculty_ids = fields.Many2many('student.faculty', 
                                    string='Applicable Faculties', 
                                    required=True)
     program_ids = fields.Many2many('student.program', string='Applicable Programs', compute="_find_programs", store=True, readonly=False, required=True)
     degree_ids = fields.Many2many('student.degree', string='Available for', required=True)
     
-    type = fields.Selection([('cw', 'Course Work (Курсовая работа)'), ('fqw', 'Final Qualifying Work (ВКР)')], string="Project Type")
-    format = fields.Selection([('research', 'Research'), ('project', 'Project'), ('startup', 'Start-up')], string="Format")
+    type = fields.Selection([('cw', 'Course Work (Курсовая работа)'), ('fqw', 'Final Qualifying Work (ВКР)')], string="Project Type", required=True)
+    format = fields.Selection([('research', 'Research'), ('project', 'Project'), ('startup', 'Start-up')], string="Format", required=True)
     language = fields.Selection([('en', 'English'), ('ru', 'Russian')], default="en", string="Language", required=True)
     assigned = fields.Boolean('Assigned to a student?', default=False, readonly=True)
     student_elected = fields.One2many('student.student', 'current_project', string='Elected Student', readonly=True)
@@ -45,10 +45,12 @@ class Project(models.Model):
     additional_files = fields.Many2many(comodel_name="ir.attachment", string="Attachments") 
     file_count = fields.Integer('Number of attached files', compute='_compute_file_count', readonly=True)
 
+    # Show projects from the same faculty
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
         pass_filters = False
         user_faculty = False
+        viewing_professor = False
 
         # Get the current user's faculty_id
         if self.env.user.has_group('student.group_administrator'):
@@ -56,14 +58,21 @@ class Project(models.Model):
         elif self.env.user.has_group('student.group_supervisor'):
             user_faculty = self.env['student.supervisor'].sudo().search([('supervisor_account', '=', self.env.user.id)], limit=1).supervisor_faculty
         elif self.env.user.has_group('student.group_professor'):
-            user_faculty = self.env['student.professor'].sudo().search([('professor_account', '=', self.env.user.id)], limit=1).professor_faculty
+            viewing_professor = self.env['student.professor'].sudo().search([('professor_account', '=', self.env.user.id)], limit=1)
+            user_faculty = viewing_professor.professor_faculty
         elif self.env.user.has_group('student.group_student'):
             user_faculty = self.env['student.student'].sudo().search([('student_account', '=', self.env.user.id)], limit=1).student_faculty
 
         # If the user has a faculty, add a domain to filter projects
         if not pass_filters:
             if user_faculty:
-                args.append(('faculty_ids', 'in', [user_faculty.id]))
+                # Professor can see their projects if they sent it to another faculty
+                if viewing_professor:
+                    args.append('|')
+                    args.append(('faculty_ids', 'in', [user_faculty.id]))
+                    args.append(('professor_id', '=', viewing_professor.id))
+                else:
+                    args.append(('faculty_ids', 'in', [user_faculty.id]))
             else:
                 raise AccessError("The user is not correctly registered in any of the faculties. Contact the manager for the fix.")
 
@@ -212,7 +221,7 @@ class Project(models.Model):
             message_text = f'<strong>Project Proposal Received</strong><p> {self.professor_account.name} sent a project proposal: <b><a href="/web#id={self.id}&model=student.project">{self.name}</a></b></p> <p><i>Please evaluate the submission.</i></p>'
 
             # Use the send_message utility function to send the message
-            self.env['student.utils'].send_message('project', str(self.id), message_text, self.program_supervisors, self.professor_account)
+            self.env['student.utils'].send_message('project', message_text, self.program_supervisors, self.professor_account, str(self.id))
 
             return self.message_display('Confirmation', 'Project is successfully submitted.', False)
             # ♦ This strangely prevents the project status to be immediately updated in the UI.
@@ -258,7 +267,7 @@ class Project(models.Model):
             message_text = f'<strong>Project Proposal Approved</strong><p> ' + self.env.user.name + ' has accepted your project "' + self.name + '".</p><p>Eligible students can now see and apply for the project.</p>'
 
             # Use the send_message utility function to send the message
-            self.env['student.utils'].send_message('project', str(self.id), message_text, self.professor_account, self.env.user)
+            self.env['student.utils'].send_message('project', message_text, self.professor_account, self.env.user, str(self.id))
 
             return self.message_display('Approval', 'The project is successfully approved.', False)
         else:
@@ -293,7 +302,7 @@ class Project(models.Model):
             message_text = f'<strong>Project Proposal Rejected</strong><p> ' + self.env.user.name + ' has rejected your project "' + self.name + '".</p><p>You can check the <b>Supervisor Feedback</b> section on the project page to learn about the reason.</p>'
 
             # Use the send_message utility function to send the message
-            self.env['student.utils'].send_message('project', str(self.id), message_text, self.professor_account, self.env.user)
+            self.env['student.utils'].send_message('project', message_text, self.professor_account, self.env.user, str(self.id))
 
             return self.message_display('Rejection', 'The project is rejected.', False)
         else:
@@ -323,7 +332,7 @@ class Project(models.Model):
             message_text = f'<strong>Project Proposal Returned</strong><p> ' + self.env.user.name + ' has returned your proposal "' + self.name + '".</p><p>You can check the <b>Supervisor Feedback</b> section on the project page to learn about the reason. After making necessary changes, you can resubmit the project.</p>'
 
             # Use the send_message utility function to send the message
-            self.env['student.utils'].send_message('project', str(self.id), message_text, self.professor_account, self.env.user)
+            self.env['student.utils'].send_message('project', message_text, self.professor_account, self.env.user, str(self.id))
 
             return self.message_display('Return', 'The project is returned.', False)
 

@@ -1,23 +1,6 @@
 <?xml version="1.0"?>
 <odoo>
     <data>
-        <record id="student_project_list_view" model="ir.ui.view">
-            <field name="name">Projects - List View</field>
-            <field name="model">student.project</field>
-            <field name="arch" type="xml">
-                <tree>
-                    <field name="name"/>
-                    <field name="name_ru"/>
-                    <field name="professor_id"/>
-                    <field name="format"/>
-                    <field name="language"/>
-                    <field name="program_ids" widget="many2many_tags"/>
-                    <field name="degree_ids" widget="many2many_tags"/>
-                    <field name="applications"/>
-                </tree>
-            </field>
-        </record>
-
         <record id="student_project_view_form" model="ir.ui.view">
             <field name="name">student.project.form</field>
             <field name="model">student.project</field>
@@ -163,7 +146,6 @@
                                 </page>
                                 <page string="Technical Log" groups="student.group_administrator">
                                     <field name="message_follower_ids" widget="mail_followers"/>
-                                    <!-- <field name="message_ids" widget="mail_thread"/> -->
                                     <field name="activity_ids"/>
                                     <field name="message_ids"/>
                                 </page>
@@ -177,6 +159,23 @@
                         <field name="message_ids" widget="mail_thread"/>
                     </div>
                 </form>
+            </field>
+        </record>
+
+        <record id="student_project_list_view" model="ir.ui.view">
+            <field name="name">Projects - List View</field>
+            <field name="model">student.project</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="name_ru"/>
+                    <field name="professor_id"/>
+                    <field name="format"/>
+                    <field name="language"/>
+                    <field name="program_ids" widget="many2many_tags"/>
+                    <field name="degree_ids" widget="many2many_tags"/>
+                    <field name="applications"/>
+                </tree>
             </field>
         </record>
 

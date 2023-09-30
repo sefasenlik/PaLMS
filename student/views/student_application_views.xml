@@ -52,7 +52,7 @@
     <record id="student_application_view_professor" model="ir.actions.act_window">
         <field name="name">Applications Received</field>
         <field name="res_model">student.application</field>
-        <field name="view_mode">kanban,form</field>
+        <field name="view_mode">tree,kanban,form</field>
         <field name="view_id" ref="student_application_kanban_view"/>
         <field name="domain">[('application_professor','=',uid)]</field>
         <field name="help" type="html">
@@ -81,7 +81,8 @@
         <field name="name">student.application.tree</field>
         <field name="model">student.application</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree default_order="sent_date">
+                <field name="sent_date"/>
                 <field name="applicant"/>
                 <field name="project_id"/>
                 <field name="student_degree"/>
@@ -200,6 +201,7 @@
                 <filter string="Rejected" name="rejected_applications" domain="[('state', '=', 'rejected')]"/>
                 <filter string="Accepted" name="accepted_applications" domain="[('state', '=', 'accepted')]"/>
                 <group expand="1" string="Group By">
+                    <filter string="Urgency" name="urgency" context="{'group_by':'urgency_category'}"/>
                     <filter string="Project" name="project" context="{'group_by':'project_id'}"/>
                     <filter string="Applicant" name="applicant" context="{'group_by':'applicant'}"/>
                     <filter string="Professor" name="professor" context="{'group_by':'application_professor'}"/>

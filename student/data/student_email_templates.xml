@@ -5,7 +5,7 @@
         <record id="email_template_project_submission" model="mail.template">
             <field name="name">Project Submission Notification</field>
             <field name="model_id" ref="student.model_student_project"/>
-            <field name="auto_delete" eval="True"/>
+            <field name="auto_delete" eval="False"/>
             <field name="email_from">{{object.professor_account.email}}</field>
             <field name="subject">«{{object.name}}» is submitted for review!</field>
             <field name="body_html">
@@ -21,7 +21,7 @@
         <record id="email_template_project_approval" model="mail.template">
             <field name="name">Project Approval Notification</field>
             <field name="model_id" ref="student.model_student_project"/>
-            <field name="auto_delete" eval="True"/>
+            <field name="auto_delete" eval="False"/>
             <field name="email_from">{{user.email}}</field>
             <field name="email_to">{{object.professor_account.email}}</field>
             <field name="subject">«{{object.name}}» is approved!</field>
@@ -40,7 +40,7 @@
         <record id="email_template_project_rejection" model="mail.template">
             <field name="name">Project Rejection Notification</field>
             <field name="model_id" ref="student.model_student_project"/>
-            <field name="auto_delete" eval="True"/>
+            <field name="auto_delete" eval="False"/>
             <field name="email_from">{{user.email}}</field>
             <field name="email_to">{{object.professor_account.email}}</field>
             <field name="subject">«{{object.name}}» is rejected</field>
@@ -60,7 +60,7 @@
         <record id="email_template_project_return" model="mail.template">
             <field name="name">Project Return Notification</field>
             <field name="model_id" ref="student.model_student_project"/>
-            <field name="auto_delete" eval="True"/>
+            <field name="auto_delete" eval="False"/>
             <field name="email_from">{{user.email}}</field>
             <field name="email_to">{{object.professor_account.email}}</field>
             <field name="subject">«{{object.name}}» is returned</field>
@@ -81,7 +81,7 @@
         <record id="email_template_application_send" model="mail.template">
             <field name="name">Application Send Notification</field>
             <field name="model_id" ref="student.model_student_application"/>
-            <field name="auto_delete" eval="True"/>
+            <field name="auto_delete" eval="False"/>
             <field name="email_from">{{user.email}}</field>
             <field name="email_to">{{object.application_professor.email}}</field>
             <field name="subject">{{object.applicant_account.name}} sent a an application for «{{object.project_id.name}}»!</field>
@@ -100,7 +100,7 @@
         <record id="email_template_application_accept" model="mail.template">
             <field name="name">Application Accepted Notification</field>
             <field name="model_id" ref="student.model_student_application"/>
-            <field name="auto_delete" eval="True"/>
+            <field name="auto_delete" eval="False"/>
             <field name="email_from">{{user.email}}</field>
             <field name="email_to">{{object.applicant_account.email}}</field>
             <field name="subject">Your application for «{{object.project_id.name}}» is accepted!</field>
@@ -119,7 +119,7 @@
         <record id="email_template_application_reject" model="mail.template">
             <field name="name">Application Rejected Notification</field>
             <field name="model_id" ref="student.model_student_application"/>
-            <field name="auto_delete" eval="True"/>
+            <field name="auto_delete" eval="False"/>
             <field name="email_from">{{user.email}}</field>
             <field name="email_to">{{object.applicant_account.email}}</field>
             <field name="subject">Your application for «{{object.project_id.name}}» is rejected</field>

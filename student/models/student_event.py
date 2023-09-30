@@ -12,7 +12,7 @@ class Event(models.Model):
 
     name = fields.Char('Event Name', required=True, translate=True)
     description = fields.Text('Description', required=True)
-    # tasks = 
+    # ♦ tasks = 
     initiator = fields.Many2one('res.users', string='Initiated By', required=True)
     assignee = fields.Many2one('res.users', string='Assigned To', required=True)
     watchers = fields.Many2many('res.users', string='Watchers')
