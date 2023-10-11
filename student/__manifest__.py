@@ -23,6 +23,7 @@
         'views/student_professor_views.xml',
         'views/student_program_views.xml',
         'views/student_project_views.xml',
+        'views/student_proposal_views.xml',
         'views/student_student_views.xml',
         'views/student_supervisor_views.xml',
         'views/student_util_views.xml',

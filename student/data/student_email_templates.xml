@@ -106,7 +106,7 @@
             <field name="subject">Your application for «{{object.project_id.name}}» is accepted!</field>
             <field name="body_html">
                 &lt;h2&gt;Hello, &lt;t t-out="object.applicant_account.name"/&gt;!&lt;/h2&gt;
-                &lt;p&gt;Your application for the following project is accepted. Your PaLMS is now assigned to this project, you can contact the supervising professor and start working on it.&lt;br&gt;
+                &lt;p&gt;Your application for the following project is accepted. Your PaLMS account is now assigned to this project, you can contact the supervising professor and start working on it.&lt;br&gt;
                 &lt;b&gt;Professor name: &lt;/b&gt;&lt;t t-out="object.application_professor.name"/&gt;&lt;br&gt;
                 &lt;b&gt;Project name: &lt;/b&gt;&lt;t t-out="object.project_id.name"/&gt;&lt;br&gt;
                 &lt;br&gt;
@@ -128,6 +128,64 @@
                 &lt;p&gt;Your application for the following project is rejected. You can apply to other available applications and provide more details next time. Good luck!&lt;br&gt;
                 &lt;b&gt;Professor name: &lt;/b&gt;&lt;t t-out="object.application_professor.name"/&gt;&lt;br&gt;
                 &lt;b&gt;Project name: &lt;/b&gt;&lt;t t-out="object.project_id.name"/&gt;&lt;br&gt;
+                &lt;br&gt;
+                Best wishes,&lt;br&gt;
+                PaLMS Notification Service
+                &lt;/p&gt;
+            </field>
+        </record>
+
+        <!-- PROPOSAL -->
+        <record id="email_template_proposal_send" model="mail.template">
+            <field name="name">Proposal Send Notification</field>
+            <field name="model_id" ref="student.model_student_proposal"/>
+            <field name="auto_delete" eval="False"/>
+            <field name="email_from">{{user.email}}</field>
+            <field name="email_to">{{object.professor_account.email}}</field>
+            <field name="subject">{{object.proponent.name}} sent a a proposal!</field>
+            <field name="body_html">
+                &lt;h2&gt;Hello, &lt;t t-out="object.professor_account.name"/&gt;!&lt;/h2&gt;
+                &lt;p&gt;You have received a proposal from a student. Please log in to your PaLMS account to review it.&lt;br&gt;
+                &lt;b&gt;Proposal name: &lt;/b&gt;&lt;t t-out="object.name"/&gt;&lt;br&gt;
+                &lt;b&gt;Proposed by: &lt;/b&gt;&lt;t t-out="object.proponent_account.name"/&gt;&lt;br&gt;
+                &lt;br&gt;
+                Best wishes,&lt;br&gt;
+                PaLMS Notification Service
+                &lt;/p&gt;
+            </field>
+        </record>
+
+        <record id="email_template_proposal_accept" model="mail.template">
+            <field name="name">Proposal Accepted Notification</field>
+            <field name="model_id" ref="student.model_student_proposal"/>
+            <field name="auto_delete" eval="False"/>
+            <field name="email_from">{{user.email}}</field>
+            <field name="email_to">{{object.proponent_account.email}}</field>
+            <field name="subject">Your proposal «{{object.name}}» is accepted!</field>
+            <field name="body_html">
+                &lt;h2&gt;Hello, &lt;t t-out="object.proponent_account.name"/&gt;!&lt;/h2&gt;
+                &lt;p&gt;Your proposal is accepted by the professor and sent to the program supervisor for approval. You can start working on it after the supervisor's confirmation is received.&lt;br&gt;
+                &lt;b&gt;Professor name: &lt;/b&gt;&lt;t t-out="object.proposal_professor.name"/&gt;&lt;br&gt;
+                &lt;b&gt;Proposal name: &lt;/b&gt;&lt;t t-out="object.name"/&gt;&lt;br&gt;
+                &lt;br&gt;
+                Best wishes,&lt;br&gt;
+                PaLMS Notification Service
+                &lt;/p&gt;
+            </field>
+        </record>
+
+        <record id="email_template_proposal_reject" model="mail.template">
+            <field name="name">Proposal Rejected Notification</field>
+            <field name="model_id" ref="student.model_student_proposal"/>
+            <field name="auto_delete" eval="False"/>
+            <field name="email_from">{{user.email}}</field>
+            <field name="email_to">{{object.proponent_account.email}}</field>
+            <field name="subject">Your proposal «{{object.project_id.name}}» is rejected</field>
+            <field name="body_html">
+                &lt;h2&gt;Hello, &lt;t t-out="object.proponent_account.name"/&gt;!&lt;/h2&gt;
+                &lt;p&gt;Your proposal for is rejected by the professor. You can apply to available projects or send your proposal to other professors. Good luck!&lt;br&gt;
+                &lt;b&gt;Professor name: &lt;/b&gt;&lt;t t-out="object.proposal_professor.name"/&gt;&lt;br&gt;
+                &lt;b&gt;Proposal name: &lt;/b&gt;&lt;t t-out="object.name"/&gt;&lt;br&gt;
                 &lt;br&gt;
                 Best wishes,&lt;br&gt;
                 PaLMS Notification Service

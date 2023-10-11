@@ -146,6 +146,11 @@ class Application(models.Model):
 			raise UserError("The application is already sent!")
 		elif self.project_id.state != 'applied' and self.project_id.state != 'approved':
 			raise UserError("The chosen project is not available for applications, please try another one.")
+		elif self.env['student.application'].search([
+				('applicant_account', '=', self.env.user.id),
+				('state', '=', "sent"),
+			]):
+			raise UserError("You have already sent an application for a project. Please wait up to 3 days to receive a response or cancel the application.")
 		else:
 			self.write({'state': 'sent'})
 			self.application_professor = self.project_id.professor_account
@@ -211,9 +216,8 @@ class Application(models.Model):
 
 		if self.state == 'sent':
 			self.write({'state': 'accepted'})
-			# ♦ self.project_id.write({'state': 'assigned', 'assigned': True, 'student_elected': self.applicant})
-			self.project_id.write({'state': 'assigned', 'assigned': True})
-
+			self.project_id.write({'state': 'assigned', 'assigned': True, 'student_elected': [(4, self.applicant.id)]})
+			
 			# Log the action --------------------
 			body = _('This application is accepted by the professor.')
 			self.message_post(body=body)

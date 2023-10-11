@@ -9,7 +9,7 @@ class Supervisor(models.Model):
     name = fields.Char('Supervisor Name', required=True, default=lambda self: self.env.user.name, compute="_compute_name", store=True, readonly=True)
     active = fields.Boolean(default=True)
 
-    program_ids = fields.Many2many('student.program', 'supervisor', string='Supervised Programs', readonly=True)
+    program_ids = fields.One2many('student.program', 'supervisor', string='Supervised Programs', readonly=True)
 
     supervisor_account = fields.Many2one('res.users', string='User Account', default=lambda self: self.env.user, required=True)
     supervisor_faculty = fields.Many2one('student.faculty', string='Faculty', required=True)

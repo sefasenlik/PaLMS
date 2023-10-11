@@ -1,0 +1,161 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="student_proposal_view_professor" model="ir.actions.act_window">
+        <field name="name">Proposals Received</field>
+        <field name="res_model">student.proposal</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('professor_account','=',uid)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                You have no pending proposals.
+            </p>
+        </field>
+    </record>
+    
+    <record id="student_proposal_view_personal" model="ir.actions.act_window">
+        <field name="name">My Proposals</field>
+        <field name="res_model">student.proposal</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('proponent_account','=',uid)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Send your first proposal to your favorite professors!
+            </p>
+            <!-- ♦ The link doesn't work! -->
+            <a t-attf-href="/web#action={{ env.ref('student_project_view_action_list').id }} ">View projects</a>
+        </field>
+    </record>
+
+    <record id="student_proposal_view_tree" model="ir.ui.view">
+        <field name="name">student.proposal.tree</field>
+        <field name="model">student.proposal</field>
+        <field name="arch" type="xml">
+            <tree default_order="sent_date">
+                <field name="state"/>
+                <field name="name"/>
+                <field name="name_ru"/>
+                <field name="sent_date"/>
+                <field name="proponent"/>
+                <field name="student_degree"/>
+                <field name="student_program"/>
+                <field name="email"/>
+            </tree>
+        </field>
+    </record>
+    
+    <record id="student_proposal_view_public" model="ir.actions.act_window">
+        <field name="name">Proposal List</field>
+        <field name="res_model">student.proposal</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="student_proposal_view_tree"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add a new proposal.
+            </p>
+        </field>
+    </record>
+
+    <record id="student_proposal_view_form" model="ir.ui.view">
+        <field name="name">student.proposal.form</field>
+        <field name="model">student.proposal</field>
+        <field name="arch" type="xml">
+            <form string="Proposal" on_load="trigger_func()">
+                <header>
+                    <button name="action_view_proposal_send"
+                        string="Send Proposal"
+                        type="object"
+                        confirm="Are you sure you want to send your proposal to the chosen professor?"
+                        groups="student.group_student"
+                        class="oe_highlight"/>
+                    <button name="action_view_proposal_cancel"
+                        string="Cancel Proposal"
+                        type="object"
+                        confirm="Are you sure you want to cancel your proposal?"
+                        groups="student.group_student"
+                        class="oe_highlight"/>
+
+                    <button name="action_view_proposal_accept"
+                        string="ACCEPT PROPOSAL"
+                        type="object"
+                        confirm="Are you sure you want to accept this proposal?"
+                        groups="student.group_professor"
+                        class="btn-success"/>
+                    <button name="action_view_proposal_reject"
+                        string="REJECT PROPOSAL"
+                        type="object"
+                        confirm="Are you sure you want to reject this proposal?"
+                        groups="student.group_professor"
+                        class="btn-danger"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Overview">
+                            <field name="name"/>
+                            <field name="name_ru"/>
+                            <field name="proposal_professor"/>
+                            <field name="state"/>
+                            <field name="project_id" attrs="{'invisible':['|',('state','=','draft'),('state','=','rejected')]}"/>
+                        </group>                        
+                        <group string="Details">
+                            <field name="type"/>
+                            <field name="format"/>
+                            <field name="language"/>
+                        </group>
+                        <group string="Contacts">
+                            <field name="proponent" readonly="True"/>
+                            <field name="email"/>
+                            <field name="phone"/>
+                        </group>                        
+                        <group string="Additional Contacts">
+                            <field name="additional_email"/>
+                            <field name="additional_phone"/>
+                            <field name="telegram"/>
+                        </group>
+                        <notebook>
+                            <page string="Proposal Details">
+                                <label for="description"/>
+                                <field name="description" attrs="{'readonly':[('state','!=','draft')]}"/>
+
+                                <label for="results"/>
+                                <field name="results" style="margin-bottom:20 px" attrs="{'readonly':[('state','!=','draft')]}"/>
+
+                                <label for="additional_files"/>
+                                <field name="additional_files" widget="many2many_binary" string="Additional Files" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </page>
+                            <page string="Feedback" attrs="{'invisible':[('state','=','draft')]}">
+                                <label for="feedback"/>
+                                <field name="feedback"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="student_proposal_view_search" model="ir.ui.view">
+        <field name="name">student.proposal.search</field>
+        <field name="model">student.proposal</field>
+        <field name="arch" type="xml">
+            <search string="Proposal List">
+                <field name="proponent" string="Proposed by"/>
+                <field name="state"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="telegram"/>
+                <field name="student_degree"/>
+                <field name="student_program"/>
+                <separator/>
+                <filter string="Sent" name="sent_proposals" domain="[('state', '=', 'sent')]"/>
+                <filter string="Rejected" name="rejected_proposals" domain="[('state', '=', 'rejected')]"/>
+                <filter string="Accepted" name="accepted_proposals" domain="[('state', '=', 'accepted')]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Proposed by" name="proponent" context="{'group_by':'proponent'}"/>
+                    <filter string="Professor" name="professor" context="{'group_by':'proposal_professor'}"/>
+                    <filter string="Program" name="program" context="{'group_by':'student_program'}"/>
+                    <filter string="Degree" name="degree" context="{'group_by':'student_degree'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

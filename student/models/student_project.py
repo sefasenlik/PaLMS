@@ -21,10 +21,33 @@ class Project(models.Model):
 
     campus_ids = fields.Many2many('student.campus', string='Campus', required=True)
     faculty_ids = fields.Many2many('student.faculty', 
-                                   string='Applicable Faculties', 
+                                   string='Target Faculties', 
+                                   required=True)    
+    program_ids = fields.Many2many(comodel_name='student.program',
+                                   relation='student_project_program_rel',
+                                   column1='project_id',
+                                   column2='program_id',
+                                   string='Target Programs',
+                                   compute="_find_programs",
+                                   store=True,
+                                   readonly=False,
                                    required=True)
-    program_ids = fields.Many2many('student.program', string='Applicable Programs', compute="_find_programs", store=True, readonly=False, required=True)
     degree_ids = fields.Many2many('student.degree', string='Available for', required=True)
+
+    approved_program_ids = fields.Many2many(comodel_name='student.program',
+                                            relation='student_project_approved_program_rel',
+                                            column1='project_id',
+                                            column2='program_id',
+                                            string='Applicable Programs',
+                                            readonly=True)
+    rejected_program_ids = fields.Many2many(comodel_name='student.program',
+                                            relation='student_project_rejected_program_rel',
+                                            column1='project_id',
+                                            column2='program_id',
+                                            string='Non-Applicable Programs',
+                                            readonly=True)
+            
+    proposal_id = fields.Many2one('student.proposal', string="Proposal", readonly=True)
     
     type = fields.Selection([('cw', 'Course Work (Курсовая работа)'), ('fqw', 'Final Qualifying Work (ВКР)')], string="Project Type", required=True)
     format = fields.Selection([('research', 'Research'), ('project', 'Project'), ('startup', 'Start-up')], string="Format", required=True)
@@ -42,8 +65,29 @@ class Project(models.Model):
     reason = fields.Text(string='Return/Rejection Reason')
     project_events = fields.Many2many('student.event', string="Project Events")
 
-    additional_files = fields.Many2many(comodel_name="ir.attachment", string="Attachments") 
+    additional_files = fields.Many2many(
+        comodel_name='ir.attachment',
+        relation='student_project_additional_files_rel',
+        column1='project_id',
+        column2='attachment_id',
+        string='Attachments'
+    )
     file_count = fields.Integer('Number of attached files', compute='_compute_file_count', readonly=True)
+
+    result_text = fields.Text(string='Results')    
+    result_files = fields.Many2many(
+        comodel_name='ir.attachment',
+        relation='student_project_result_files_rel',
+        column1='project_id',
+        column2='attachment_id',
+        string='Result Files'
+    )
+
+    @api.onchange("result_files")
+    def _update_ownership(self):
+        # Updates the ownership of files for other users to access them
+        for attachment in self.result_files:
+            attachment.write({'res_model': self._name, 'res_id': self.id})
 
     # Show projects from the same faculty
     @api.model
@@ -163,7 +207,10 @@ class Project(models.Model):
         project = super(Project, self.with_context(tracking_disable=True)).create(vals)
 
         # Customizes the creation log message
-        message = _("A new project has been created by %s.") % (self.env.user.name)
+        if self.proposal_id:
+            message = _("A new project has been created upon the proposal of %s.") % (self.student_elected)
+        else:
+            message = _("A new project has been created by %s.") % (self.env.user.name)
         project.message_post(body=message)
 
         return project
@@ -200,7 +247,6 @@ class Project(models.Model):
             # Updates the ownership of files for other users to access them
             for attachment in self.additional_files:
                 attachment.write({'res_model': self._name, 'res_id': self.id})
-
 
             # Log the action --------------------
             subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
@@ -244,13 +290,32 @@ class Project(models.Model):
         if not self.env.user.has_group('student.group_administrator'):
             if self.env.user not in self.program_supervisors:
                 raise AccessError("You can only react to projects sent to the program that you are supervising.")
+    
+    # Check if all supervisors have decided. If yes, mark the project accordingly.            
+    def _check_decisions(self):
+        if len(self.program_ids) == (len(self.approved_program_ids) + len(self.rejected_program_ids)):
+            if self.student_elected:
+                return 'assigned'
+            
+            if len(self.approved_program_ids) > 0:
+                return 'approved'
+            else:
+                return 'rejected'
+        
+        return 'pending'
 
-    # ♦ What if supervisors make different decisions?
     def action_view_project_approve(self):
         self._check_supervisor_identity()
 
         if self.state == 'pending':
-            self.write({'state': 'approved'})
+            if self.proposal_id:              
+                self.write({'state': 'assigned'})
+            else:                
+                supervisor_programs = self.env['student.supervisor'].search([('supervisor_account', '=', self.env.uid)]).program_ids
+                for program in supervisor_programs:
+                    self.approved_program_ids = [(4, program.id)] 
+
+                self.write({'state': self._check_decisions()})
 
             # Log the action --------------------
             subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
@@ -264,7 +329,7 @@ class Project(models.Model):
             # -----------------------------------
 
             # Construct the message that is to be sent to the user
-            message_text = f'<strong>Project Proposal Approved</strong><p> ' + self.env.user.name + ' has accepted your project "' + self.name + '".</p><p>Eligible students can now see and apply for the project.</p>'
+            message_text = f'<strong>Project Proposal Approved</strong><p> ' + self.env.user.name + ' has accepted your project "' + self.name + '".</p><p>Eligible students can see and apply for the project after all supervisors complete their evaluation.</p>'
 
             # Use the send_message utility function to send the message
             self.env['student.utils'].send_message('project', message_text, self.professor_account, self.env.user, str(self.id))
@@ -283,9 +348,17 @@ class Project(models.Model):
         self._check_supervisor_identity()
 
         if self.state == 'pending':
-            self._check_reason()
+            self._check_reason()           
 
-            self.write({'state': 'rejected'})
+            supervisor_programs = self.env['student.supervisor'].search([('supervisor_account', '=', self.env.uid)]).program_ids
+            for program in supervisor_programs:
+                self.rejected_program_ids = [(4, program.id)] 
+                
+            self.write({'state': self._check_decisions()})
+            
+            # Remove the programs that their supervisor rejected
+            user_supervisor = self.env['student.supervisor'].search([('supervisor_account', '=', self.env.uid)])
+            self.program_ids = self.program_ids.filtered(lambda program: program.supervisor != user_supervisor)
 
             # Log the action --------------------
             subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
@@ -317,6 +390,10 @@ class Project(models.Model):
             self.locked = False
             self.write({'state': 'returned'})
 
+            # When a supervisor returns the project, all approval progress is reset
+            self.approved_program_ids = [(5, 0, 0)]  
+            self.rejected_program_ids = [(5, 0, 0)]
+
             # Log the action --------------------
             subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
             body = _('The project is returned by ' + self.env.user.name + '. Resubmission after applying requested modifications is possible.')
@@ -343,8 +420,7 @@ class Project(models.Model):
         self.student_elected.current_project = None
 
         # Erase all applications for this project
-        project_id = self.id  
-        applications = self.env['student.application'].search([('project_id', '=', project_id)])
+        applications = self.env['student.application'].search([('project_id', '=', self.id)])
         applications.unlink()
 
     # Creates an application upon clicking "Apply"
@@ -353,7 +429,7 @@ class Project(models.Model):
         if not student_record:
             raise AccessError("You are not registered as a student in the system, please contact your academic supervisor.")
         else:
-            if student_record.student_program not in self.program_ids:
+            if student_record.student_program not in self.approved_program_ids:
                 raise UserError("This project is not applicable for your program, please use filters to find another one.")
             elif student_record.degree not in self.degree_ids:
                 raise UserError("This project is not applicable for your level of education, please use filters to find another one.")

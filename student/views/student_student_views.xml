@@ -73,7 +73,7 @@
                             <field name="degree"/>
                         </group>
                         <notebook>
-                            <page string="Applications">
+                            <page string="Applications">        
                                 <p>
                                     <label for="application_number" class="oe_inline"/>
                                     <field name="application_number" style="margin-left:10px" class="oe_inline"/>

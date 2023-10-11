@@ -3,6 +3,8 @@
     <menuitem id="student_menu_root" name="𝗣𝗮𝗟𝗠𝗦">
         <menuitem sequence="1" id="personal_first_level_menu" name="MyLMS">
 
+                <menuitem id="personal_proposal_private" action="student_proposal_view_personal" groups="student.group_student"/>
+                <menuitem id="personal_proposal_professor" action="student_proposal_view_professor" groups="student.group_professor"/>
                 <menuitem id="personal_application_private" action="student_application_view_personal" groups="student.group_student"/>
                 <menuitem id="personal_application_professor" action="student_application_view_professor" groups="student.group_professor"/>
                 <menuitem id="personal_project_supervisor" action="student_project_view_supervisor" groups="student.group_supervisor"/>
@@ -24,6 +26,7 @@
             </menuitem>
             
             <menuitem id="faculty_first_project_menu" name="Project" >
+                <menuitem id="faculty_proposal_list" action="student_proposal_view_public" groups="student.group_student,student.group_professor"/>
                 <menuitem id="faculty_project_kanban" action="student_project_view_action_kanban" groups="student.group_supervisor,student.group_professor"/>
                 <menuitem id="faculty_project_list" action="student_project_view_action_list" groups="student.group_student"/>
             </menuitem>

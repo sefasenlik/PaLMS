@@ -66,13 +66,17 @@
                             <group string="Availability">
                                 <field name="state"/>
                                 <field name="assigned"/>
-                                <field name="student_elected" widget="many2many_tags"/>
+                                <field name="proposal_id" attrs="{'invisible': [('proposal_id', '=', False)]}"/>
+                                <!-- If based on a proposal -->
+                                <field name="student_elected" widget="many2many_tags" string="Proposed by" attrs="{'invisible': [('proposal_id', '=', False)]}"/>
+                                <!-- If NOT based on a proposal -->
+                                <field name="student_elected" widget="many2many_tags" attrs="{'invisible': ['|', ('proposal_id', '!=', False), ('state', '!=', 'assigned')]}"/>
                             </group>
                             <group string="Eligibility" colspan="2">
                                 <group>
                                     <field name="campus_ids" widget="many2many_tags" attrs="{'readonly': [('locked', '=', True)]}"/>
                                     <field name="faculty_ids" help="You can only choose faculties from the campuses above." widget="many2many_tags" attrs="{'readonly': [('locked', '=', True)]}" domain="[('campus', 'in', campus_ids)]"/>
-                                    <field name="program_ids" help="You can only choose programs from the faculties above." widget="many2many_tags" attrs="{'readonly': [('locked', '=', True)]}" domain="[('program_faculty_id', 'in', faculty_ids)]"/>
+                                    <field name="program_ids" help="You can only choose programs from the faculties above." widget="many2many_tags" attrs="{'readonly': [('locked', '=', True)]}" domain="[('program_faculty_id', 'in', faculty_ids)]" groups="student.group_administrator,student.group_supervisor,student.group_professor"/>
                                     <field name="degree_ids" widget="many2many_tags" attrs="{'readonly': [('locked', '=', True)]}"/>
                                 </group>
                                 <group>
@@ -81,11 +85,19 @@
                                     <field name="language" attrs="{'readonly': [('locked', '=', True)]}"/>
                                 </group>
                             </group>
+                            <group string="Evaluations" colspan="2" attrs="{'invisible': [('state', 'in', ['draft', 'assigned', 'returned'])]}">
+                                <group>
+                                    <field name="approved_program_ids" widget="many2many_tags"/>
+                                </group>
+                                <group>
+                                    <field name="rejected_program_ids" widget="many2many_tags" groups="student.group_administrator, student.group_supervisor, student.group_professor"/>
+                                </group>
+                            </group>        
                             <notebook>
                                 <page string="Additional Details">
                                     <group>
                                         <field name="description" placeholder="Short project description to inspire potential applicants." attrs="{'readonly': [('locked', '=', True)]}"/>
-                                        <field name="requirements" placeholder="Minimum requirements for applications can be listed here." attrs="{'readonly': [('locked', '=', True)]}"/>
+                                        <field name="requirements" placeholder="Minimum requirements for applications can be listed here." attrs="{'readonly': ['|',('locked', '=', True),('proposal_id', '!=', False)]}"/>
                                         <field name="results" placeholder="Expected outcomes at the end of given implementation/research period." style="margin-bottom:20 px" attrs="{'readonly': [('locked', '=', True)]}"/>
                                     </group>
                                     
@@ -94,7 +106,7 @@
                                         <field name="additional_files" widget="many2many_binary" string="Attach a file" attrs="{'readonly':['&amp;', ('state','!=','draft'), ('state','!=','returned')]}"/>
                                     </group>
                                 </page>
-                                <page string="Applications" attrs="{'invisible': ['&amp;', ('state', '!=', 'applied'), ('state', '!=', 'approved'), ('state', '!=', 'assigned')]}">
+                                <page string="Applications" attrs="{'invisible': [('state', 'not in', ['applied', 'approved'])]}">
                                     <p>
                                         <label for="applications" class="oe_inline"/>
                                         <field name="applications" style="margin-left:10px" class="oe_inline"/>
@@ -141,10 +153,21 @@
                                         </tree>
                                     </field> 
                                 </page>
-                                <page string="Supervisor Feedback" attrs="{'invisible': ['&amp;', ('state', '!=', 'pending'), ('state', '!=', 'returned'), ('state', '!=', 'rejected')]}" groups="student.group_supervisor,student.group_professor">
-                                    <field name="reason" placeholder="Please specify the reason if you will reject or return the project." attrs="{'readonly': ['|', ('state', '=', 'rejected'), ('state', '=', 'returned')]}"/>
+                                <page string="Results" attrs="{'invisible': [('state', '!=', 'assigned')]}">
+                                    <p>
+                                        <label for="result_text" class="oe_inline"/>
+                                        <field name="result_text" placeholder="List project results (summary, links, etc.) here. Files can be added in the section below." style="margin-left:10px" class="oe_inline"/>
+                                    </p>
+                                    <p>
+                                        <label for="result_files" class="oe_inline"/>
+                                        <field name="result_files" widget="many2many_binary" string="Attach a file" attrs="{'readonly':[('state','!=','assigned')]}"/>
+                                    </p>
                                 </page>
-                                <page string="Technical Log" groups="student.group_administrator">
+                                <page string="Supervisor Feedback" attrs="{'invisible': [('state', 'not in', ['pending', 'returned', 'rejected'])]}" groups="student.group_administrator, student.group_supervisor, student.group_professor">
+                                    <field name="reason" placeholder="Please specify the reason if the project will be rejected or returned." attrs="{'readonly': ['|', ('state', '=', 'rejected'), ('state', '=', 'returned')]}" groups="student.group_administrator, student.group_supervisor"/>
+                                    <field name="reason" placeholder="Please specify the reason if the project will be rejected or returned." readonly="True" groups="student.group_professor"/>
+                                </page>
+                                <page string="Technical Log &amp; Details" groups="student.group_administrator">
                                     <field name="message_follower_ids" widget="mail_followers"/>
                                     <field name="activity_ids"/>
                                     <field name="message_ids"/>
@@ -255,7 +278,7 @@
             <field name="domain">[('state', 'in', ['approved','assigned','applied'])]</field>
         </record>
 
-        <!-- Define the action to open the list view of projects from the professor form-->
+        <!-- Define the action to open the tree view of projects from the professor form-->
         <record id="action_project" model="ir.actions.act_window">
             <field name="name">Projects</field>
             <field name="type">ir.actions.act_window</field>
@@ -287,7 +310,8 @@
                     <filter string="Project Format" name="project_format" context="{'group_by':'format'}"/>
                     <filter string="Target Degree" name="target_degree" context="{'group_by':'degree_ids'}"/>
                     <filter string="Faculty" name="faculty" context="{'group_by':'faculty_ids'}"/>
-                    <filter string="Program" name="program" context="{'group_by':'program_ids'}"/>
+                    <filter string="Target Program" name="program" context="{'group_by':'program_ids'}" groups="student.group_administrator, student.group_supervisor, student.group_professor"/>
+                    <filter string="Applicable Program" name="program" context="{'group_by':'approved_program_ids'}" groups="student.group_student"/>
                 </group>
             </search>
         </field>

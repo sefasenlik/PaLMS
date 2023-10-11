@@ -2,6 +2,30 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 
 student_utils_admin,Utilities for Administrator,model_student_utils,student.group_administrator,1,1,1,1
 
+student_event_admin,Event for Administrator,model_student_event,student.group_administrator,1,1,1,1
+student_event_supervisor,Event for Supervisor,model_student_event,student.group_supervisor,1,1,1,1
+student_event_professor,Event for Professor,model_student_event,student.group_professor,1,1,1,1
+student_event_student,Event for Student,model_student_event,student.group_student,1,1,1,1
+
+student_subtype_admin,Subtype for Administrator,model_student_message_subtype,student.group_administrator,1,0,0,0
+
+
+
+student_supervisor_admin,Supervisor for Administrator,model_student_supervisor,student.group_administrator,1,1,1,1
+student_supervisor_supervisor,Supervisor for Supervisor,model_student_supervisor,student.group_supervisor,1,0,0,0
+
+student_professor_admin,Professor for Administrator,model_student_professor,student.group_administrator,1,1,1,1
+student_professor_supervisor,Professor for Supervisor,model_student_professor,student.group_supervisor,1,1,0,0
+student_professor_professor,Professor for Professor,model_student_professor,student.group_professor,1,0,0,0
+student_professor_student,Professor for Student,model_student_professor,student.group_student,1,0,0,0
+
+student_student_admin,Student for Administrator,model_student_student,student.group_administrator,1,1,1,1
+student_student_supervisor,Student for Supervisor,model_student_student,student.group_supervisor,1,1,0,0
+student_student_professor,Student for Professor,model_student_student,student.group_professor,1,1,0,0
+student_student_student,Student for Student,model_student_student,student.group_student,1,0,0,0
+
+
+
 student_degree_admin,Degree for Administrator,model_student_degree,student.group_administrator,1,1,1,1
 student_degree_supervisor,Degree for Supervisor,model_student_degree,student.group_supervisor,1,0,0,0
 student_degree_professor,Degree for Professor,model_student_degree,student.group_professor,1,0,0,0
@@ -11,20 +35,6 @@ student_campus_admin,Campus for Administrator,model_student_campus,student.group
 student_campus_supervisor,Campus for Supervisor,model_student_campus,student.group_supervisor,1,0,0,0
 student_campus_professor,Campus for Professor,model_student_campus,student.group_professor,1,0,0,0
 student_campus_student,Campus for Student,model_student_campus,student.group_student,1,0,0,0
-
-
-
-student_supervisor_admin,Supervisor for Administrator,model_student_supervisor,student.group_administrator,1,1,1,1
-
-student_professor_admin,Professor for Administrator,model_student_professor,student.group_administrator,1,1,1,1
-student_professor_supervisor,Professor for Supervisor,model_student_professor,student.group_supervisor,1,1,0,0
-
-student_student_admin,Student for Administrator,model_student_student,student.group_administrator,1,1,1,1
-student_student_supervisor,Student for Supervisor,model_student_student,student.group_supervisor,1,1,0,0
-student_student_professor,Student for Professor,model_student_student,student.group_professor,1,0,0,0
-student_student_student,Student for Student,model_student_student,student.group_student,1,0,0,0
-
-
 
 student_faculty_admin,Faculty for Administrator,model_student_faculty,student.group_administrator,1,1,1,1
 student_faculty_supervisor,Faculty for Supervisor,model_student_faculty,student.group_supervisor,1,0,0,0
@@ -41,14 +51,14 @@ student_project_supervisor,Project for Supervisor,model_student_project,student.
 student_project_professor,Project for Professor,model_student_project,student.group_professor,1,1,1,0
 student_project_student,Project for Student,model_student_project,student.group_student,1,1,0,0
 
+
+
 student_application_admin,Application for Administrator,model_student_application,student.group_administrator,1,1,1,1
 student_application_supervisor,Application for Supervisor,model_student_application,student.group_supervisor,1,1,1,1
 student_application_professor,Application for Professor,model_student_application,student.group_professor,1,1,0,0
 student_application_student,Application for Student,model_student_application,student.group_student,1,1,1,0
 
-student_event_admin,Event for Administrator,model_student_event,student.group_administrator,1,1,1,1
-student_event_supervisor,Event for Supervisor,model_student_event,student.group_supervisor,1,1,1,1
-student_event_professor,Event for Professor,model_student_event,student.group_professor,1,1,1,1
-student_event_student,Event for Student,model_student_event,student.group_student,1,1,1,1
-
-student_subtype_admin,Subtype for Administrator,model_student_message_subtype,student.group_administrator,1,0,0,0
+student_proposal_admin,Proposal for Administrator,model_student_proposal,student.group_administrator,1,1,1,1
+student_proposal_supervisor,Proposal for Supervisor,model_student_proposal,student.group_supervisor,1,0,0,0
+student_proposal_professor,Proposal for Professor,model_student_proposal,student.group_professor,1,1,0,0
+student_proposal_student,Proposal for Student,model_student_proposal,student.group_student,1,1,1,0

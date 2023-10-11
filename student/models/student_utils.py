@@ -5,11 +5,13 @@ class StudentUtils(models.AbstractModel):
     _description = 'PaLMS - Utility Methods'
 
     @api.model
-    def send_message(context, source, message_text, recipients, author, project_id, application_id = -1):
+    def send_message(context, source, message_text, recipients, author, project_id = -1, application_id = -1, proposal_id = -1):
         if source == 'project':
             channel_name = "Project №" + project_id + " (" + context.env['student.project'].sudo().search([('id', '=', project_id)],limit=1,).name + ")"
         elif source == 'application':
             channel_name = "Applicaton №" + application_id + " for " + context.env['student.project'].sudo().search([('id', '=', project_id)],limit=1,).name
+        elif source == 'proposal':
+            channel_name = "Project Proposal №" + proposal_id + " (" + context.env['student.proposal'].sudo().search([('id', '=', proposal_id)],limit=1,).name + ")"
         else:
             channel_name = source + " №" + id
 
@@ -30,7 +32,6 @@ class StudentUtils(models.AbstractModel):
                 'channel_partner_ids': [(4, recipient.id+1) for recipient in recipients]
             })
 
-        print("Test:", author.id)
         # Send a message to the related user
         channel.sudo().message_post(
             body=message_text,
