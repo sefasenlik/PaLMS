@@ -36,8 +36,8 @@
                 <field name="name_ru"/>
                 <field name="sent_date"/>
                 <field name="proponent"/>
-                <field name="student_degree"/>
                 <field name="student_program"/>
+                <field name="student_degree"/>
                 <field name="email"/>
             </tree>
         </field>
@@ -90,16 +90,16 @@
                 <sheet>
                     <group>
                         <group string="Overview">
-                            <field name="name"/>
-                            <field name="name_ru"/>
-                            <field name="proposal_professor"/>
+                            <field name="name" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="name_ru" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="proposal_professor" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="state"/>
                             <field name="project_id" attrs="{'invisible':['|',('state','=','draft'),('state','=','rejected')]}"/>
                         </group>                        
                         <group string="Details">
-                            <field name="type"/>
-                            <field name="format"/>
-                            <field name="language"/>
+                            <field name="type" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="format" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="language" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                         </group>
                         <group string="Contacts">
                             <field name="proponent" readonly="True"/>
@@ -107,9 +107,9 @@
                             <field name="phone"/>
                         </group>                        
                         <group string="Additional Contacts">
-                            <field name="additional_email"/>
-                            <field name="additional_phone"/>
-                            <field name="telegram"/>
+                            <field name="additional_email" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="additional_phone" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="telegram" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                         </group>
                         <notebook>
                             <page string="Proposal Details">
@@ -124,7 +124,7 @@
                             </page>
                             <page string="Feedback" attrs="{'invisible':[('state','=','draft')]}">
                                 <label for="feedback"/>
-                                <field name="feedback"/>
+                                <field name="feedback" attrs="{'readonly': [('state', '!=', 'sent')]}"/>
                             </page>
                         </notebook>
                     </group>
@@ -150,6 +150,7 @@
                 <filter string="Rejected" name="rejected_proposals" domain="[('state', '=', 'rejected')]"/>
                 <filter string="Accepted" name="accepted_proposals" domain="[('state', '=', 'accepted')]"/>
                 <group expand="1" string="Group By">
+                    <filter string="State" name="state_group" context="{'group_by':'state'}"/>
                     <filter string="Proposed by" name="proponent" context="{'group_by':'proponent'}"/>
                     <filter string="Professor" name="professor" context="{'group_by':'proposal_professor'}"/>
                     <filter string="Program" name="program" context="{'group_by':'student_program'}"/>

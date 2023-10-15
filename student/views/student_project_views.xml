@@ -57,8 +57,8 @@
                             <field name="locked" invisible="1"/>
                             
                             <group string="Basic Info">
-                                <field name="name" attrs="{'readonly': [('locked', '=', True)]}" />
-                                <field name="name_ru" attrs="{'readonly': [('locked', '=', True)]}" />
+                                <field name="name" attrs="{'readonly': [('locked', '=', True)]}"/>
+                                <field name="name_ru" attrs="{'readonly': [('locked', '=', True)]}"/>
                                 <field name="professor_id"/>
                                 <field name="create_date"/>
                                 <field name="write_date"/>
@@ -77,6 +77,7 @@
                                     <field name="campus_ids" widget="many2many_tags" attrs="{'readonly': [('locked', '=', True)]}"/>
                                     <field name="faculty_ids" help="You can only choose faculties from the campuses above." widget="many2many_tags" attrs="{'readonly': [('locked', '=', True)]}" domain="[('campus', 'in', campus_ids)]"/>
                                     <field name="program_ids" help="You can only choose programs from the faculties above." widget="many2many_tags" attrs="{'readonly': [('locked', '=', True)]}" domain="[('program_faculty_id', 'in', faculty_ids)]" groups="student.group_administrator,student.group_supervisor,student.group_professor"/>
+                                    <field name="approved_program_ids" widget="many2many_tags" groups="student.group_student"/>
                                     <field name="degree_ids" widget="many2many_tags" attrs="{'readonly': [('locked', '=', True)]}"/>
                                 </group>
                                 <group>
@@ -85,12 +86,12 @@
                                     <field name="language" attrs="{'readonly': [('locked', '=', True)]}"/>
                                 </group>
                             </group>
-                            <group string="Evaluations" colspan="2" attrs="{'invisible': [('state', 'in', ['draft', 'assigned', 'returned'])]}">
+                            <group string="Supervisor Evaluations" colspan="2" attrs="{'invisible': [('state', 'in', ['draft', 'assigned', 'returned'])]}" groups="student.group_administrator, student.group_supervisor, student.group_professor">
                                 <group>
                                     <field name="approved_program_ids" widget="many2many_tags"/>
                                 </group>
                                 <group>
-                                    <field name="rejected_program_ids" widget="many2many_tags" groups="student.group_administrator, student.group_supervisor, student.group_professor"/>
+                                    <field name="rejected_program_ids" widget="many2many_tags"/>
                                 </group>
                             </group>        
                             <notebook>
@@ -163,9 +164,8 @@
                                         <field name="result_files" widget="many2many_binary" string="Attach a file" attrs="{'readonly':[('state','!=','assigned')]}"/>
                                     </p>
                                 </page>
-                                <page string="Supervisor Feedback" attrs="{'invisible': [('state', 'not in', ['pending', 'returned', 'rejected'])]}" groups="student.group_administrator, student.group_supervisor, student.group_professor">
-                                    <field name="reason" placeholder="Please specify the reason if the project will be rejected or returned." attrs="{'readonly': ['|', ('state', '=', 'rejected'), ('state', '=', 'returned')]}" groups="student.group_administrator, student.group_supervisor"/>
-                                    <field name="reason" placeholder="Please specify the reason if the project will be rejected or returned." readonly="True" groups="student.group_professor"/>
+                                <page string="Supervisor Feedback" attrs="{'invisible': [('state', '!=', 'pending')]}" groups="student.group_administrator, student.group_supervisor">
+                                    <field name="reason" placeholder="Please specify the reason if the project will be rejected or returned. The reason will registered in the log."/>
                                 </page>
                                 <page string="Technical Log &amp; Details" groups="student.group_administrator">
                                     <field name="message_follower_ids" widget="mail_followers"/>

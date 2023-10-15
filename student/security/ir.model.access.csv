@@ -13,6 +13,8 @@ student_subtype_admin,Subtype for Administrator,model_student_message_subtype,st
 
 student_supervisor_admin,Supervisor for Administrator,model_student_supervisor,student.group_administrator,1,1,1,1
 student_supervisor_supervisor,Supervisor for Supervisor,model_student_supervisor,student.group_supervisor,1,0,0,0
+student_supervisor_professor,Supervisor for Professor,model_student_supervisor,student.group_professor,1,0,0,0
+student_supervisor_student,Supervisor for Student,model_student_supervisor,student.group_student,1,0,0,0
 
 student_professor_admin,Professor for Administrator,model_student_professor,student.group_administrator,1,1,1,1
 student_professor_supervisor,Professor for Supervisor,model_student_professor,student.group_supervisor,1,1,0,0

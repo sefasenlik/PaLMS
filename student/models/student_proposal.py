@@ -1,4 +1,4 @@
-from odoo import models, fields, api, _
+from odoo import models, fields, api
 from odoo.exceptions import UserError, ValidationError, AccessError
 
 class Proposal(models.Model):
@@ -28,12 +28,16 @@ class Proposal(models.Model):
 			raise ValidationError("Student account could not be found. Please contact the supervisor.")
 		
 	@api.depends('proponent')
-	def _compute_proponent_account(self):
-		for proposal in self:
-			proposal.proponent_account = proposal.proponent.student_account
+	def _compute_proponent_details(self):
+		self.proponent_account = self.proponent.student_account
+		self.proponent_faculty = self.proponent.student_faculty
+		
+		# ♦ It doesn't work. How to filter professors based on student faculty?
+		return {'domain': {'proposal_professor': [('professor_faculty.id','=',self.proponent_faculty.id)]}}
 	
 	proponent = fields.Many2one('student.student', string='Proposed by', default=_default_proponent, readonly=True, required=True)
-	proponent_account= fields.Many2one('res.users', string="Proposing Account", compute='_compute_proponent_account', store=True)
+	proponent_account= fields.Many2one('res.users', string="Proposing Account", compute='_compute_proponent_details', store=True)
+	proponent_faculty = fields.Many2one('student.faculty', string="Proposing Student Faculty", compute='_compute_proponent_details', store=True)
 
 	proposal_professor = fields.Many2one('student.professor', string='Professor', required=True)
 	professor_account= fields.Many2one('res.users', string="Professor Account", compute='_compute_professor_account', store=True)
@@ -65,21 +69,15 @@ class Proposal(models.Model):
 	additional_files = fields.Many2many(comodel_name="ir.attachment", string="Additional Files") 
 
 	state = fields.Selection([('draft', 'Draft'),('sent', 'Sent'),('accepted', 'Accepted'),('confirmed', 'Confirmed'),('rejected', 'Rejected')], default='draft', readonly=True, string='Proposal State', store=True)
-	sent_date = fields.Date(string='Sent Date')
-
-	def message_display(self, title, message, sticky_bool):
-		return {
-			'type': 'ir.actions.client',
-			'tag': 'display_notification',
-			'params': {
-				'title': _(title),
-				'message': message,
-				'sticky': sticky_bool,
-				'next': {
-					'type': 'ir.actions.act_window_close',
-				}
-			}
-		}
+	sent_date = fields.Date(string='Sent Date')    
+	
+	@api.constrains("feedback")
+	def _check_reason_modified(self):
+		if not self.env.user.has_group("student.group_professor"):
+			raise UserError("Only professors can modify the feedback!")
+        
+		if self.env.user.id != self.professor_account.id:
+			raise UserError("This project proposal is not sent to you.")
 
 	@api.onchange('description', 'results', 'proposal_professor', 'additional_email', 'additional_phone', 'telegram')
 	def _check_user_identity(self):
@@ -114,7 +112,7 @@ class Proposal(models.Model):
 
 			self.sent_date = fields.Date.today()
 
-			return self.message_display('Sent', 'The project proposal is submitted for review.', False)
+			return self.env['student.utils'].message_display('Sent', 'The project proposal is submitted for review.', False)
 
 	def action_view_proposal_cancel(self):
 		self._check_user_identity()
@@ -122,7 +120,7 @@ class Proposal(models.Model):
 		if self.state == 'sent':
 			self.write({'state': 'draft'})
 
-			return self.message_display('Cancellation', 'The proposal submission is cancelled.', False)
+			return self.env['student.utils'].message_display('Cancellation', 'The proposal submission is cancelled.', False)
 		else:
 			raise UserError("The proposal is already processed!")
 			
@@ -172,7 +170,7 @@ class Proposal(models.Model):
 			# Use the send_message utility function to send the message
 			self.env['student.utils'].send_message('proposal', message_text, self.proponent_account, self.professor_account, proposal_id = str(self.id))
 			
-			return self.message_display('Accepted', 'The proposal is accepted and converted to a project..', False)
+			return self.env['student.utils'].message_display('Accepted', 'The proposal is accepted and converted to a project.', False)
 		else:
 			raise UserError("The proposal is already processed or still a draft!")
 	
@@ -202,6 +200,12 @@ class Proposal(models.Model):
 			# Use the send_message utility function to send the message
 			self.env['student.utils'].send_message('proposal', message_text, self.proponent_account, self.professor_account, proposal_id = str(self.id))
 
-			return self.message_display('Rejection', 'The proposal is rejected.', False)
+			return self.env['student.utils'].message_display('Rejection', 'The proposal is rejected.', False)
 		else:
 			raise UserError("The proposal is already processed or still a draft!")
+		
+    # RESTRICTIONS #
+	@api.constrains('name', 'name_ru', 'proposal_professor', 'type', 'format', 'language', 'additional_email', 'additional_phone', 'telegram', 'description', 'results', 'additional_files')
+	def _check_initiator_identity(self):
+		if self.env.uid != self.proponent_account.id:
+			raise ValidationError("Only the creator of the proposal can modify details.")

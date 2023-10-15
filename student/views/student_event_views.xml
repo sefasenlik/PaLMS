@@ -49,20 +49,46 @@
                             string="Complete"
                             type="object"
                             class="oe_highlight"
-                            confirm="Are you sure you want to complete this event?"/>  
+                            confirm="Are you sure you want to complete this event?"
+                            attrs="{'invisible': [('complete', '=', True)]}"/>  
+                    <button name="action_view_event_reopen" 
+                            string="Reopen"
+                            type="object"
+                            class="oe_highlight"
+                            confirm="Are you sure you want to reinitiate this event?"
+                            attrs="{'invisible': [('complete', '=', False)]}"/>  
                 </header>
                 <sheet>
-                    <group string="Event Details">
-                        <field name="name"/>
-                        <field name="description"/>
-                        <field name="creation_date"/>
-                        <field name="due_date"/>
-                        <field name="type"/>
+                    <group string="Event Progress" col="6">
+                        <group colspan="2">
+                            <field name="complete" readonly="True"/>
+                        </group>
+                        <group colspan="4">
+                            <field name="status" readonly="True"/>
+                        </group>
                     </group>
-                    <group string="Participants">
-                        <field name="initiator"/>
-                        <field name="assignee"/>
-                        <field name="watchers" widget="many2many_tags"/>
+                    <group string="Event Details" col="2">
+                        <group>
+                            <field name="type"/>
+                            <field name="name" colors="red:due_date &lt; completion_date;"/>
+                            <field name="description"/>
+                        </group>
+                        <group>
+                            <field name="creation_date"/>
+                            <field name="due_date"/>
+                            <field name="completion_date" attrs="{'invisible': [('complete', '=', False)]}"/>
+                        </group>
+                    </group>
+                    <group string="Participants" col="4">
+                        <group colspan="2">
+                            <field name="initiator"/>
+                        </group>
+                        <group colspan="2">
+                            <field name="assignee"/>
+                        </group>
+                        <group colspan="4">
+                            <field name="watchers" widget="many2many_tags"/>
+                        </group>
                     </group>
                     <notebook>
                         <page string="Related Projects">
@@ -90,12 +116,15 @@
         <field name="model">student.event</field>
         <field name="arch" type="xml">
             <!-- Define the view with the calendar widget -->
-            <calendar string="Event Calendar" date_start="due_date" mode="month" 
-                      hide_time="true" event_open_popup="true" quick_add="false"> 
-                <field name="name"/>
-                <field name="description"/>
+            <calendar string="Event Calendar" date_start="creation_date" date_stop="due_date" mode="month" 
+                      color="color" hide_time="true" event_open_popup="true" quick_add="false"> 
+                <field name="status" decoration-danger="status == 'past'" decoration-warning="status == 'late'" decoration-success="status == 'complete'"/>
+                <field name="type"/>
+                <field name="name" />
                 <field name="creation_date"/>
-                <field name="due_date"/>
+                <field name="due_date" decoration-danger="status == 'past'"/>
+                <field name="completion_date" attrs="{'invisible': [('status', 'in', ['progress', 'past'])]}" decoration-warning="status == 'late'" decoration-success="status == 'complete'"/>
+                <field name="assignee"/>
             </calendar>
         </field>
     </record>

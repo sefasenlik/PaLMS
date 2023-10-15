@@ -7,7 +7,7 @@
             <field name="model_id" ref="student.model_student_project"/>
             <field name="auto_delete" eval="False"/>
             <field name="email_from">{{object.professor_account.email}}</field>
-            <field name="subject">«{{object.name}}» is submitted for review!</field>
+            <field name="subject">«{{object.name}}» is submitted for review</field>
             <field name="body_html">
                 &lt;h2&gt;Hello there!&lt;/h2&gt;
                 &lt;p&gt;The program you are supervising has received a new project proposal. Please examine and decide on the eligibility of this proposal.
@@ -58,7 +58,7 @@
         </record>
 
         <record id="email_template_project_return" model="mail.template">
-            <field name="name">Project Return Notification</field>
+            <field name="name">Returned Project Notification</field>
             <field name="model_id" ref="student.model_student_project"/>
             <field name="auto_delete" eval="False"/>
             <field name="email_from">{{user.email}}</field>
@@ -79,15 +79,15 @@
 
         <!-- APPLICATION -->
         <record id="email_template_application_send" model="mail.template">
-            <field name="name">Application Send Notification</field>
+            <field name="name">Received Application Notification</field>
             <field name="model_id" ref="student.model_student_application"/>
             <field name="auto_delete" eval="False"/>
             <field name="email_from">{{user.email}}</field>
             <field name="email_to">{{object.application_professor.email}}</field>
-            <field name="subject">{{object.applicant_account.name}} sent a an application for «{{object.project_id.name}}»!</field>
+            <field name="subject">{{object.applicant_account.name}} sent a an application for «{{object.project_id.name}}»</field>
             <field name="body_html">
                 &lt;h2&gt;Hello, &lt;t t-out="object.application_professor.name"/&gt;!&lt;/h2&gt;
-                &lt;p&gt;You have received an application for one of your projects. Please log in to your PaLMS account to review it.&lt;br&gt;
+                &lt;p&gt;You have received an application for one of your projects. Please log in to your PaLMS account and review the application in 3 days.&lt;br&gt;
                 &lt;b&gt;Project name: &lt;/b&gt;&lt;t t-out="object.project_id.name"/&gt;&lt;br&gt;
                 &lt;b&gt;Applicant name: &lt;/b&gt;&lt;t t-out="object.applicant_account.name"/&gt;&lt;br&gt;
                 &lt;br&gt;
@@ -137,12 +137,12 @@
 
         <!-- PROPOSAL -->
         <record id="email_template_proposal_send" model="mail.template">
-            <field name="name">Proposal Send Notification</field>
+            <field name="name">Received Proposal Notification</field>
             <field name="model_id" ref="student.model_student_proposal"/>
             <field name="auto_delete" eval="False"/>
             <field name="email_from">{{user.email}}</field>
             <field name="email_to">{{object.professor_account.email}}</field>
-            <field name="subject">{{object.proponent.name}} sent a a proposal!</field>
+            <field name="subject">{{object.proponent.name}} sent a a proposal</field>
             <field name="body_html">
                 &lt;h2&gt;Hello, &lt;t t-out="object.professor_account.name"/&gt;!&lt;/h2&gt;
                 &lt;p&gt;You have received a proposal from a student. Please log in to your PaLMS account to review it.&lt;br&gt;
@@ -186,6 +186,64 @@
                 &lt;p&gt;Your proposal for is rejected by the professor. You can apply to available projects or send your proposal to other professors. Good luck!&lt;br&gt;
                 &lt;b&gt;Professor name: &lt;/b&gt;&lt;t t-out="object.proposal_professor.name"/&gt;&lt;br&gt;
                 &lt;b&gt;Proposal name: &lt;/b&gt;&lt;t t-out="object.name"/&gt;&lt;br&gt;
+                &lt;br&gt;
+                Best wishes,&lt;br&gt;
+                PaLMS Notification Service
+                &lt;/p&gt;
+            </field>
+        </record>
+
+        <!-- EVENT -->
+        <record id="email_template_event_complete" model="mail.template">
+            <field name="name">Event Completion Notification</field>
+            <field name="model_id" ref="student.model_student_event"/>
+            <field name="auto_delete" eval="False"/>
+            <field name="email_from">{{user.email}}</field>
+            <field name="email_to">{{object.initiator.email}}</field>
+            <field name="subject">{{object.assignee.name}} completed the event!</field>
+            <field name="body_html">
+                &lt;h2&gt;Hello, &lt;t t-out="object.initiator.name"/&gt;!&lt;/h2&gt;
+                &lt;p&gt;An event initiated by you is complete. Please log in to your PaLMS account to review it.&lt;br&gt;
+                &lt;b&gt;Event name: &lt;/b&gt;&lt;t t-out="object.name"/&gt;&lt;br&gt;
+                &lt;b&gt;Event type: &lt;/b&gt;&lt;t t-out="object.type"/&gt;&lt;br&gt;
+                &lt;br&gt;
+                Best wishes,&lt;br&gt;
+                PaLMS Notification Service
+                &lt;/p&gt;
+            </field>
+        </record>        
+        
+        <record id="email_template_event_late" model="mail.template">
+            <field name="name">Delayed Event Completion Notification</field>
+            <field name="model_id" ref="student.model_student_event"/>
+            <field name="auto_delete" eval="False"/>
+            <field name="email_from">{{user.email}}</field>
+            <field name="email_to">{{object.initiator.email}}</field>
+            <field name="subject">{{object.assignee.name}} completed the event with a delay</field>
+            <field name="body_html">
+                &lt;h2&gt;Hello, &lt;t t-out="object.initiator.name"/&gt;!&lt;/h2&gt;
+                &lt;p&gt;An event initiated by you is complete, but later than the due date. Please log in to your PaLMS account to review it.&lt;br&gt;
+                &lt;b&gt;Event name: &lt;/b&gt;&lt;t t-out="object.name"/&gt;&lt;br&gt;
+                &lt;b&gt;Event type: &lt;/b&gt;&lt;t t-out="object.type"/&gt;&lt;br&gt;
+                &lt;br&gt;
+                Best wishes,&lt;br&gt;
+                PaLMS Notification Service
+                &lt;/p&gt;
+            </field>
+        </record>
+
+        <record id="email_template_event_reopen" model="mail.template">
+            <field name="name">Reopened Event Notification</field>
+            <field name="model_id" ref="student.model_student_event"/>
+            <field name="auto_delete" eval="False"/>
+            <field name="email_from">{{user.email}}</field>
+            <field name="email_to">{{object.assignee.email}}</field>
+            <field name="subject">Event ({{object.name}}) is reopened</field>
+            <field name="body_html">
+                &lt;h2&gt;Hello, &lt;t t-out="object.assignee.name"/&gt;!&lt;/h2&gt;
+                &lt;p&gt;An event previously marked complete is now reopened. Please log in to your PaLMS account to review it.&lt;br&gt;
+                &lt;b&gt;Event name: &lt;/b&gt;&lt;t t-out="object.name"/&gt;&lt;br&gt;
+                &lt;b&gt;Event type: &lt;/b&gt;&lt;t t-out="object.type"/&gt;&lt;br&gt;
                 &lt;br&gt;
                 Best wishes,&lt;br&gt;
                 PaLMS Notification Service

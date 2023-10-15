@@ -1,4 +1,4 @@
-from odoo import api, fields, models
+from odoo import api, fields, models, _ #_ is for translations
 
 class StudentUtils(models.AbstractModel):
     _name = 'student.utils'
@@ -39,6 +39,21 @@ class StudentUtils(models.AbstractModel):
             message_type="comment",
             subtype_xmlid='mail.mt_comment'
         )
+
+    # Displays notification messages
+    def message_display(self, title, message, sticky_bool):
+        return {
+			'type': 'ir.actions.client',
+			'tag': 'display_notification',
+			'params': {
+				'title': _(title),
+				'message': message,
+				'sticky': sticky_bool,
+				'next': {
+					'type': 'ir.actions.act_window_close',
+				}
+			}
+		}
 
 class StudentDegree(models.Model):
     _name = 'student.degree'

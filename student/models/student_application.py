@@ -71,20 +71,6 @@ class Application(models.Model):
 		for application in self:
 			application.applicant_account = application.applicant.student_account
 
-	def message_display(self, title, message, sticky_bool):
-		return {
-			'type': 'ir.actions.client',
-			'tag': 'display_notification',
-			'params': {
-				'title': _(title),
-				'message': message,
-				'sticky': sticky_bool,
-				'next': {
-					'type': 'ir.actions.act_window_close',
-				}
-			}
-		}
-
 	_sql_constraints = [
         ('check_uniqueness', 'UNIQUE(applicant, project_id)', 'You have already applied to this project.')
 	]
@@ -97,11 +83,11 @@ class Application(models.Model):
 	def _compute_color_value(self):
 		if self.state == 'draft':
 			self.color = 4
-		if self.state == 'sent':
+		elif self.state == 'sent':
 			self.color = 3
-		if self.state == 'accepted':
+		elif self.state == 'accepted':
 			self.color = 10
-		if self.state == 'rejected':
+		elif self.state == 'rejected':
 			self.color = 9
 
 	application_professor = fields.Many2one('res.users', string='Professor of the Applied Project', default=lambda self: self.project_id.professor_account)
@@ -148,9 +134,13 @@ class Application(models.Model):
 			raise UserError("The chosen project is not available for applications, please try another one.")
 		elif self.env['student.application'].search([
 				('applicant_account', '=', self.env.user.id),
-				('state', '=', "sent"),
+				('state', '=', "sent")
 			]):
 			raise UserError("You have already sent an application for a project. Please wait up to 3 days to receive a response or cancel the application.")
+		elif self.env['student.student'].search([
+				('current_project', '!=', False)
+			]):
+			raise UserError("You are already assigned to a project, you cannot apply to other projects anymore.")
 		else:
 			self.write({'state': 'sent'})
 			self.application_professor = self.project_id.professor_account
@@ -177,7 +167,7 @@ class Application(models.Model):
 
 			self.sent_date = fields.Date.today()
 
-			return self.message_display('Sent', 'The application is submitted for review.', False)
+			return self.env['student.utils'].message_display('Sent', 'The application is submitted for review.', False)
 
 	def action_view_application_cancel(self):
 		self._check_user_identity()
@@ -189,7 +179,7 @@ class Application(models.Model):
 			body = _('The application submission is cancelled.')
 			self.message_post(body=body)
 
-			return self.message_display('Cancellation', 'The application submission is cancelled.', False)
+			return self.env['student.utils'].message_display('Cancellation', 'The application submission is cancelled.', False)
 		else:
 			raise UserError("The application is already processed!")
 
@@ -229,14 +219,14 @@ class Application(models.Model):
 			# -----------------------------------
 
 			# Construct the message that is to be sent to the user
-			message_text = f'<strong>Application Accepted</strong><p> This application submitted for <i>' + self.project_id.name + '</i> is accepted by the professor. You can contact the project professor to start working on it.</p>'
+			message_text = f'<strong>Application Accepted</strong><p> This application submitted for «' + self.project_id.name + '» is accepted by the professor. You can contact the project professor to start working on it.</p>'
 
 			# Use the send_message utility function to send the message
 			self.env['student.utils'].send_message('application', message_text, self.applicant_account, self.application_professor, str(self.project_id.id), str(self.id))
 
 			self.mark_other_applications()
 
-			return self.message_display('Accepted', 'The selected application is chosen for the project, remaining ones are automatically rejected.', False)
+			return self.env['student.utils'].message_display('Accepted', 'The selected application is chosen for the project, remaining ones are automatically rejected.', False)
 		else:
 			raise UserError("The application is already processed or still a draft!")
 
@@ -264,7 +254,7 @@ class Application(models.Model):
 			# Use the send_message utility function to send the message
 			self.env['student.utils'].send_message('application', message_text, self.applicant_account, self.application_professor, str(self.project_id.id), str(self.id))
 
-			return self.message_display('Rejection', 'The application is rejected.', False)
+			return self.env['student.utils'].message_display('Rejection', 'The application is rejected.', False)
 		else:
 			raise UserError("The application is already processed or still a draft!")
 

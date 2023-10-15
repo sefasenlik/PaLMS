@@ -22,6 +22,7 @@
                 <field name="student_program"/>
                 <field name="degree"/>
                 <field name="application_number"/>
+                <field name="proposal_number"/>
                 <field name="current_project"/>
             </tree>
         </field>
@@ -78,12 +79,19 @@
                                     <label for="application_number" class="oe_inline"/>
                                     <field name="application_number" style="margin-left:10px" class="oe_inline"/>
                                 </p>
+                                <p>
                                     <label for="current_project" class="oe_inline"/>
                                     <field name="current_project" style="margin-left:10px" readonly="True" class="oe_inline"/>
-                                <p>
                                 </p>
                                 <field name="application_ids"/>
                             </page>
+                            <page string="Proposals">        
+                                <p>
+                                    <label for="proposal_number" class="oe_inline"/>
+                                    <field name="proposal_number" style="margin-left:10px" class="oe_inline"/>
+                                </p>
+                                <field name="proposal_ids"/>
+                            </page>                            
                         </notebook>
                     </group>
                 </sheet>

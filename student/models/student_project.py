@@ -1,4 +1,4 @@
-from odoo import fields, models, api, _ #_ is for translations
+from odoo import fields, models, api, _
 from odoo.exceptions import UserError, AccessError
 
 class Project(models.Model):
@@ -126,8 +126,6 @@ class Project(models.Model):
     def _compute_file_count(self):
         self.file_count = len(self.additional_files)
 
-    # notification_ids = fields.One2many('mail.message', 'res_id', string='Notifications', domain=[('message_type', '!=', 'email')], auto_join=True)
-
     program_supervisors = fields.Many2many('res.users', compute='_compute_program_supervisors', string='Program Supervisors', store=True, readonly=True)
 
     @api.depends('program_ids')
@@ -176,17 +174,17 @@ class Project(models.Model):
     def _compute_color_value(self):
         if self.state == 'draft':
             self.color = 4
-        if self.state == 'pending':
+        elif self.state == 'pending':
             self.color = 3
-        if self.state == 'approved':
+        elif self.state == 'approved':
             self.color = 10
-        if self.state == 'rejected':
+        elif self.state == 'rejected':
             self.color = 9
-        if self.state == 'returned':
+        elif self.state == 'returned':
             self.color = 11
-        if self.state == 'applied':
+        elif self.state == 'applied':
             self.color = 6
-        if self.state == 'assigned':
+        elif self.state == 'assigned':
             self.color = 8
 
     # Orders kanban groups/stages
@@ -197,8 +195,11 @@ class Project(models.Model):
     # RESTRICTIONS #
     @api.constrains("reason")
     def _check_reason_modified(self):
-        if not self.env.user.has_group("student.group_supervisor") and self.state == 'returned':
+        if not self.env.user.has_group("student.group_supervisor") and self.state == 'pending':
             raise UserError("Only academic supervisors can modify the feedback!")
+        
+        if self.env.user.id not in self.program_supervisors.mapped('id') and self.state == 'pending':
+            raise UserError("This project is not sent to a program you are supervising.")
 
     # UTILITY #
     # Prevents the creation of the default log message
@@ -214,21 +215,6 @@ class Project(models.Model):
         project.message_post(body=message)
 
         return project
-    
-    # Displays notification messages
-    def message_display(self, title, message, sticky_bool):
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': _(title),
-                'message': message,
-                'sticky': sticky_bool,
-                'next': {
-                    'type': 'ir.actions.act_window_close',
-                }
-            }
-        }
 
     # BUTTON LOGIC #
     def _check_professor_identity(self):
@@ -269,7 +255,7 @@ class Project(models.Model):
             # Use the send_message utility function to send the message
             self.env['student.utils'].send_message('project', message_text, self.program_supervisors, self.professor_account, str(self.id))
 
-            return self.message_display('Confirmation', 'Project is successfully submitted.', False)
+            return self.env['student.utils'].message_display('Confirmation', 'The project is successfully submitted.', False)
             # ♦ This strangely prevents the project status to be immediately updated in the UI.
     
     def action_view_project_cancel(self):
@@ -284,7 +270,7 @@ class Project(models.Model):
             body = _('The project submission is cancelled.')
             self.message_post(body=body, subtype_id=subtype_id.id)
 
-            return self.message_display('Cancellation', 'The project submission is cancelled.', False)
+            return self.env['student.utils'].message_display('Cancellation', 'The project submission is cancelled.', False)
         
     def _check_supervisor_identity(self):
         if not self.env.user.has_group('student.group_administrator'):
@@ -329,12 +315,12 @@ class Project(models.Model):
             # -----------------------------------
 
             # Construct the message that is to be sent to the user
-            message_text = f'<strong>Project Proposal Approved</strong><p> ' + self.env.user.name + ' has accepted your project "' + self.name + '".</p><p>Eligible students can see and apply for the project after all supervisors complete their evaluation.</p>'
+            message_text = f'<strong>Project Proposal Approved</strong><p> ' + self.env.user.name + ' has accepted your project «' + self.name + '».</p><p>Eligible students can see and apply for the project after all supervisors complete their evaluation.</p>'
 
             # Use the send_message utility function to send the message
             self.env['student.utils'].send_message('project', message_text, self.professor_account, self.env.user, str(self.id))
 
-            return self.message_display('Approval', 'The project is successfully approved.', False)
+            return self.env['student.utils'].message_display('Approval', 'The project is successfully approved.', False)
         else:
             raise UserError("You can only approve projects submissions in 'Pending' status.")
 	
@@ -355,15 +341,14 @@ class Project(models.Model):
                 self.rejected_program_ids = [(4, program.id)] 
                 
             self.write({'state': self._check_decisions()})
-            
-            # Remove the programs that their supervisor rejected
-            user_supervisor = self.env['student.supervisor'].search([('supervisor_account', '=', self.env.uid)])
-            self.program_ids = self.program_ids.filtered(lambda program: program.supervisor != user_supervisor)
 
             # Log the action --------------------
             subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
-            body = _('The project is rejected by ' + self.env.user.name + '.')
+            body = _('The project is rejected by ' + self.env.user.name + '.<br><b>Rejection reason: </b>' + self.reason)
             self.message_post(body=body, subtype_id=subtype_id.id)
+
+            # Reset the reason after logging it.
+            self.reason = ""
 
             # Send the email --------------------
             subtype_id = self.env.ref('student.student_message_subtype_email')
@@ -372,12 +357,12 @@ class Project(models.Model):
             # -----------------------------------
 
             # Construct the message that is to be sent to the user
-            message_text = f'<strong>Project Proposal Rejected</strong><p> ' + self.env.user.name + ' has rejected your project "' + self.name + '".</p><p>You can check the <b>Supervisor Feedback</b> section on the project page to learn about the reason.</p>'
+            message_text = f'<strong>Project Proposal Rejected</strong><p> ' + self.env.user.name + ' has rejected your project «' + self.name + '».</p><p>You can check the <b>project log</b> to learn about the reason.</p>'
 
             # Use the send_message utility function to send the message
             self.env['student.utils'].send_message('project', message_text, self.professor_account, self.env.user, str(self.id))
 
-            return self.message_display('Rejection', 'The project is rejected.', False)
+            return self.env['student.utils'].message_display('Rejection', 'The project is rejected.', False)
         else:
             raise UserError("You can only reject projects submissions in 'Pending' status.")
     
@@ -396,8 +381,11 @@ class Project(models.Model):
 
             # Log the action --------------------
             subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
-            body = _('The project is returned by ' + self.env.user.name + '. Resubmission after applying requested modifications is possible.')
+            body = _('The project is returned by ' + self.env.user.name + ' for the reason below. Resubmission after applying requested modifications is possible.<br><b>Rejection reason: </b>' + self.reason)
             self.message_post(body=body, subtype_id=subtype_id.id)
+
+            # Reset the reason after logging it.
+            self.reason = ""
 
             # Send the email --------------------
             subtype_id = self.env.ref('student.student_message_subtype_email')
@@ -411,13 +399,15 @@ class Project(models.Model):
             # Use the send_message utility function to send the message
             self.env['student.utils'].send_message('project', message_text, self.professor_account, self.env.user, str(self.id))
 
-            return self.message_display('Return', 'The project is returned.', False)
+            return self.env['student.utils'].message_display('Return', 'The project is returned.', False)
 
     # The reset button functionality for development purposes
     def action_view_project_reset(self):
         self.state = "draft"
+        self.locked = False
         self.student_elected = None
         self.student_elected.current_project = None
+        self.reason = ""
 
         # Erase all applications for this project
         applications = self.env['student.application'].search([('project_id', '=', self.id)])
