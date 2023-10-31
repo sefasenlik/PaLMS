@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <odoo>
-    <!-- Add a message subtype for students to not see-->
+    <!-- Add a message subtype for students to not see project conversations -->
     <record id="student_message_subtype_professor_supervisor" model="mail.message.subtype">
         <field name="name">Student - Professor/Supervisor Conversation</field>
         <field name="res_model">student.utils</field>
@@ -12,6 +12,17 @@
         <field name="name">Student - Email</field>
         <field name="res_model">student.utils</field>
         <field name="default" eval="False"/>
+    </record>
+
+    <!-- Add this group to res.groups for professors to change student user groups -->
+    <record model="ir.model.access" id="student_professor_groups_access">
+        <field name="name">Student - Write Access (Access Groups) for Professors</field>
+        <field name="model_id" ref="mail.model_res_groups"/>
+        <field name="group_id" ref="student.group_professor"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="perm_create" eval="False"/>
     </record>
 
     <!-- Add a restriction rule for the message subtype -->

@@ -3,12 +3,13 @@
     <menuitem id="student_menu_root" name="𝗣𝗮𝗟𝗠𝗦">
         <menuitem sequence="1" id="personal_first_level_menu" name="MyLMS">
 
-                <menuitem id="personal_proposal_private" action="student_proposal_view_personal" groups="student.group_student"/>
-                <menuitem id="personal_proposal_professor" action="student_proposal_view_professor" groups="student.group_professor"/>
-                <menuitem id="personal_application_private" action="student_application_view_personal" groups="student.group_student"/>
-                <menuitem id="personal_application_professor" action="student_application_view_professor" groups="student.group_professor"/>
-                <menuitem id="personal_project_supervisor" action="student_project_view_supervisor" groups="student.group_supervisor"/>
-                <menuitem id="personal_event_private" action="student_event_view_personal"/>
+                <menuitem id="personal_event_private" sequence="1" action="student_event_view_personal"/>
+                <menuitem id="personal_proposal_private" sequence="2" action="student_proposal_view_personal" groups="student.group_student"/>
+                <menuitem id="personal_proposal_professor" sequence="2" action="student_proposal_view_professor" groups="student.group_professor"/>
+                <menuitem id="personal_application_private" sequence="3" action="student_application_view_personal" groups="student.group_student"/>
+                <menuitem id="personal_application_professor" sequence="3" action="student_application_view_professor" groups="student.group_professor"/>
+                <menuitem id="personal_project_supervisor" sequence="4" action="student_project_view_supervisor" groups="student.group_supervisor"/>
+                <menuitem id="personal_project_student" sequence="5" action="student_project_view_personal" groups="student.group_elected_student"/>
                 
         </menuitem>
 
@@ -20,18 +21,19 @@
             </menuitem>
 
             <menuitem id="faculty_first_membet_menu" name="Users">
-                <menuitem id="faculty_supervisor_menu_action" action="student_supervisor_view_action"/>
-                <menuitem id="faculty_professor_menu_action" action="student_professor_view_action"/>
-                <menuitem id="faculty_student_menu_action" action="student_student_view_action"/>
+                <menuitem id="faculty_manager_menu_action" sequence="1" action="student_manager_view_action"/>
+                <menuitem id="faculty_supervisor_menu_action" sequence="2" action="student_supervisor_view_action"/>
+                <menuitem id="faculty_professor_menu_action" sequence="3" action="student_professor_view_action"/>
+                <menuitem id="faculty_student_menu_action" sequence="4" action="student_student_view_action"/>
             </menuitem>
             
-            <menuitem id="faculty_first_project_menu" name="Project" >
+            <menuitem id="faculty_first_project_menu" name="Projects" >
                 <menuitem id="faculty_proposal_list" action="student_proposal_view_public" groups="student.group_student,student.group_professor"/>
-                <menuitem id="faculty_project_kanban" action="student_project_view_action_kanban" groups="student.group_supervisor,student.group_professor"/>
+                <menuitem id="faculty_project_kanban" action="student_project_view_action_kanban" groups="student.group_manager,student.group_supervisor,student.group_professor"/>
                 <menuitem id="faculty_project_list" action="student_project_view_action_list" groups="student.group_student"/>
             </menuitem>
 
-            <menuitem id="faculty_first_application_menu" name="Application" >
+            <menuitem id="faculty_first_application_menu" name="Applications" >
                 <menuitem id="faculty_application_public" action="student_application_view_public" groups="student.group_supervisor,student.group_professor"/>
             </menuitem>
 
@@ -39,9 +41,15 @@
 
         <menuitem sequence="3" id="util_first_level_menu" name="Utility" groups="student.group_administrator">
 
-            <menuitem id="degree_model_menu_action" action="student_degree_view_action"/>
-            <menuitem id="campus_model_menu_action" action="student_campus_view_action"/>
-            <menuitem id="event_model_menu_action" action="student_event_view_action"/>
+            <menuitem id="util_second_level_menu_b" name="Project Details">
+                <menuitem id="degree_model_menu_action" action="student_degree_view_action"/>
+                <menuitem id="availability_model_menu_action" action="student_availability_view_action"/>
+            </menuitem>
+
+            <menuitem id="util_second_level_menu_a" name="Miscellaneous">
+                <menuitem id="campus_model_menu_action" action="student_campus_view_action"/>
+                <menuitem id="event_model_menu_action" action="student_event_view_action"/>
+            </menuitem>
 
         </menuitem>
     </menuitem>

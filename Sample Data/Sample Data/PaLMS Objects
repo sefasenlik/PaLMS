@@ -31,22 +31,25 @@ Odoo is a comprehensive and versatile Enterprise Resource Planning (ERP) platfor
 
 Calendar Events:
 
-> Event Type:  Meeting
-> Event Name:  First Meeting
-> Description: Discussing project details even further.
+> Event Type:  		Meeting
+> Event Name:  		First Meeting
+> Description: 		Discussing project details even further.
+> Description Files: 	Attachment 14
 
 /
 
-> Event Type:  Assignment
-> Event Name:  Document Upload to LMS
-> Description: Please upload project proposal to LMS.
+> Event Type: 	Assignment
+> Event Name:  	Document Upload to LMS
+> Description: 	Please upload project proposal to LMS.
+> Outcomes: 	You can find the document I uploaded in the attachment.
+> Result Files: Attachment 15
 
 ________________________________________________________________________________
 
 > DECISION:                     REJECTED
 > Proposal Name:                Data Science with pandas
 > Название предложения проекта: Наука о данных с помощью pandas
-> Professor:                    Aleksander Mareev
+> Professor:                    Konstantin Degtyarev
 
 > Proposal Project Type: Course Work (Курсовая работа)
 > Format:                Research
@@ -165,7 +168,7 @@ ________________________________________________________________________________
 > DECISION:         REJECTED
 > Project Name:     Biology with IoT
 > Название проекта: Биология с IoT
-> PROFESSOR:        ALEKSANDER MAREEV
+> PROFESSOR:        KONSTANTIN DEGTYAREV
 
 > Campus:                Moscow
 > Target Faculties:      Computer Science
@@ -176,7 +179,7 @@ ________________________________________________________________________________
 > Language:              English
 
 > Detailed Description:
-This project, under the guidance of Professor Aleksander Mareev, is a research-oriented exploration that delves into the intersection of biology and the Internet of Things (IoT). This study seeks to leverage cutting-edge IoT technology to enhance and innovate within the field of biology. Students from the faculties of Computer Science, specializing in Artificial Intelligence and Data Analysis, are eligible for participation in this project. By combining their skills and knowledge, participants will work on integrating IoT solutions into biological research and experimentation, potentially revolutionizing data collection, monitoring, and analysis in the field of biology.
+This project, under the guidance of Professor Konstantin Degtyarev, is a research-oriented exploration that delves into the intersection of biology and the Internet of Things (IoT). This study seeks to leverage cutting-edge IoT technology to enhance and innovate within the field of biology. Students from the faculties of Computer Science, specializing in Artificial Intelligence and Data Analysis, are eligible for participation in this project. By combining their skills and knowledge, participants will work on integrating IoT solutions into biological research and experimentation, potentially revolutionizing data collection, monitoring, and analysis in the field of biology.
 > Application Requirements:
 - Open to Bachelor's 4th-year and Master's 2nd-year students in Computer Science.
 - Strong interest in the application of IoT technology in the context of biology.
@@ -245,7 +248,7 @@ ________________________________________________________________________________
 > DECISION:         APPROVED (APPLIED)
 > Project Name:     Significance of Documentation in Software Development
 > Название проекта: Значение документации при разработке программного обеспечения
-> PROFESSOR:        ALEKSANDER MAREEV
+> PROFESSOR:        KONSTANTIN DEGTYAREV
 
 > Campus:                Moscow
 > Target Faculties:      Computer Science

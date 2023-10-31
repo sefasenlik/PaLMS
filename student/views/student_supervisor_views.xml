@@ -18,7 +18,7 @@
             <tree>
                 <field name="name"/>
                 <field name="supervisor_faculty"/>
-                <field name="program_ids"/>
+                <field name="program_ids" widget="many2many_tags"/>
             </tree>
         </field>
     </record>

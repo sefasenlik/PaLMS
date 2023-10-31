@@ -1,7 +1,6 @@
 from odoo import api, fields, models
 from datetime import datetime, timedelta
 
-
 class Supervisor(models.Model):
     _name = "student.supervisor"
     _description = "PaLMS - Supervisors"

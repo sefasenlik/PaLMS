@@ -6,7 +6,6 @@ class Faculty(models.Model):
 
     name = fields.Char('Faculty Name', required=True, translate=True)
     dean = fields.Many2one('res.users', string='Faculty Dean', required=True)
-    manager = fields.Many2one('res.users', string='Faculty Manager', required=True)
     address = fields.Text('Address', required=True)
     campus = fields.Many2one('student.campus', string='Campus', default=lambda self: self.env['student.campus'].search([], limit=1), required=True)
 
@@ -25,6 +24,14 @@ class Faculty(models.Model):
     @api.model
     def _compute_professor_count(self):
         self.professor_number = len(self.professor_ids)
+
+    manager_number = fields.Integer(string='Number of Managers', compute='_compute_manager_count', store=True, readonly=True)
+    manager_ids = fields.One2many('student.manager', "manager_faculty", string='Program Managers', readonly=True)
+
+    @api.depends('manager_ids')
+    @api.model
+    def _compute_manager_count(self):
+        self.manager_number = len(self.manager_ids)
 
     supervisor_number = fields.Integer(string='Number of Supervisors', compute='_compute_supervisor_count', store=True, readonly=True)
     supervisor_ids = fields.One2many('student.supervisor', 'supervisor_faculty', string='Supervisors', readonly=True)

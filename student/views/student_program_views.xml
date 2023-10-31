@@ -55,17 +55,22 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <group>
-                        <group>
-                            <field name="name"/>
-                            <field name="degree"/>
-                            <field name="program_faculty_id"/>
-                            <field name="supervisor"/>
+                    <group col="6">
+                        <group string="Basic Info" colspan="4">
+                            <group>
+                                <field name="name"/>
+                                <field name="degree"/>
+                                <field name="program_faculty_id"/>
+                            </group>
+                            <group>
+                                <field name="type"/>
+                                <field name="length"/>
+                                <field name="language"/>
+                            </group>
                         </group>
-                        <group>
-                            <field name="type"/>
-                            <field name="length"/>
-                            <field name="language"/>
+                        <group string="Management" colspan="2">
+                            <field name="supervisor"/>
+                            <field name="manager"/>
                         </group>
                         <notebook>
                             <page string="Students">

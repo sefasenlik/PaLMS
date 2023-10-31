@@ -3,6 +3,7 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 student_utils_admin,Utilities for Administrator,model_student_utils,student.group_administrator,1,1,1,1
 
 student_event_admin,Event for Administrator,model_student_event,student.group_administrator,1,1,1,1
+student_event_manager,Event for Manager,model_student_event,student.group_manager,1,0,0,0
 student_event_supervisor,Event for Supervisor,model_student_event,student.group_supervisor,1,1,1,1
 student_event_professor,Event for Professor,model_student_event,student.group_professor,1,1,1,1
 student_event_student,Event for Student,model_student_event,student.group_student,1,1,1,1
@@ -11,56 +12,78 @@ student_subtype_admin,Subtype for Administrator,model_student_message_subtype,st
 
 
 
+student_manager_admin,Manager for Administrator,model_student_manager,student.group_administrator,1,1,1,1
+student_manager_manager,Manager for Manager,model_student_manager,student.group_manager,1,0,0,0
+student_manager_supervisor,Manager for Supervisor,model_student_manager,student.group_supervisor,1,0,0,0
+student_manager_professor,Manager for Professor,model_student_manager,student.group_professor,1,0,0,0
+student_manager_student,Manager for Student,model_student_manager,student.group_student,1,0,0,0
+
 student_supervisor_admin,Supervisor for Administrator,model_student_supervisor,student.group_administrator,1,1,1,1
+student_supervisor_manager,Supervisor for Manager,model_student_supervisor,student.group_manager,1,1,0,0
 student_supervisor_supervisor,Supervisor for Supervisor,model_student_supervisor,student.group_supervisor,1,0,0,0
 student_supervisor_professor,Supervisor for Professor,model_student_supervisor,student.group_professor,1,0,0,0
 student_supervisor_student,Supervisor for Student,model_student_supervisor,student.group_student,1,0,0,0
 
 student_professor_admin,Professor for Administrator,model_student_professor,student.group_administrator,1,1,1,1
-student_professor_supervisor,Professor for Supervisor,model_student_professor,student.group_supervisor,1,1,0,0
+student_professor_manager,Professor for Manager,model_student_professor,student.group_manager,1,1,0,0
+student_professor_supervisor,Professor for Supervisor,model_student_professor,student.group_supervisor,1,0,0,0
 student_professor_professor,Professor for Professor,model_student_professor,student.group_professor,1,0,0,0
 student_professor_student,Professor for Student,model_student_professor,student.group_student,1,0,0,0
 
 student_student_admin,Student for Administrator,model_student_student,student.group_administrator,1,1,1,1
-student_student_supervisor,Student for Supervisor,model_student_student,student.group_supervisor,1,1,0,0
+student_student_manager,Student for Manager,model_student_student,student.group_manager,1,1,0,0
+student_student_supervisor,Student for Supervisor,model_student_student,student.group_supervisor,1,0,0,0
 student_student_professor,Student for Professor,model_student_student,student.group_professor,1,1,0,0
 student_student_student,Student for Student,model_student_student,student.group_student,1,0,0,0
 
 
 
 student_degree_admin,Degree for Administrator,model_student_degree,student.group_administrator,1,1,1,1
+student_degree_manager,Degree for Manager,model_student_degree,student.group_manager,1,0,0,0
 student_degree_supervisor,Degree for Supervisor,model_student_degree,student.group_supervisor,1,0,0,0
 student_degree_professor,Degree for Professor,model_student_degree,student.group_professor,1,0,0,0
 student_degree_student,Degree for Student,model_student_degree,student.group_student,1,0,0,0
 
+student_availability_admin,Availability for Administrator,model_student_availability,student.group_administrator,1,1,1,1
+student_availability_manager,Availability for Manager,model_student_availability,student.group_manager,1,0,0,0
+student_availability_supervisor,Availability for Supervisor,model_student_availability,student.group_supervisor,1,1,0,0
+student_availability_professor,Availability for Professor,model_student_availability,student.group_professor,1,1,1,1
+student_availability_student,Availability for Student,model_student_availability,student.group_student,1,0,0,0
+
 student_campus_admin,Campus for Administrator,model_student_campus,student.group_administrator,1,1,1,1
+student_campus_manager,Campus for Manager,model_student_campus,student.group_manager,1,0,0,0
 student_campus_supervisor,Campus for Supervisor,model_student_campus,student.group_supervisor,1,0,0,0
 student_campus_professor,Campus for Professor,model_student_campus,student.group_professor,1,0,0,0
 student_campus_student,Campus for Student,model_student_campus,student.group_student,1,0,0,0
 
 student_faculty_admin,Faculty for Administrator,model_student_faculty,student.group_administrator,1,1,1,1
+student_faculty_manager,Faculty for Manager,model_student_faculty,student.group_manager,1,0,0,0
 student_faculty_supervisor,Faculty for Supervisor,model_student_faculty,student.group_supervisor,1,0,0,0
 student_faculty_professor,Faculty for Professor,model_student_faculty,student.group_professor,1,0,0,0
 student_faculty_student,Faculty for Student,model_student_faculty,student.group_student,1,0,0,0
 
 student_program_admin,Program for Administrator,model_student_program,student.group_administrator,1,1,1,1
-student_program_supervisor,Program for Supervisor,model_student_program,student.group_supervisor,1,1,0,0
+student_program_manager,Program for Manager,model_student_program,student.group_manager,1,1,0,0
+student_program_supervisor,Program for Supervisor,model_student_program,student.group_supervisor,1,0,0,0
 student_program_professor,Program for Professor,model_student_program,student.group_professor,1,0,0,0
 student_program_student,Program for Student,model_student_program,student.group_student,1,0,0,0
 
 student_project_admin,Project for Administrator,model_student_project,student.group_administrator,1,1,1,1
+student_project_manager,Project for Manager,model_student_project,student.group_manager,1,1,0,0
 student_project_supervisor,Project for Supervisor,model_student_project,student.group_supervisor,1,1,0,1
-student_project_professor,Project for Professor,model_student_project,student.group_professor,1,1,1,0
+student_project_professor,Project for Professor,model_student_project,student.group_professor,1,1,1,1
 student_project_student,Project for Student,model_student_project,student.group_student,1,1,0,0
 
 
 
 student_application_admin,Application for Administrator,model_student_application,student.group_administrator,1,1,1,1
+student_application_manager,Application for Manager,model_student_application,student.group_manager,1,0,0,0
 student_application_supervisor,Application for Supervisor,model_student_application,student.group_supervisor,1,1,1,1
 student_application_professor,Application for Professor,model_student_application,student.group_professor,1,1,0,0
 student_application_student,Application for Student,model_student_application,student.group_student,1,1,1,0
 
 student_proposal_admin,Proposal for Administrator,model_student_proposal,student.group_administrator,1,1,1,1
+student_proposal_manager,Proposal for Manager,model_student_proposal,student.group_manager,1,0,0,0
 student_proposal_supervisor,Proposal for Supervisor,model_student_proposal,student.group_supervisor,1,0,0,0
 student_proposal_professor,Proposal for Professor,model_student_proposal,student.group_professor,1,1,0,0
-student_proposal_student,Proposal for Student,model_student_proposal,student.group_student,1,1,1,0
+student_proposal_student,Proposal for Student,model_student_proposal,student.group_student,1,1,1,1

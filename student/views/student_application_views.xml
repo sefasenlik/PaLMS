@@ -108,26 +108,30 @@
                         type="object"
                         confirm="Are you sure you want to send your application for the chosen project?"
                         groups="student.group_student"
-                        class="oe_highlight"/>
+                        class="oe_highlight"
+                        attrs="{'invisible': [('state', '!=', 'draft')]}"/>
                     <button name="action_view_application_cancel"
                         string="Cancel Application"
                         type="object"
                         confirm="Are you sure you want to cancel your application?"
                         groups="student.group_student"
-                        class="oe_highlight"/>
+                        class="oe_highlight"
+                        attrs="{'invisible': [('state', '!=', 'sent')]}"/>
 
                     <button name="action_view_application_accept"
                         string="ACCEPT APPLICATION"
                         type="object"
                         confirm="Are you sure you want to accept this application?"
                         groups="student.group_professor"
-                        class="btn-success"/>
+                        class="btn-success"
+                        attrs="{'invisible': [('state', '!=', 'sent')]}"/>
                     <button name="action_view_application_reject"
                         string="REJECT APPLICATION"
                         type="object"
                         confirm="Are you sure you want to reject this application?"
                         groups="student.group_professor"
-                        class="btn-danger"/>
+                        class="btn-danger"
+                        attrs="{'invisible': [('state', '!=', 'sent')]}"/>
                 </header>
                 <sheet>
                     <group>
@@ -146,7 +150,10 @@
                                 <field name="message" style="margin-bottom:20 px" attrs="{'readonly':[('state','!=','draft')]}"/>
 
                                 <label for="additional_files"/>
-                                <field name="additional_files" widget="many2many_binary" string="Additional Files" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <p colspan="2" style="color:gray" attrs="{'invisible': [('id', '!=', False)]}">
+                                    <i>Save the application to add additional files.</i>
+                                </p>
+                                <field name="additional_files" widget="many2many_binary" string="Additional Files" attrs="{'readonly':[('state','!=','draft')], 'invisible': [('id', '=', False)]}"/>
                             </page>
                             <page string="Student Info">
                                 <group string="Academic">

@@ -1,0 +1,58 @@
+Date : 2023-10-31 03:12:40
+Directory : /home/sefa/git/odoo/16.0/addons/student
+Total : 29 files,  3231 codes, 176 comments, 451 blanks, all 3858 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| XML      |         15 |      1,966 |         46 |        110 |      2,122 |
+| Python   |         14 |      1,265 |        130 |        341 |      1,736 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                        | files      | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                           |         29 |      3,231 |        176 |        451 |      3,858 |
+| . (Files)                                                                   |          2 |         32 |          2 |          3 |         37 |
+| data                                                                        |          3 |        405 |         13 |         32 |        450 |
+| models                                                                      |         12 |      1,233 |        128 |        338 |      1,699 |
+| views                                                                       |         12 |      1,561 |         33 |         78 |      1,672 |
++-----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                    | language | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| /home/sefa/git/odoo/16.0/addons/student/__init__.py                         | Python   |          1 |          0 |          1 |          2 |
+| /home/sefa/git/odoo/16.0/addons/student/__manifest__.py                     | Python   |         31 |          2 |          2 |         35 |
+| /home/sefa/git/odoo/16.0/addons/student/data/student_email_templates.xml    | XML      |        238 |          4 |         13 |        255 |
+| /home/sefa/git/odoo/16.0/addons/student/data/student_groups.xml             | XML      |         34 |          1 |          4 |         39 |
+| /home/sefa/git/odoo/16.0/addons/student/data/student_regulations.xml        | XML      |        133 |          8 |         15 |        156 |
+| /home/sefa/git/odoo/16.0/addons/student/models/__init__.py                  | Python   |          1 |          0 |          1 |          2 |
+| /home/sefa/git/odoo/16.0/addons/student/models/student_application.py       | Python   |        200 |         28 |         63 |        291 |
+| /home/sefa/git/odoo/16.0/addons/student/models/student_event.py             | Python   |        130 |         10 |         27 |        167 |
+| /home/sefa/git/odoo/16.0/addons/student/models/student_faculty.py           | Python   |         44 |          0 |         14 |         58 |
+| /home/sefa/git/odoo/16.0/addons/student/models/student_manager.py           | Python   |         15 |          0 |          6 |         21 |
+| /home/sefa/git/odoo/16.0/addons/student/models/student_professor.py         | Python   |         31 |          1 |         10 |         42 |
+| /home/sefa/git/odoo/16.0/addons/student/models/student_program.py           | Python   |         24 |          0 |          6 |         30 |
+| /home/sefa/git/odoo/16.0/addons/student/models/student_project.py           | Python   |        417 |         64 |        109 |        590 |
+| /home/sefa/git/odoo/16.0/addons/student/models/student_proposal.py          | Python   |        157 |         16 |         51 |        224 |
+| /home/sefa/git/odoo/16.0/addons/student/models/student_student.py           | Python   |         67 |          2 |         17 |         86 |
+| /home/sefa/git/odoo/16.0/addons/student/models/student_supervisor.py        | Python   |         16 |          0 |          7 |         23 |
+| /home/sefa/git/odoo/16.0/addons/student/models/student_utils.py             | Python   |        131 |          7 |         27 |        165 |
+| /home/sefa/git/odoo/16.0/addons/student/views/student_application_views.xml | XML      |        208 |          4 |          9 |        221 |
+| /home/sefa/git/odoo/16.0/addons/student/views/student_event_views.xml       | XML      |        166 |          2 |          7 |        175 |
+| /home/sefa/git/odoo/16.0/addons/student/views/student_faculty_views.xml     | XML      |        116 |          0 |          3 |        119 |
+| /home/sefa/git/odoo/16.0/addons/student/views/student_manager_views.xml     | XML      |         69 |          0 |          3 |         72 |
+| /home/sefa/git/odoo/16.0/addons/student/views/student_menus.xml             | XML      |         44 |          0 |         12 |         56 |
+| /home/sefa/git/odoo/16.0/addons/student/views/student_professor_views.xml   | XML      |         83 |          2 |          3 |         88 |
+| /home/sefa/git/odoo/16.0/addons/student/views/student_program_views.xml     | XML      |         93 |          0 |          3 |         96 |
+| /home/sefa/git/odoo/16.0/addons/student/views/student_project_views.xml     | XML      |        351 |          7 |         15 |        373 |
+| /home/sefa/git/odoo/16.0/addons/student/views/student_proposal_views.xml    | XML      |        160 |          1 |          8 |        169 |
+| /home/sefa/git/odoo/16.0/addons/student/views/student_student_views.xml     | XML      |         97 |          1 |          4 |        102 |
+| /home/sefa/git/odoo/16.0/addons/student/views/student_supervisor_views.xml  | XML      |         69 |         12 |          3 |         84 |
+| /home/sefa/git/odoo/16.0/addons/student/views/student_util_views.xml        | XML      |        105 |          4 |          8 |        117 |
+| Total                                                                       |          |      3,231 |        176 |        451 |      3,858 |
++-----------------------------------------------------------------------------+----------+------------+------------+------------+------------+

@@ -19,9 +19,9 @@
                 <field name="name"/>
                 <field name="campus"/>
                 <field name="dean"/>
-                <field name="manager"/>
                 <field name="program_number"/>
                 <field name="professor_number"/>
+                <field name="manager_number"/>
                 <field name="supervisor_number"/>
                 <field name="student_number"/>
                 <field name="project_number"/>
@@ -36,14 +36,12 @@
             <search string="Faculty List">
                 <field name="name" string="Faculty Name"/>
                 <field name="dean" string="Dean"/>
-                <field name="manager" string="manager"/>
                 <filter string="Has programs" name="has_programs" domain="[('program_number', '>', 0)]"/>
                 <filter string="Has professors" name="has_professors" domain="[('professor_number', '>', 0)]"/>
                 <filter string="Has projects  " name="has_students" domain="[('project_number', '>', 0)]"/>
                 <group expand="1" string="Group By">
                     <filter name="campus" context="{'group_by':'campus'}"/>
                     <filter name="dean" context="{'group_by':'dean'}"/>
-                    <filter name="manager" context="{'group_by':'manager'}"/>
                 </group>
             </search>
         </field>
@@ -59,11 +57,8 @@
                         <group>
                             <field name="name"/>
                             <field name="campus"/>
-                            <field name="address"/>
-                        </group>
-                        <group>
                             <field name="dean"/>
-                            <field name="manager"/>
+                            <field name="address"/>
                         </group>
                         <group string="Faculty in Numbers" colspan="1" col="6">
                             <field name="program_number" string="Programs" readonly="True" style="width: 100px;" colspan="1"/>
@@ -86,6 +81,13 @@
                                     <field name="professor_number" style="margin-left:10px" class="oe_inline"/>
                                 </p>
                                 <field name="professor_ids"/>
+                            </page>
+                            <page string="Program Managers">
+                                <p>
+                                    <label for="manager_number" class="oe_inline"/>
+                                    <field name="manager_number" style="margin-left:10px" class="oe_inline"/>
+                                </p>
+                                <field name="manager_ids"/>
                             </page>
                             <page string="Supervisors">
                                 <p>

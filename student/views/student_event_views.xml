@@ -46,21 +46,23 @@
             <form>
                 <header>
                     <button name="action_view_event_complete" 
-                            string="Complete"
+                            string="COMPLETE"
                             type="object"
-                            class="oe_highlight"
+                            class="btn-success"
                             confirm="Are you sure you want to complete this event?"
-                            attrs="{'invisible': [('complete', '=', True)]}"/>  
+                            attrs="{'invisible': ['|',('button_control','!=','assignee'),('complete', '=', True)]}"/>  
                     <button name="action_view_event_reopen" 
-                            string="Reopen"
+                            string="REOPEN"
                             type="object"
-                            class="oe_highlight"
-                            confirm="Are you sure you want to reinitiate this event?"
-                            attrs="{'invisible': [('complete', '=', False)]}"/>  
+                            class="btn-warning"
+                            confirm="Are you sure you want to reinitiate this event? (Due date update is recommended)"
+                            attrs="{'invisible': ['|',('button_control','!=','initiator'),('complete', '=', False)]}"/>
                 </header>
                 <sheet>
                     <group string="Event Progress" col="6">
                         <group colspan="2">
+                            <field name="_current_user" invisible="True"/>
+                            <field name="button_control" invisible="False"/>
                             <field name="complete" readonly="True"/>
                         </group>
                         <group colspan="4">
@@ -69,14 +71,21 @@
                     </group>
                     <group string="Event Details" col="2">
                         <group>
-                            <field name="type"/>
                             <field name="name" colors="red:due_date &lt; completion_date;"/>
-                            <field name="description"/>
+                            <field name="type"/>
                         </group>
                         <group>
                             <field name="creation_date"/>
                             <field name="due_date"/>
                             <field name="completion_date" attrs="{'invisible': [('complete', '=', False)]}"/>
+                        </group>
+                        <group colspan="2">
+                            <field name="description"/>
+                            <p colspan="2" style="color:gray" attrs="{'invisible': [('id', '!=', False)]}">
+                                <label for="additional_files"/>
+                                <i>Save the event to add additional files.</i>
+                            </p>
+                            <field name="additional_files" widget="many2many_binary" string="Description Files" attrs="{'invisible': [('id', '=', False)]}"/>
                         </group>
                     </group>
                     <group string="Participants" col="4">
@@ -90,22 +99,17 @@
                             <field name="watchers" widget="many2many_tags"/>
                         </group>
                     </group>
-                    <notebook>
-                        <page string="Related Projects">
-                            <field name="related_projects">
-                                <tree>
-                                    <field name="name"/>
-                                    <field name="name_ru"/>
-                                    <field name="professor_id"/>
-                                    <field name="format"/>
-                                    <field name="language"/>
-                                </tree>
-                            </field>
-                        </page>
-                        <page string="Attachments">
-                            <field name="additional_files" widget="many2many_binary" string="Attach a file"/>
-                        </page>
-                    </notebook>
+                    <group string="Related Projects" groups="student.group_administrator, student.group_supervisor, student.group_professor">
+                        <field name="related_projects" widget="many2many_tags"/>
+                    </group>
+                    <group string="Results">
+                        <field name="outcomes"/>
+                        <p colspan="2" style="color:gray" attrs="{'invisible': [('id', '!=', False)]}">
+                            <label for="result_files"/>
+                            <i>Save the event to add result files.</i>
+                        </p>
+                        <field name="result_files" widget="many2many_binary" string="Result Files" attrs="{'invisible': [('id', '=', False)]}"/>
+                    </group>
                 </sheet>
             </form>
         </field>
@@ -116,7 +120,7 @@
         <field name="model">student.event</field>
         <field name="arch" type="xml">
             <!-- Define the view with the calendar widget -->
-            <calendar string="Event Calendar" date_start="creation_date" date_stop="due_date" mode="month" 
+            <calendar string="Event Calendar" date_start="due_date" date_stop="due_date" mode="month" 
                       color="color" hide_time="true" event_open_popup="true" quick_add="false"> 
                 <field name="status" decoration-danger="status == 'past'" decoration-warning="status == 'late'" decoration-success="status == 'complete'"/>
                 <field name="type"/>
@@ -155,7 +159,7 @@
         </field>
     </record>
 
-    <!-- Define the action to open the list view of events from the project form-->
+    <!-- Define the action to open the Tree View of events from the project form -->
     <record id="action_event" model="ir.actions.act_window">
         <field name="name">Events</field>
         <field name="type">ir.actions.act_window</field>

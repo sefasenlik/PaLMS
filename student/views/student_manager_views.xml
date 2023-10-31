@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="student_manager_view_action" model="ir.actions.act_window">
+        <field name="name">Managers</field>
+        <field name="res_model">student.manager</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Define a new manager registry.
+            </p>
+        </field>
+    </record>
+
+    <record id="student_manager_view_tree" model="ir.ui.view">
+        <field name="name">student.manager.tree</field>
+        <field name="model">student.manager</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="manager_faculty"/>
+                <field name="program_ids" widget="many2many_tags"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="student_manager_view_search" model="ir.ui.view">
+        <field name="name">student.manager.search</field>
+        <field name="model">student.manager</field>
+        <field name="arch" type="xml">
+            <search string="manager List">
+                <field name="name" string="manager"/>
+                <field name="manager_faculty" string="Faculty"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="student_manager_view_form" model="ir.ui.view">
+        <field name="name">student.manager.form</field>
+        <field name="model">student.manager</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="manager_account"/>
+                            <field name="manager_faculty"/>
+                        </group>
+                        <notebook>
+                            <page string="Programs">
+                                <field name="program_ids">
+                                    <tree>    
+                                        <field name="name"/>
+                                        <field name="degree"/>
+                                        <field name="program_faculty_id"/>
+                                        <field name="length"/>
+                                        <field name="language"/>
+                                        <field name="student_number"/>
+                                        <field name="project_number"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

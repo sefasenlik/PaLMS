@@ -1,4 +1,4 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError, AccessError
 
 class Proposal(models.Model):
@@ -108,7 +108,7 @@ class Proposal(models.Model):
 			message_text = f'<strong>Project Proposal Received</strong><p> ' + self.proponent_account.name + " sent a project proposal «" + self.name + "». Please evaluate the proposal.</p>"
 
 			# Use the send_message utility function to send the message
-			self.env['student.utils'].send_message('proposal', message_text, self.professor_account, self.proponent_account, proposal_id = str(self.id))
+			self.env['student.utils'].send_message('proposal', message_text, self.professor_account, self.proponent_account, (str(self.id),str(self.name)))
 
 			self.sent_date = fields.Date.today()
 
@@ -142,11 +142,9 @@ class Proposal(models.Model):
 				'description': self.description,
 				'requirements': 'Not applicable for proposed projects...',
 				'results': self.results,
-				'campus_ids': self.proponent.student_faculty.campus,
-				'faculty_ids': self.proponent.student_faculty,
+				'campus_id': self.proponent.student_faculty.campus,
+				'faculty_id': self.proponent.student_faculty,
 				'program_ids': self.proponent.student_program,
-				'degree_ids': self.proponent.degree,
-				'type': self.type,
 				'format': self.format,
 				'language': self.language,
 				'proposal_id': self.id,
@@ -155,6 +153,16 @@ class Proposal(models.Model):
 				'assigned': True,
 				'student_elected': self.proponent
 			})
+
+			project_availability = self.env['student.availability'].create({
+				'project_id': self.project_id.id,
+				'state': 'waiting',
+				'program_id': self.proponent.student_program.id,
+				'type': self.type,
+				'degree_ids': self.proponent.degree,
+			})
+
+			self.project_id.write({'availability_ids': project_availability})
 			
 			self.write({'state': 'accepted'})
             
@@ -168,7 +176,7 @@ class Proposal(models.Model):
 			message_text = f"<strong>Proposal Accepted</strong><p> The proposal is accepted by <i>" + self.professor_account.name + "</i> and converted to a project submission. It can be assigned to the student after supervisor's approval.</p>"
 
 			# Use the send_message utility function to send the message
-			self.env['student.utils'].send_message('proposal', message_text, self.proponent_account, self.professor_account, proposal_id = str(self.id))
+			self.env['student.utils'].send_message('proposal', message_text, self.proponent_account, self.professor_account, (str(self.id),str(self.name)))
 			
 			return self.env['student.utils'].message_display('Accepted', 'The proposal is accepted and converted to a project.', False)
 		else:
@@ -198,7 +206,7 @@ class Proposal(models.Model):
 			message_text = f'<strong>Proposal Rejected</strong><p> This project proposal is rejected by <i>' + self.professor_account.name + '</i>. Please check the <b>Feedback</b> section to learn about the reason.</p>'
 
 			# Use the send_message utility function to send the message
-			self.env['student.utils'].send_message('proposal', message_text, self.proponent_account, self.professor_account, proposal_id = str(self.id))
+			self.env['student.utils'].send_message('proposal', message_text, self.proponent_account, self.professor_account, (str(self.id),str(self.name)))
 
 			return self.env['student.utils'].message_display('Rejection', 'The proposal is rejected.', False)
 		else:
@@ -209,3 +217,8 @@ class Proposal(models.Model):
 	def _check_initiator_identity(self):
 		if self.env.uid != self.proponent_account.id:
 			raise ValidationError("Only the creator of the proposal can modify details.")
+		
+	def unlink(self):
+		if self.env.uid != self.proponent_account.id:
+			raise UserError(_('Only the proposing student can delete the proposal!'))
+		return super(Proposal, self).unlink()

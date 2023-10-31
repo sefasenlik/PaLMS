@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <odoo>
+    <!-- DEGREE -->
     <record id="student_degree_view_action" model="ir.actions.act_window">
         <field name="name">Degrees of Education</field>
         <field name="res_model">student.degree</field>
@@ -27,6 +28,66 @@
         </field>
     </record>
 
+    <!-- AVAILABILITY -->
+    <record id="student_availability_view_action" model="ir.actions.act_window">
+        <field name="name">Project Availability</field>
+        <field name="res_model">student.availability</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Define a new project availability.
+            </p>
+        </field>
+    </record>
+
+    <record id="student_availability_view_form" model="ir.ui.view">
+        <field name="name">student.availability.form</field>
+        <field name="model">student.availability</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group string="Project Availability">
+                        <field name="project_id" readonly="1"/>
+                        <field name="state" readonly="1"/>
+                        <field name="type" attrs="{'readonly': ['|', ('state', '=', 'accepted'), ('state', '=', 'rejected')]}"/>
+                        <field name="program_id" attrs="{'readonly': [('state', '!=', 'waiting')]}"/>
+                        <field name="degree_ids" widget="many2many_tags" domain="degree_ids_domain" attrs="{'readonly': ['|', ('state', '=', 'accepted'), ('state', '=', 'rejected')]}"/>
+                        <field name="reason" attrs="{'invisible': [('state', 'in', ['waiting','approved'])]}" placeholder="Please specify the reason if the project will be rejected or returned. The reason will registered in the log." readonly="1"/>
+                        
+                        <field name="degree_ids_domain" invisible="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ♦ Finish it -->
+    <record id="student_availability_view_search" model="ir.ui.view">
+        <field name="name">student.availability.search</field>
+        <field name="model">student.availability</field>
+        <field name="arch" type="xml">
+            <search string="Availability List">
+                <field name="project_id" string="Related Project" />
+                <field name="program_id" string="Submitted to" />
+                <field name="degree_ids" string="Available for"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="student_availability_view_list" model="ir.ui.view">
+        <field name="name">Availability - Tree View</field>
+        <field name="model">student.availability</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="state" string="Submission State" />
+                <field name="program_id" string="Submitted to" />
+                <field name="type" string="Type" />
+                <field name="degree_ids" widget="many2many_tags" string="Available for"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- CAMPUS -->
     <record id="student_campus_view_action" model="ir.actions.act_window">
         <field name="name">University Campuses</field>
         <field name="res_model">student.campus</field>

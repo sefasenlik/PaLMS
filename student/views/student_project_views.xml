@@ -12,32 +12,38 @@
                             type="object"
                             class="oe_highlight"
                             confirm="Are you sure you want to submit this project?"
-                            groups="student.group_professor"/>
+                            groups="student.group_professor"
+                            attrs="{'invisible': [('state', 'not in', ['draft','returned'])]}"/>
                         <button name="action_view_project_cancel"
                             string="Cancel Submission"
                             type="object"
                             class="oe_highlight"
                             confirm="Are you sure you want to cancel your project submission?"
-                            groups="student.group_professor"/>
+                            groups="student.group_professor"
+                            attrs="{'invisible': [('state', '!=', 'pending')]}"/>
                         
                         <button name="action_view_project_approve"
                             string="APPROVE PROJECT"
                             type="object"
                             class="btn-success"
                             confirm="Are you sure you want to accept this project?"
-                            groups="student.group_supervisor"/>
+                            groups="student.group_supervisor"
+                            attrs="{'invisible': ['|',('state', 'not in', ['partially','pending','applied']),('user_supervisor_response','=',False)]}"/>
                         <button name="action_view_project_reject"
                             string="REJECT PROJECT"
                             type="object"
                             class="btn-danger"
                             confirm="Are you sure you want to reject this project?"
-                            groups="student.group_supervisor"/>
+                            groups="student.group_supervisor"
+                            attrs="{'invisible': ['|',('state', 'not in', ['partially','pending','applied']),('user_supervisor_response','=',False)]}"/>
                         <button name="action_view_project_return"
                             string="RETURN PROJECT"
                             type="object"
                             class="oe_highlight"
                             confirm="Are you sure you want to return this project?"
-                            groups="student.group_supervisor"/>
+                            groups="student.group_supervisor"
+                            attrs="{'invisible': ['|',('state', 'not in', ['partially','pending','applied']),('user_supervisor_response','=',False)]}"/>
+
                         <button name="action_view_project_reset"
                             string="RESET PROJECT"
                             type="object"
@@ -50,18 +56,28 @@
                             type="object"
                             class="oe_highlight"
                             groups="student.group_student"
-                            attrs="{'invisible': ['&amp;', ('state', '!=', 'approved'), ('state', '!=', 'applied')]}"/>
+                            attrs="{'invisible': [('state', 'not in', ['partially','approved','applied'])]}"/>
                     </header>
                     <sheet>
                         <group>
                             <field name="locked" invisible="1"/>
+                            <field name="current_user" invisible="1"/>
+                            <field name="user_supervisor_response" invisible="1"/>
                             
-                            <group string="Basic Info">
-                                <field name="name" attrs="{'readonly': [('locked', '=', True)]}"/>
-                                <field name="name_ru" attrs="{'readonly': [('locked', '=', True)]}"/>
-                                <field name="professor_id"/>
-                                <field name="create_date"/>
-                                <field name="write_date"/>
+                            <group string="Basic Info" cols="2"> 
+                                <group colspan="2">
+                                    <field name="name" attrs="{'readonly': [('locked', '=', True)]}"/> 
+                                    <field name="name_ru" attrs="{'readonly': [('locked', '=', True)]}"/> 
+                                </group>   
+                                <group>
+                                    <field name="professor_id"/>
+                                    <field name="create_date"/>
+                                    <field name="write_date"/>
+                                </group>
+                                <group>
+                                    <field name="format" attrs="{'readonly': [('locked', '=', True)]}"/>
+                                    <field name="language" attrs="{'readonly': [('locked', '=', True)]}"/>
+                                </group>
                             </group>
                             <group string="Availability">
                                 <field name="state"/>
@@ -72,28 +88,6 @@
                                 <!-- If NOT based on a proposal -->
                                 <field name="student_elected" widget="many2many_tags" attrs="{'invisible': ['|', ('proposal_id', '!=', False), ('state', '!=', 'assigned')]}"/>
                             </group>
-                            <group string="Eligibility" colspan="2">
-                                <group>
-                                    <field name="campus_ids" widget="many2many_tags" attrs="{'readonly': [('locked', '=', True)]}"/>
-                                    <field name="faculty_ids" help="You can only choose faculties from the campuses above." widget="many2many_tags" attrs="{'readonly': [('locked', '=', True)]}" domain="[('campus', 'in', campus_ids)]"/>
-                                    <field name="program_ids" help="You can only choose programs from the faculties above." widget="many2many_tags" attrs="{'readonly': [('locked', '=', True)]}" domain="[('program_faculty_id', 'in', faculty_ids)]" groups="student.group_administrator,student.group_supervisor,student.group_professor"/>
-                                    <field name="approved_program_ids" widget="many2many_tags" groups="student.group_student"/>
-                                    <field name="degree_ids" widget="many2many_tags" attrs="{'readonly': [('locked', '=', True)]}"/>
-                                </group>
-                                <group>
-                                    <field name="type" attrs="{'readonly': [('locked', '=', True)]}"/>
-                                    <field name="format" attrs="{'readonly': [('locked', '=', True)]}"/>
-                                    <field name="language" attrs="{'readonly': [('locked', '=', True)]}"/>
-                                </group>
-                            </group>
-                            <group string="Supervisor Evaluations" colspan="2" attrs="{'invisible': [('state', 'in', ['draft', 'assigned', 'returned'])]}" groups="student.group_administrator, student.group_supervisor, student.group_professor">
-                                <group>
-                                    <field name="approved_program_ids" widget="many2many_tags"/>
-                                </group>
-                                <group>
-                                    <field name="rejected_program_ids" widget="many2many_tags"/>
-                                </group>
-                            </group>        
                             <notebook>
                                 <page string="Additional Details">
                                     <group>
@@ -103,11 +97,14 @@
                                     </group>
                                     
                                     <group string="Files">
-                                        <field name="file_count"/>
-                                        <field name="additional_files" widget="many2many_binary" string="Attach a file" attrs="{'readonly':['&amp;', ('state','!=','draft'), ('state','!=','returned')]}"/>
+                                        <p colspan="2" style="color:gray" attrs="{'invisible': [('id', '!=', False)]}">
+                                            <i>Save the project to add additional files.</i>
+                                        </p>
+                                        <field name="file_count" attrs="{'invisible': [('id', '=', False)]}"/>
+                                        <field name="additional_files" widget="many2many_binary" string="Attach a file" attrs="{'readonly':[('state','not in',['draft','returned'])], 'invisible': [('id', '=', False)]}" help="Additional files to describe the content of the project further."/>
                                     </group>
                                 </page>
-                                <page string="Applications" attrs="{'invisible': [('state', 'not in', ['applied', 'approved'])]}">
+                                <page string="Applications" attrs="{'invisible': [('state', 'not in', ['applied', 'partially', 'approved'])]}">
                                     <p>
                                         <label for="applications" class="oe_inline"/>
                                         <field name="applications" style="margin-left:10px" class="oe_inline"/>
@@ -122,7 +119,7 @@
                                                     string="Accept ✔"
                                                     type="object"
                                                     class="btn-success"
-                                                    confirm="Are you sure to accept the application? Other applications will be automatically rejected."
+                                                    confirm="Are you sure to accept the application? Other applications will be rejected automatically."
                                                     groups="student.group_professor"
                                                     attrs="{'invisible': [('state', '!=', 'sent')]}"/>  
                                             <button name="action_view_application_reject" 
@@ -136,18 +133,18 @@
                                         </tree>
                                     </field>
                                 </page>
-                                <page string="Calendar" attrs="{'invisible': [('state', '!=', 'assigned')]}">
+                                <page string="Activities" attrs="{'invisible': [('state', '!=', 'assigned')]}">
                                     <div class="text-center">
                                         <button name="action_view_project_events" 
-                                                string="Go to calendar view ►"
+                                                string="Open calendar view to create events ►"
                                                 type="object"
                                                 class="btn-secondary"/>  
                                     </div>
-                                    <field name="project_events" style="margin-top:10px">
+                                    <field name="project_events" style="margin-top:10px" readonly="1">
                                         <tree default_order='due_date' groupby="type" decoration-muted="complete" decoration-bf="due_date==current_date and complete==False" decoration-primary="due_date==current_date and complete==False" decoration-danger="due_date&lt;current_date and complete==False">
                                             <field name="complete" invisible="1"/>
+                                            <field name="status"/>
                                             <field name="name"/>
-                                            <field name="type"/>
                                             <field name="initiator"/>
                                             <field name="assignee"/>
                                             <field name="due_date"/>
@@ -155,17 +152,17 @@
                                     </field> 
                                 </page>
                                 <page string="Results" attrs="{'invisible': [('state', '!=', 'assigned')]}">
-                                    <p>
-                                        <label for="result_text" class="oe_inline"/>
+                                    <group>
+                                        <field name="project_report_file" filename="project_report_filename"/>
+                                        <field name="project_report_filename" invisible="1"/>
+                                        <field name="plagiarism_check_file" filename="plagiarism_check_filename"/>
+                                        <field name="plagiarism_check_filename" invisible="1"/>
+                                        <field name="professor_review_file" filename="professor_review_filename"/>
+                                        <field name="professor_review_filename" invisible="1"/>
                                         <field name="result_text" placeholder="List project results (summary, links, etc.) here. Files can be added in the section below." style="margin-left:10px" class="oe_inline"/>
-                                    </p>
-                                    <p>
-                                        <label for="result_files" class="oe_inline"/>
-                                        <field name="result_files" widget="many2many_binary" string="Attach a file" attrs="{'readonly':[('state','!=','assigned')]}"/>
-                                    </p>
-                                </page>
-                                <page string="Supervisor Feedback" attrs="{'invisible': [('state', '!=', 'pending')]}" groups="student.group_administrator, student.group_supervisor">
-                                    <field name="reason" placeholder="Please specify the reason if the project will be rejected or returned. The reason will registered in the log."/>
+                                        <field name="result_files" widget="many2many_binary" string="Additional Files" attrs="{'readonly':[('state','!=','assigned')]}" help="Additional files that may include reports, source files, analysis, etc."/>
+                                    </group>
+                                    
                                 </page>
                                 <page string="Technical Log &amp; Details" groups="student.group_administrator">
                                     <field name="message_follower_ids" widget="mail_followers"/>
@@ -174,8 +171,28 @@
                                 </page>
                             </notebook>
                         </group>
+                        <group string="Eligibility" attrs="{'invisible': [('id', '!=', False)]}">
+                            <p colspan="2" style="color:gray">
+                                <i>Save the project to set up the academic programs for submission.</i>
+                            </p>
+                        </group>
+                        <group string="Eligibility" attrs="{'invisible': ['|',('id', '=', False),('state', '=', 'assigned')]}">
+                            <group col="6" colspan="2">
+                                <group colspan="2">
+                                    <field name="campus_id" help="The campus is automatically assigned based on the project professor." widget="many2many_tags" readonly="1"/>
+                                </group>
+                                <group colspan="4">
+                                    <field name="faculty_id" help="The faculty is automatically assigned based on the project professor." widget="many2many_tags" readonly="1"/>
+                                </group>
+                            </group>
+                            <group colspan="2">
+                                <field name="availability_ids" context="{'project_id': active_id}"/>
+                            </group>
+                            <group colspan="2" attrs="{'invisible': [('state', 'not in', ['pending','partially'])]}">
+                                <field name="reason" placeholder="Please specify the reason if the project will be rejected or returned. The reason will be registered in the log."/>
+                            </group>
+                        </group>
                     </sheet>
-                
                     <div class="oe_chatter" groups="student.group_administrator, student.group_supervisor, student.group_professor">
                         <field name="message_follower_ids" widget="mail_followers"/>
                         <field name="activity_ids"/>
@@ -186,7 +203,7 @@
         </record>
 
         <record id="student_project_list_view" model="ir.ui.view">
-            <field name="name">Projects - List View</field>
+            <field name="name">Projects - Tree View</field>
             <field name="model">student.project</field>
             <field name="arch" type="xml">
                 <tree>
@@ -196,7 +213,6 @@
                     <field name="format"/>
                     <field name="language"/>
                     <field name="program_ids" widget="many2many_tags"/>
-                    <field name="degree_ids" widget="many2many_tags"/>
                     <field name="applications"/>
                 </tree>
             </field>
@@ -211,7 +227,7 @@
                         default_group_by="state" 
                         class="o_res_partner_kanban o_kanban_small_column" 
                         name="student_project_kanban"
-                        order="write_date">
+                        default_order="write_date desc">
                     <field name="state"/>
                     <field name="name"/>
                     <field name="professor_id"/>
@@ -224,10 +240,16 @@
                             <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click">
                                 <div class="oe_kanban_details">
                                     <div class="oe_kanban_title">
-                                        <strong><field name="state"/></strong>
-                                         (<field name="write_date_date"/>)
+                                        <strong>Last update: </strong>
+                                        <field name="write_date"/>
                                     </div>
                                     <div class="oe_kanban_subtitle">
+                                        <field name="program_ids_count" invisible="1"/>
+                                        <field name="pending_program_ids_count" invisible="1"/>
+                                        <field name="approved_program_ids_count" invisible="1"/>
+                                        <div style="color:gray" t-if="record.state.value == 'Pending' or record.state.value == 'Partially Approved'">
+                                            (Reacted: <t t-esc="record.program_ids_count.value - record.pending_program_ids_count.value"/>/<t t-esc="record.program_ids_count.value"/> • Approved: <t t-esc="record.approved_program_ids_count.value"/>)
+                                        </div>
                                         Project Name:
                                         <field name="name"/>
                                     </div>
@@ -236,7 +258,7 @@
                                             Professor:
                                             <t t-esc="record.professor_id.value"/>
                                         </div>
-                                        <div t-if="record.applications.value">
+                                        <div t-if="record.applications.value &gt; 0">
                                             Applications:
                                             <t t-esc="record.applications.value"/>
                                         </div>
@@ -255,7 +277,7 @@
             <field name="res_model">student.project</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="view_id" ref="student_project_kanban_view"/>
-            <field name="context">{'search_default_my_projects': 1, 'search_default_supervised_by_me': 1}</field>
+            <field name="context">{'search_default_my_projects': 1, 'search_default_supervised_by_me': 1, 'view_type': 'project_board'}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
                     There are no projects yet. You can create the first one. Yay!
@@ -263,19 +285,19 @@
             </field>
         </record>
 
-        <!-- The basic view that student_menus.xml refers to -->
+        <!-- The view for students that student_menus.xml refers to -->
         <record id="student_project_view_action_list" model="ir.actions.act_window">
             <field name="name">Available Projects</field>
             <field name="res_model">student.project</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="student_project_list_view"/>
-            <field name="context">{'search_default_available': 1}</field>
+            <field name="context">{'search_default_available': 1, 'view_type': 'available_projects'}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
                     There are no projects yet. You can create the first one. Yay!
                 </p>
             </field>
-            <field name="domain">[('state', 'in', ['approved','assigned','applied'])]</field>
+            <field name="domain">[('state', 'in', ['partially','approved','applied','assigned'])]</field>
         </record>
 
         <!-- Define the action to open the tree view of projects from the professor form-->
@@ -302,14 +324,13 @@
                 <field name="state" string="Project State"/>
                 <filter string="My projects" groups="student.group_professor" name="my_projects" domain="[('professor_account', '=', uid)]"/>
                 <filter string="Supervised by me" groups="student.group_supervisor" name="supervised_by_me" domain="[('program_supervisors', 'in', uid)]"/>
-                <filter string="Available for application" groups="student.group_student" name="available" domain="[('state', 'in', ['approved','applied'])]"/>
+                <filter string="Available for application" groups="student.group_student" name="available" domain="[('state', 'in', ['partially','approved','applied'])]"/>
                 <filter string="Requires attention" groups="student.group_professor" name="attention_professor" domain="['&amp;', ('professor_account', '=', uid), ('state', 'in', ['returned', 'applied'])]"/>
                 <group expand="1" string="Group By">
                     <filter string="Professor" name="professor" context="{'group_by':'professor_id'}"/>
-                    <filter string="Project Type" name="project_type" context="{'group_by':'type'}"/>
+                    <!-- <filter string="Project Type" name="project_type" context="{'group_by':'type'}"/> -->
                     <filter string="Project Format" name="project_format" context="{'group_by':'format'}"/>
-                    <filter string="Target Degree" name="target_degree" context="{'group_by':'degree_ids'}"/>
-                    <filter string="Faculty" name="faculty" context="{'group_by':'faculty_ids'}"/>
+                    <filter string="Faculty" name="faculty" context="{'group_by':'faculty_id'}"/>
                     <filter string="Target Program" name="program" context="{'group_by':'program_ids'}" groups="student.group_administrator, student.group_supervisor, student.group_professor"/>
                     <filter string="Applicable Program" name="program" context="{'group_by':'approved_program_ids'}" groups="student.group_student"/>
                 </group>
@@ -323,11 +344,30 @@
         <field name="res_model">student.project</field>
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="student_project_list_view"/>
-        <field name="domain">[('state','=','pending')]</field>
+        <field name="domain">[('state','in',['partially','pending'])]</field>
+        <field name="context">{'view_type': 'pending_submissions'}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 There are no pending projects.
             </p>
+        </field>
+    </record>
+
+    <record id="student_project_view_personal" model="ir.actions.server">
+        <field name="name">My Project</field>
+        <field name="model_id" ref="model_student_project"/>
+        <field name="state">code</field>
+        <field name="code">
+student_project_id = env['student.project'].sudo().search([('student_elected.student_account.id', '=', env.uid)], limit=1).id
+if not student_project_id:
+    raise UserError("You are not assigned to a project yet. Try applying to projects first.")
+action = {
+    "name": "My Project (Server)",
+    "type": "ir.actions.act_window",
+    "res_model": "student.project",
+    "view_mode": "form",
+    "res_id": student_project_id,
+}
         </field>
     </record>
 </odoo>

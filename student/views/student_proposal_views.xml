@@ -66,26 +66,30 @@
                         type="object"
                         confirm="Are you sure you want to send your proposal to the chosen professor?"
                         groups="student.group_student"
-                        class="oe_highlight"/>
+                        class="oe_highlight"
+                        attrs="{'invisible': [('state', '!=', 'draft')]}"/>
                     <button name="action_view_proposal_cancel"
                         string="Cancel Proposal"
                         type="object"
                         confirm="Are you sure you want to cancel your proposal?"
                         groups="student.group_student"
-                        class="oe_highlight"/>
+                        class="oe_highlight"
+                        attrs="{'invisible': [('state', '!=', 'sent')]}"/>
 
                     <button name="action_view_proposal_accept"
                         string="ACCEPT PROPOSAL"
                         type="object"
                         confirm="Are you sure you want to accept this proposal?"
                         groups="student.group_professor"
-                        class="btn-success"/>
+                        class="btn-success"
+                        attrs="{'invisible': [('state', '!=', 'sent')]}"/>
                     <button name="action_view_proposal_reject"
                         string="REJECT PROPOSAL"
                         type="object"
                         confirm="Are you sure you want to reject this proposal?"
                         groups="student.group_professor"
-                        class="btn-danger"/>
+                        class="btn-danger"
+                        attrs="{'invisible': [('state', '!=', 'sent')]}"/>
                 </header>
                 <sheet>
                     <group>
@@ -120,7 +124,10 @@
                                 <field name="results" style="margin-bottom:20 px" attrs="{'readonly':[('state','!=','draft')]}"/>
 
                                 <label for="additional_files"/>
-                                <field name="additional_files" widget="many2many_binary" string="Additional Files" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <p colspan="2" style="color:gray" attrs="{'invisible': [('id', '!=', False)]}">
+                                    <i>Save the proposal to add additional files.</i>
+                                </p>
+                                <field name="additional_files" widget="many2many_binary" string="Additional Files" attrs="{'readonly':[('state','!=','draft')], 'invisible': [('id', '=', False)]}"/>
                             </page>
                             <page string="Feedback" attrs="{'invisible':[('state','=','draft')]}">
                                 <label for="feedback"/>

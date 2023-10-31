@@ -11,6 +11,7 @@ class Program(models.Model):
     type = fields.Selection([('on','Online'),('off','Offline'),('hrd','Hybrid')], default='off', string='Mode of Education', required=True)
     program_faculty_id = fields.Many2one('student.faculty', string='Faculty', default=lambda self: self.env['student.faculty'].search([], limit=1), required=True, store=True)
     supervisor = fields.Many2one('student.supervisor', string='Academic Supervisor', required=True)
+    manager = fields.Many2one('student.manager', string='Program Manager', required=True)
     
     student_number = fields.Integer(string='Number of Students', compute='_compute_student_count', store=True, readonly=True)
     student_ids = fields.One2many('student.student', 'student_program', string='Students')
