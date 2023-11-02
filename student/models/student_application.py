@@ -50,7 +50,7 @@ class Application(models.Model):
         ('urgent', 'Urgent'),
         ('missed', 'Missed'),
 		('handled', 'Handled')
-    ], string='Urgency', compute='_compute_urgency_category', store=True)
+    ], string='Urgency', compute='_compute_urgency_category', store=True)    
 
 	def _compute_urgency_category(self):
 		today = fields.Date.today()

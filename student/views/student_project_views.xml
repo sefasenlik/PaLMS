@@ -152,17 +152,25 @@
                                     </field> 
                                 </page>
                                 <page string="Results" attrs="{'invisible': [('state', '!=', 'assigned')]}">
-                                    <group>
+                                    <group string="Student Uploads">
                                         <field name="project_report_file" filename="project_report_filename"/>
                                         <field name="project_report_filename" invisible="1"/>
                                         <field name="plagiarism_check_file" filename="plagiarism_check_filename"/>
                                         <field name="plagiarism_check_filename" invisible="1"/>
+                                        <field name="student_feedback" placeholder="Here you can express what you liked/did not like about the project or other aspects."/>
+                                    </group>
+                                    <group string="Professor Uploads">
                                         <field name="professor_review_file" filename="professor_review_filename"/>
                                         <field name="professor_review_filename" invisible="1"/>
-                                        <field name="result_text" placeholder="List project results (summary, links, etc.) here. Files can be added in the section below." style="margin-left:10px" class="oe_inline"/>
-                                        <field name="result_files" widget="many2many_binary" string="Additional Files" attrs="{'readonly':[('state','!=','assigned')]}" help="Additional files that may include reports, source files, analysis, etc."/>
                                     </group>
-                                    
+                                    <group string="Faculty Member Response">
+                                        <field name="result_text" placeholder="List project results (summary, links, etc.) here. Additional files can be added in the section below."/>
+                                        <field name="notes"/>
+                                        <field name="grade"/>
+                                    </group>
+                                    <group string="Common">
+                                        <field colspan="2" name="result_files" widget="many2many_binary" string="Additional Files" attrs="{'readonly':[('state','!=','assigned')]}" help="Additional files that may include reports, source files, analysis, etc."/>
+                                    </group>
                                 </page>
                                 <page string="Technical Log &amp; Details" groups="student.group_administrator">
                                     <field name="message_follower_ids" widget="mail_followers"/>
@@ -186,7 +194,14 @@
                                 </group>
                             </group>
                             <group colspan="2">
-                                <field name="availability_ids" context="{'project_id': active_id}"/>
+                                <field name="availability_ids" context="{'project_id': active_id}">
+                                    <tree>
+                                        <field name="state" string="Submission State"/>
+                                        <field name="program_id" string="Submitted to"/>
+                                        <field name="type" string="Type"/>
+                                        <field name="degree_ids" widget="many2many_tags" string="Available for"/>
+                                    </tree>
+                                </field>
                             </group>
                             <group colspan="2" attrs="{'invisible': [('state', 'not in', ['pending','partially'])]}">
                                 <field name="reason" placeholder="Please specify the reason if the project will be rejected or returned. The reason will be registered in the log."/>

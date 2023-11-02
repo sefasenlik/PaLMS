@@ -45,6 +45,9 @@
         <field name="arch" type="xml">
             <form>
                 <header>
+                    <button name="action_view_event_save" 
+                            string="Save"
+                            type="object"/>
                     <button name="action_view_event_complete" 
                             string="COMPLETE"
                             type="object"

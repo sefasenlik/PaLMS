@@ -149,6 +149,19 @@ class Project(models.Model):
         string='Add Files'
     )
 
+    student_feedback = fields.Text(string='Feedback from the Student')   
+    notes = fields.Text(string='Notes & Comments')        
+    grade = fields.Selection([('1', '1'),       
+                              ('2', '2'),
+                              ('3', '3'),
+                              ('4', '4'),
+                              ('5', '5'),
+                              ('6', '6'),
+                              ('7', '7'),  
+                              ('8', '8'),  
+                              ('9', '9'),  
+                              ('10', '10')], string='Project Grade (Out of 10)')
+
     # Assigns the professor account created for this user
     @api.model
     def _default_professor(self):
@@ -428,26 +441,32 @@ class Project(models.Model):
             elif self.env.user.id not in self.program_supervisors.mapped('id'):
                 raise UserError("This project is not sent to a program you are supervising.")
             
-    @api.constrains("name", "name_ru", "format", "language", "description", "requirements", "results", "additional_files", "project_report_file", "result_text")
+    @api.constrains("result_text", "notes", "grade")
+    def _check_modifier_faculty_member(self):
+        if self.env.user.has_group("student.group_student"):
+            raise UserError("Only faculty members can change these fields.")
+            
+    @api.constrains("name", "name_ru", "format", "language", "description", "requirements", "results", "additional_files", "professor_review_file")
     def _check_modifier_professor(self):
         if self.env.user.id != self.professor_account.id:
             raise UserError("You cannot modify projects of other professors.")
         
-    @api.constrains("project_report_file", "project_check_file")
+    @api.constrains("project_report_file", "project_check_file", "student_feedback")
     def _check_modifier_student(self):
         if self.state == "assigned" and self.env.user.id != self.student_elected.student_account.id:
             raise UserError("These fields can be modified by the assigned student.")
         
     def unlink(self):
-        if not self.env.user.has_group('student.group_administrator'): 
-            if self.state == "assigned":
-                raise UserError(_('Only administrators can delete assigned projects!'))
-            elif self.env.uid != self.professor_account.id or self.env.uid in self.program_supervisors.ids:
-                raise UserError(_('Only its professor or related supervisors can delete this project!'))
+        for record in self:
+            if not record.env.user.has_group('student.group_administrator'): 
+                if record.state == "assigned":
+                    raise UserError(_('Only administrators can delete assigned projects!'))
+                elif record.env.uid != record.professor_account.id or record.env.uid in record.program_supervisors.ids:
+                    raise UserError(_('Only its professor or related supervisors can delete this project!'))
 
-        # Remove the student from the group
-        group_id = self.env.ref('student.group_elected_student') 
-        group_id.users = [(3, self.student_elected.id)]
+            # Remove the student from the group
+            group_id = record.env.ref('student.group_elected_student') 
+            group_id.users = [(3, record.student_elected.id)]
         
         return super(Project, self).unlink()
     
@@ -574,7 +593,6 @@ class Project(models.Model):
                     'res_model': 'student.application',
                     'view_mode': 'form',
                     'view_type': 'form',
-                    'target': 'new',
                     'context': {
                         'default_project_id': self.id
                     }

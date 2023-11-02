@@ -219,6 +219,7 @@ class Proposal(models.Model):
 			raise ValidationError("Only the creator of the proposal can modify details.")
 		
 	def unlink(self):
-		if self.env.uid != self.proponent_account.id:
-			raise UserError(_('Only the proposing student can delete the proposal!'))
+		for record in self:
+			if not record.env.user.has_group('student.group_administrator') and record.env.uid != record.proponent_account.id:
+				raise UserError(_('Only the proposing student can delete the proposal!'))
 		return super(Proposal, self).unlink()

@@ -82,17 +82,17 @@
         <field name="model">student.application</field>
         <field name="arch" type="xml">
             <tree default_order="sent_date">
+                <!-- ♦ How to change the color of the field value? -->
+                <field name="state"/>
                 <field name="sent_date"/>
                 <field name="applicant"/>
                 <field name="project_id"/>
-                <field name="student_degree"/>
                 <field name="student_program"/>
+                <field name="student_degree"/>
                 <field name="student_id"/>
                 <field name="email"/>
                 <field name="phone"/>
                 <field name="telegram"/>
-                <!-- ♦ How to change the color of the field value? -->
-                <field name="state"/>
             </tree>
         </field>
     </record>

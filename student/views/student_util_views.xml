@@ -79,9 +79,10 @@
         <field name="model">student.availability</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="state" string="Submission State" />
-                <field name="program_id" string="Submitted to" />
-                <field name="type" string="Type" />
+                <field name="project_id"/>
+                <field name="state" string="Submission State"/>
+                <field name="program_id" string="Submitted to"/>
+                <field name="type" string="Type"/>
                 <field name="degree_ids" widget="many2many_tags" string="Available for"/>
             </tree>
         </field>

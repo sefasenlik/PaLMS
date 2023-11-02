@@ -29,7 +29,7 @@
                 &lt;h2&gt;Hello, &lt;t t-out="object.professor_account.name"/&gt;!&lt;/h2&gt;
                 &lt;p&gt;The following project you have submitted is approved. Now students can view it and send applications.&lt;br&gt;
                 &lt;b&gt;Project name: &lt;/b&gt;&lt;t t-out="object.name"/&gt;&lt;br&gt;
-                &lt;b&gt;Approved by: &lt;/b&gt;&lt;t t-out="user.email"/&gt;&lt;br&gt;
+                &lt;b&gt;Approved by: &lt;/b&gt;&lt;t t-out="user.name"/&gt;&lt;br&gt;
                 &lt;br&gt;
                 Best wishes,&lt;br&gt;
                 PaLMS Notification Service

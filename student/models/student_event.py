@@ -85,8 +85,9 @@ class Event(models.Model):
             raise ValidationError("Only the assignee or initiator can modify results.")
     
     def unlink(self):
-        if not self.env.user.has_group('student.group_administrator') and self.env.uid != self.initiator.id:
-            raise UserError(_('Only the initiator can delete their event!'))
+        for record in self:
+            if not record.env.user.has_group('student.group_administrator') and record.env.uid != record.initiator.id:
+                raise UserError(_('Only the initiator can delete their event!'))
         return super(Event, self).unlink()
 
     # Computed completion status to categorize events into groups
@@ -108,7 +109,10 @@ class Event(models.Model):
         elif self.status == 'complete':
             self.color = 10 # Green
         elif self.status == 'past':
-            self.color = 9  # Fushia    
+            self.color = 9  # Fushia  
+
+    def action_view_event_save(self):
+        return True  
 
     def action_view_event_complete(self):
         if self.env.user != self.initiator and self.env.user != self.assignee:
@@ -128,10 +132,11 @@ class Event(models.Model):
             self.status = "complete"
             template = self.env.ref('student.email_template_event_complete')
         template.send_mail(self.id, email_values={'email_to': self.initiator.email, 'subtype_id': subtype_id.id}, force_send=True)
-        template.send_mail(self.id, 
-                            email_values={'email_to': ','.join([watcher.email for watcher in self.watchers]),
-                                            'subtype_id': subtype_id.id}, 
-                            force_send=True)
+        if len(self.watchers) > 0:
+            template.send_mail(self.id, 
+                                email_values={'email_to': ','.join([watcher.email for watcher in self.watchers]),
+                                                'subtype_id': subtype_id.id}, 
+                                force_send=True)
         # -----------------------------------
 		
         return self.env['student.utils'].message_display('Event Complete', 'You successfully completed the event.', False)

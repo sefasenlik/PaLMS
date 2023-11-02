@@ -25,6 +25,17 @@
         <field name="perm_create" eval="False"/>
     </record>
 
+    <!-- Add this group to res.groups for supervisor to change student user groups -->
+    <record model="ir.model.access" id="student_supervisor_groups_access">
+        <field name="name">Student - Write Access (Access Groups) for Supervisors</field>
+        <field name="model_id" ref="mail.model_res_groups"/>
+        <field name="group_id" ref="student.group_supervisor"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="perm_create" eval="False"/>
+    </record>
+
     <!-- Add a restriction rule for the message subtype -->
     <record model="ir.rule" id="student_professor_supervisor_rule">
         <field name="name">Student - Hide professor/supervisor messages</field>
