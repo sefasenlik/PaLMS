@@ -171,6 +171,9 @@
                                     <group string="Common">
                                         <field colspan="2" name="result_files" widget="many2many_binary" string="Additional Files" attrs="{'readonly':[('state','!=','assigned')]}" help="Additional files that may include reports, source files, analysis, etc."/>
                                     </group>
+                                    <group string="Project Report Preview">
+                                        <field name="project_report_file" filename="project_report_filename" widget="pdf_viewer" readonly="1"/>
+                                    </group>
                                 </page>
                                 <page string="Technical Log &amp; Details" groups="student.group_administrator">
                                     <field name="message_follower_ids" widget="mail_followers"/>
