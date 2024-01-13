@@ -67,14 +67,14 @@
                         confirm="Are you sure you want to send your proposal to the chosen professor?"
                         groups="student.group_student"
                         class="oe_highlight"
-                        attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        invisible="state != 'draft'"/>
                     <button name="action_view_proposal_cancel"
                         string="Cancel Proposal"
                         type="object"
                         confirm="Are you sure you want to cancel your proposal?"
                         groups="student.group_student"
                         class="oe_highlight"
-                        attrs="{'invisible': [('state', '!=', 'sent')]}"/>
+                        invisible="state != 'sent'"/>
 
                     <button name="action_view_proposal_accept"
                         string="ACCEPT PROPOSAL"
@@ -82,28 +82,28 @@
                         confirm="Are you sure you want to accept this proposal?"
                         groups="student.group_professor"
                         class="btn-success"
-                        attrs="{'invisible': [('state', '!=', 'sent')]}"/>
+                        invisible="state != 'sent'"/>
                     <button name="action_view_proposal_reject"
                         string="REJECT PROPOSAL"
                         type="object"
                         confirm="Are you sure you want to reject this proposal?"
                         groups="student.group_professor"
                         class="btn-danger"
-                        attrs="{'invisible': [('state', '!=', 'sent')]}"/>
+                        invisible="state != 'sent'"/>
                 </header>
                 <sheet>
                     <group>
                         <group string="Overview">
-                            <field name="name" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                            <field name="name_ru" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                            <field name="proposal_professor" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="name" readonly="state != 'draft'"/>
+                            <field name="name_ru" readonly="state != 'draft'"/>
+                            <field name="proposal_professor" readonly="state != 'draft'"/>
                             <field name="state"/>
-                            <field name="project_id" attrs="{'invisible':['|',('state','=','draft'),('state','=','rejected')]}"/>
+                            <field name="project_id" invisible="state in ['draft', 'rejected']"/>
                         </group>                        
                         <group string="Details">
-                            <field name="type" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                            <field name="format" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                            <field name="language" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="type" readonly="state != 'draft'"/>
+                            <field name="format" readonly="state != 'draft'"/>
+                            <field name="language" readonly="state != 'draft'"/>
                         </group>
                         <group string="Contacts">
                             <field name="proponent" readonly="True"/>
@@ -111,27 +111,27 @@
                             <field name="phone"/>
                         </group>                        
                         <group string="Additional Contacts">
-                            <field name="additional_email" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                            <field name="additional_phone" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                            <field name="telegram" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="additional_email" readonly="state != 'draft'"/>
+                            <field name="additional_phone" readonly="state != 'draft'"/>
+                            <field name="telegram" readonly="state != 'draft'"/>
                         </group>
                         <notebook>
                             <page string="Proposal Details">
                                 <label for="description"/>
-                                <field name="description" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="description" readonly="state != 'draft'"/>
 
                                 <label for="results"/>
-                                <field name="results" style="margin-bottom:20 px" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="results" style="margin-bottom:20 px" readonly="state != 'draft'"/>
 
                                 <label for="additional_files"/>
-                                <p colspan="2" style="color:gray" attrs="{'invisible': [('id', '!=', False)]}">
+                                <p colspan="2" style="color:gray" invisible="id != False">
                                     <i>Save the proposal to add additional files.</i>
                                 </p>
-                                <field name="additional_files" widget="many2many_binary" string="Additional Files" attrs="{'readonly':[('state','!=','draft')], 'invisible': [('id', '=', False)]}"/>
+                                <field name="additional_files" widget="many2many_binary" string="Additional Files" readonly="state != 'draft'" invisible="id == False"/>
                             </page>
-                            <page string="Feedback" attrs="{'invisible':[('state','=','draft')]}">
+                            <page string="Feedback" invisible="state == 'draft'">
                                 <label for="feedback"/>
-                                <field name="feedback" attrs="{'readonly': [('state', '!=', 'sent')]}"/>
+                                <field name="feedback" readonly="state != 'sent'"/>
                             </page>
                         </notebook>
                     </group>

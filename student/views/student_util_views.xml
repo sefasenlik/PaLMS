@@ -49,10 +49,10 @@
                     <group string="Project Availability">
                         <field name="project_id" readonly="1"/>
                         <field name="state" readonly="1"/>
-                        <field name="type" attrs="{'readonly': ['|', ('state', '=', 'accepted'), ('state', '=', 'rejected')]}"/>
-                        <field name="program_id" attrs="{'readonly': [('state', '!=', 'waiting')]}"/>
-                        <field name="degree_ids" widget="many2many_tags" domain="degree_ids_domain" attrs="{'readonly': ['|', ('state', '=', 'accepted'), ('state', '=', 'rejected')]}"/>
-                        <field name="reason" attrs="{'invisible': [('state', 'in', ['waiting','approved'])]}" placeholder="Please specify the reason if the project will be rejected or returned. The reason will registered in the log." readonly="1"/>
+                        <field name="type" readonly="state in ['accepted', 'rejected']"/>
+                        <field name="program_id" readonly="state != 'waiting'"/>
+                        <field name="degree_ids" widget="many2many_tags" domain="degree_ids_domain" readonly="state in ['accepted', 'rejected']"/>
+                        <field name="reason" invisible="state in ['waiting','approved']" placeholder="Please specify the reason if the project will be rejected or returned. The reason will registered in the log." readonly="1"/>
                         
                         <field name="degree_ids_domain" invisible="1"/>
                     </group>

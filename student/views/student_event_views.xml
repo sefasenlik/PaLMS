@@ -53,13 +53,13 @@
                             type="object"
                             class="btn-success"
                             confirm="Are you sure you want to complete this event?"
-                            attrs="{'invisible': ['|',('button_control','!=','assignee'),('complete', '=', True)]}"/>  
+                            invisible= "button_control != 'assignee' or complete == True"/>  
                     <button name="action_view_event_reopen" 
                             string="REOPEN"
                             type="object"
                             class="btn-warning"
                             confirm="Are you sure you want to reinitiate this event? (Due date update is recommended)"
-                            attrs="{'invisible': ['|',('button_control','!=','initiator'),('complete', '=', False)]}"/>
+                            invisible= "button_control != 'initiator' or complete == False"/>
                 </header>
                 <sheet>
                     <group string="Event Progress" col="6">
@@ -80,15 +80,15 @@
                         <group>
                             <field name="creation_date"/>
                             <field name="due_date"/>
-                            <field name="completion_date" attrs="{'invisible': [('complete', '=', False)]}"/>
+                            <field name="completion_date" invisible= "complete == False"/>
                         </group>
                         <group colspan="2">
                             <field name="description"/>
-                            <p colspan="2" style="color:gray" attrs="{'invisible': [('id', '!=', False)]}">
+                            <p colspan="2" style="color:gray" invisible= "id != False">
                                 <label for="additional_files"/>
                                 <i>Save the event to add additional files.</i>
                             </p>
-                            <field name="additional_files" widget="many2many_binary" string="Description Files" attrs="{'invisible': [('id', '=', False)]}"/>
+                            <field name="additional_files" widget="many2many_binary" string="Description Files" invisible="id == False"/>
                         </group>
                     </group>
                     <group string="Participants" col="4">
@@ -107,11 +107,11 @@
                     </group>
                     <group string="Results">
                         <field name="outcomes"/>
-                        <p colspan="2" style="color:gray" attrs="{'invisible': [('id', '!=', False)]}">
+                        <p colspan="2" style="color:gray" invisible="id != False">
                             <label for="result_files"/>
                             <i>Save the event to add result files.</i>
                         </p>
-                        <field name="result_files" widget="many2many_binary" string="Result Files" attrs="{'invisible': [('id', '=', False)]}"/>
+                        <field name="result_files" widget="many2many_binary" string="Result Files" invisible= "id == False"/>
                     </group>
                 </sheet>
             </form>
@@ -124,13 +124,13 @@
         <field name="arch" type="xml">
             <!-- Define the view with the calendar widget -->
             <calendar string="Event Calendar" date_start="due_date" date_stop="due_date" mode="month" 
-                      color="color" hide_time="true" event_open_popup="true" quick_add="false"> 
+                      color="color" hide_time="true" event_open_popup="true" quick_create="false"> 
                 <field name="status" decoration-danger="status == 'past'" decoration-warning="status == 'late'" decoration-success="status == 'complete'"/>
                 <field name="type"/>
                 <field name="name" />
                 <field name="creation_date"/>
                 <field name="due_date" decoration-danger="status == 'past'"/>
-                <field name="completion_date" attrs="{'invisible': [('status', 'in', ['progress', 'past'])]}" decoration-warning="status == 'late'" decoration-success="status == 'complete'"/>
+                <field name="completion_date" invisible="status in ['progress', 'past']" decoration-warning="status == 'late'" decoration-success="status == 'complete'"/>
                 <field name="assignee"/>
             </calendar>
         </field>

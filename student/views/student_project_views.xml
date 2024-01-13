@@ -13,14 +13,14 @@
                             class="oe_highlight"
                             confirm="Are you sure you want to submit this project?"
                             groups="student.group_professor"
-                            attrs="{'invisible': [('state', 'not in', ['draft','returned'])]}"/>
+                            invisible="state not in ['draft','returned']"/>
                         <button name="action_view_project_cancel"
                             string="Cancel Submission"
                             type="object"
                             class="oe_highlight"
                             confirm="Are you sure you want to cancel your project submission?"
                             groups="student.group_professor"
-                            attrs="{'invisible': [('state', '!=', 'pending')]}"/>
+                            invisible="state != 'pending'"/>
                         
                         <button name="action_view_project_approve"
                             string="APPROVE PROJECT"
@@ -28,21 +28,21 @@
                             class="btn-success"
                             confirm="Are you sure you want to accept this project?"
                             groups="student.group_supervisor"
-                            attrs="{'invisible': ['|',('state', 'not in', ['partially','pending','applied']),('user_supervisor_response','=',False)]}"/>
+                            invisible="state not in ['partially','pending','applied'] or user_supervisor_response == False"/>
                         <button name="action_view_project_reject"
                             string="REJECT PROJECT"
                             type="object"
                             class="btn-danger"
                             confirm="Are you sure you want to reject this project?"
                             groups="student.group_supervisor"
-                            attrs="{'invisible': ['|',('state', 'not in', ['partially','pending','applied']),('user_supervisor_response','=',False)]}"/>
+                            invisible="state not in ['partially','pending','applied'] or user_supervisor_response == False"/>
                         <button name="action_view_project_return"
                             string="RETURN PROJECT"
                             type="object"
                             class="oe_highlight"
                             confirm="Are you sure you want to return this project?"
                             groups="student.group_supervisor"
-                            attrs="{'invisible': ['|',('state', 'not in', ['partially','pending','applied']),('user_supervisor_response','=',False)]}"/>
+                            invisible="state not in ['partially','pending','applied'] or user_supervisor_response == False"/>
 
                         <button name="action_view_project_reset"
                             string="RESET PROJECT"
@@ -56,7 +56,7 @@
                             type="object"
                             class="oe_highlight"
                             groups="student.group_student"
-                            attrs="{'invisible': [('state', 'not in', ['partially','approved','applied'])]}"/>
+                            invisible="state not in ['partially','approved','applied']"/>
                     </header>
                     <sheet>
                         <group>
@@ -66,8 +66,8 @@
                             
                             <group string="Basic Info" cols="2"> 
                                 <group colspan="2">
-                                    <field name="name" attrs="{'readonly': [('locked', '=', True)]}"/> 
-                                    <field name="name_ru" attrs="{'readonly': [('locked', '=', True)]}"/> 
+                                    <field name="name" readonly="locked == True"/> 
+                                    <field name="name_ru" readonly="locked == True"/> 
                                 </group>   
                                 <group>
                                     <field name="professor_id"/>
@@ -75,36 +75,36 @@
                                     <field name="write_date"/>
                                 </group>
                                 <group>
-                                    <field name="format" attrs="{'readonly': [('locked', '=', True)]}"/>
-                                    <field name="language" attrs="{'readonly': [('locked', '=', True)]}"/>
+                                    <field name="format" readonly="locked == True"/>
+                                    <field name="language" readonly="locked == True"/>
                                 </group>
                             </group>
                             <group string="Availability">
                                 <field name="state"/>
                                 <field name="assigned"/>
-                                <field name="proposal_id" attrs="{'invisible': [('proposal_id', '=', False)]}"/>
+                                <field name="proposal_id" invisible="proposal_id == False"/>
                                 <!-- If based on a proposal -->
-                                <field name="student_elected" widget="many2many_tags" string="Proposed by" attrs="{'invisible': [('proposal_id', '=', False)]}"/>
+                                <field name="student_elected" widget="many2many_tags" string="Proposed by" invisible="proposal_id == False"/>
                                 <!-- If NOT based on a proposal -->
-                                <field name="student_elected" widget="many2many_tags" attrs="{'invisible': ['|', ('proposal_id', '!=', False), ('state', '!=', 'assigned')]}"/>
+                                <field name="student_elected" widget="many2many_tags" invisible="proposal_id != False or state != 'assigned'"/>
                             </group>
                             <notebook>
                                 <page string="Additional Details">
                                     <group>
-                                        <field name="description" placeholder="Short project description to inspire potential applicants." attrs="{'readonly': [('locked', '=', True)]}"/>
-                                        <field name="requirements" placeholder="Minimum requirements for applications can be listed here." attrs="{'readonly': ['|',('locked', '=', True),('proposal_id', '!=', False)]}"/>
-                                        <field name="results" placeholder="Expected outcomes at the end of given implementation/research period." style="margin-bottom:20 px" attrs="{'readonly': [('locked', '=', True)]}"/>
+                                        <field name="description" placeholder="Short project description to inspire potential applicants." readonly="locked == True"/>
+                                        <field name="requirements" placeholder="Minimum requirements for applications can be listed here." readonly="locked == True or proposal_id != False"/>
+                                        <field name="results" placeholder="Expected outcomes at the end of given implementation/research period." style="margin-bottom:20 px" readonly="locked == True"/>
                                     </group>
                                     
                                     <group string="Files">
-                                        <p colspan="2" style="color:gray" attrs="{'invisible': [('id', '!=', False)]}">
+                                        <p colspan="2" style="color:gray" invisible="id != False">
                                             <i>Save the project to add additional files.</i>
                                         </p>
-                                        <field name="file_count" attrs="{'invisible': [('id', '=', False)]}"/>
-                                        <field name="additional_files" widget="many2many_binary" string="Attach a file" attrs="{'readonly':[('state','not in',['draft','returned'])], 'invisible': [('id', '=', False)]}" help="Additional files to describe the content of the project further."/>
+                                        <field name="file_count" invisible="id == False"/>
+                                        <field name="additional_files" widget="many2many_binary" string="Attach a file" readonly="state not in ['draft','returned']" invisible="id == False" help="Additional files to describe the content of the project further."/>
                                     </group>
                                 </page>
-                                <page string="Applications" attrs="{'invisible': [('state', 'not in', ['applied', 'partially', 'approved'])]}">
+                                <page string="Applications" invisible="state not in ['applied', 'partially', 'approved']">
                                     <p>
                                         <label for="applications" class="oe_inline"/>
                                         <field name="applications" style="margin-left:10px" class="oe_inline"/>
@@ -121,19 +121,19 @@
                                                     class="btn-success"
                                                     confirm="Are you sure to accept the application? Other applications will be rejected automatically."
                                                     groups="student.group_professor"
-                                                    attrs="{'invisible': [('state', '!=', 'sent')]}"/>  
+                                                    invisible="state != 'sent'"/>  
                                             <button name="action_view_application_reject" 
                                                     string="Reject ✘"
                                                     type="object"
                                                     class="btn-danger"
                                                     confirm="Are you sure to reject the application?"
                                                     groups="student.group_professor"
-                                                    attrs="{'invisible': [('state', '!=', 'sent')]}"/>  
+                                                    invisible="state != 'sent'"/>  
                                             <field name="state"/>
                                         </tree>
                                     </field>
                                 </page>
-                                <page string="Activities" attrs="{'invisible': [('state', '!=', 'assigned')]}">
+                                <page string="Activities" invisible="state != 'assigned'">
                                     <div class="text-center">
                                         <button name="action_view_project_events" 
                                                 string="Open calendar view to create events ►"
@@ -151,7 +151,7 @@
                                         </tree>
                                     </field> 
                                 </page>
-                                <page string="Results" attrs="{'invisible': [('state', '!=', 'assigned')]}">
+                                <page string="Results" invisible="state != 'assigned'">
                                     <group string="Student Uploads">
                                         <field name="project_report_file" filename="project_report_filename"/>
                                         <field name="project_report_filename" invisible="1"/>
@@ -169,10 +169,10 @@
                                         <field name="grade"/>
                                     </group>
                                     <group string="Common">
-                                        <field colspan="2" name="result_files" widget="many2many_binary" string="Additional Files" attrs="{'readonly':[('state','!=','assigned')]}" help="Additional files that may include reports, source files, analysis, etc."/>
+                                        <field colspan="2" name="result_files" widget="many2many_binary" string="Additional Files" readonly="state != 'assigned'" help="Additional files that may include reports, source files, analysis, etc."/>
                                     </group>
                                     <group string="Project Report Preview">
-                                        <field name="project_report_file" filename="project_report_filename" widget="pdf_viewer" readonly="1"/>
+                                        <field name="project_report_file" widget="pdf_viewer" readonly="1"/>
                                     </group>
                                 </page>
                                 <page string="Technical Log &amp; Details" groups="student.group_administrator">
@@ -182,12 +182,12 @@
                                 </page>
                             </notebook>
                         </group>
-                        <group string="Eligibility" attrs="{'invisible': [('id', '!=', False)]}">
+                        <group string="Eligibility" invisible="id != False">
                             <p colspan="2" style="color:gray">
                                 <i>Save the project to set up the academic programs for submission.</i>
                             </p>
                         </group>
-                        <group string="Eligibility" attrs="{'invisible': ['|',('id', '=', False),('state', '=', 'assigned')]}">
+                        <group string="Eligibility" invisible="id == False or state == 'assigned'">
                             <group col="6" colspan="2">
                                 <group colspan="2">
                                     <field name="campus_id" help="The campus is automatically assigned based on the project professor." widget="many2many_tags" readonly="1"/>
@@ -206,7 +206,7 @@
                                     </tree>
                                 </field>
                             </group>
-                            <group colspan="2" attrs="{'invisible': [('state', 'not in', ['pending','partially'])]}">
+                            <group colspan="2" invisible="state not in ['pending','partially']">
                                 <field name="reason" placeholder="Please specify the reason if the project will be rejected or returned. The reason will be registered in the log."/>
                             </group>
                         </group>
