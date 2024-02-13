@@ -19,11 +19,11 @@ class StudentUtils(models.AbstractModel):
             channel_name = source + " №" + id
 
         # Search the channel to avoid duplicates
-        channel = context.env['mail.channel'].sudo().search([('name', '=', channel_name)],limit=1,)
+        channel = context.env['discuss.channel'].sudo().search([('name', '=', channel_name)],limit=1,)
 
         # If no suitable channel is found, create a new channel
         if not channel:
-            channel = context.env['mail.channel'].with_context(mail_create_nosubscribe=True).sudo().create({
+            channel = context.env['discuss.channel'].with_context(mail_create_nosubscribe=True).sudo().create({
                 'channel_partner_ids': [(6, 0, author.id+1)],
                 'channel_type': 'channel',
                 'name': channel_name,

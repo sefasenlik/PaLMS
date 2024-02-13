@@ -48,7 +48,15 @@
                             string="RESET PROJECT"
                             type="object"
                             class="btn-warning"
-                            confirm="WARNING! This is a development command. Are you sure that you want reset the project?"
+                            confirm="WARNING! This is a development command. Are you sure that you want to reset the project?"
+                            groups="student.group_administrator"/>
+
+                        <!-- DELETE AFTER DEBUGGING -->
+                        <button name="create_project_project"
+                            string="CREATE PROJECT"
+                            type="object"
+                            class="btn-warning"
+                            confirm="WARNING! This is a development command. Are you sure that you want create the Odoo project?"
                             groups="student.group_administrator"/>
 
                         <button name="action_view_project_apply"

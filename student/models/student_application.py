@@ -211,7 +211,10 @@ class Application(models.Model):
 
 		if self.state == 'sent':
 			self.write({'state': 'accepted'})
+
+			# student.project operations
 			self.project_id.write({'state': 'assigned', 'assigned': True, 'student_elected': [(4, self.applicant.id)]})
+			self.project_id.create_project_project()
 
 			# Assign the user to the special group for them to view "My Project" menu
 			group_id = self.env.ref('student.group_elected_student') 

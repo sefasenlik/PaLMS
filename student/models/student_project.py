@@ -1,3 +1,5 @@
+
+from markupsafe import Markup
 from odoo import fields, models, api, _
 from odoo.exceptions import UserError, AccessError, ValidationError
 import copy
@@ -192,7 +194,7 @@ class Project(models.Model):
 
     # Show projects from the same faculty
     @api.model
-    def search(self, args, offset=0, limit=None, order=None, count=False):
+    def search(self, args, offset=0, limit=None, order=None):
         active_view_type = self.env.context.get('view_type', False)
 
         # FACULTY FILTER in 'Project Board'
@@ -248,7 +250,7 @@ class Project(models.Model):
                 else:
                     raise AccessError("This supervisor account is not registered or not supervising any programs. Contact the administrator for the fix.")
 
-        return super(Project, self).search(args, offset=offset, limit=limit, order=order, count=count)
+        return super(Project, self).search(args, offset=offset, limit=limit, order=order)
 
     # COLORING #        
     # Handle the coloring of the project
@@ -326,7 +328,7 @@ class Project(models.Model):
             subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
             supervisor_name_list = [supervisor.name for supervisor in self.program_supervisors]
             body = f"The project is submitted for the approval of supervisor(s). <br> <i><b>Supervisor(s):</b> {', '.join(supervisor_name_list)}</i>"
-            self.message_post(body=body, subtype_id=subtype_id.id)
+            self.message_post(body=Markup(body), subtype_id=subtype_id.id)
             
             # Send the email --------------------
             subtype_id = self.env.ref('student.student_message_subtype_email')
@@ -499,7 +501,7 @@ class Project(models.Model):
             # Log the action --------------------
             subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
             body = _('The project is rejected by ' + self.env.user.name + '.<br><b>Rejection reason: </b>' + self.reason)
-            self.message_post(body=body, subtype_id=subtype_id.id)
+            self.message_post(body=Markup(body), subtype_id=subtype_id.id)
 
             # Reset the reason after logging it.
             self.reason = ""
@@ -542,7 +544,7 @@ class Project(models.Model):
             # Log the action --------------------
             subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
             body = _('The project is returned by ' + self.env.user.name + ' for the reason below. Resubmission after applying requested modifications is possible.<br><b>Rejection reason: </b>' + self.reason)
-            self.message_post(body=body, subtype_id=subtype_id.id)
+            self.message_post(body=Markup(body), subtype_id=subtype_id.id)
 
             # Reset the reason after logging it.
             self.reason = ""
@@ -606,3 +608,11 @@ class Project(models.Model):
         action['context'] = {'project_id': self.id}
         action['domain'] = [('related_projects', 'in', self.ids)]
         return action
+    
+    project_project_id = fields.Many2one('project.project', string="Odoo Project", compute='create_project_project')
+    # Creates the project.project for student.project
+    def create_project_project(self):
+        self.project_project_id = self.env['project.project'].create({
+            'name': self.name,
+            'privacy_visibility': 'followers'
+        }).id
