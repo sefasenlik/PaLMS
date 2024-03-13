@@ -1,3 +1,4 @@
+from markupsafe import Markup
 from odoo import api, fields, models, _ #_ is for translations
 from odoo.exceptions import UserError, ValidationError
 
@@ -37,7 +38,7 @@ class StudentUtils(models.AbstractModel):
 
         # Send a message to the related user
         channel.sudo().message_post(
-            body=message_text,
+            body=Markup(message_text),
             author_id=author.id+1,
             message_type="comment",
             subtype_xmlid='mail.mt_comment'

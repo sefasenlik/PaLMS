@@ -90,6 +90,7 @@
                             <group string="Availability">
                                 <field name="state"/>
                                 <field name="assigned"/>
+                                <field name="project_project_id" readonly="1" invisible="state != 'assigned'"/>
                                 <field name="proposal_id" invisible="proposal_id == False"/>
                                 <!-- If based on a proposal -->
                                 <field name="student_elected" widget="many2many_tags" string="Proposed by" invisible="proposal_id == False"/>
@@ -144,20 +145,11 @@
                                 <page string="Activities" invisible="state != 'assigned'">
                                     <div class="text-center">
                                         <button name="action_view_project_events" 
-                                                string="Open calendar view to create events ►"
+                                                string="GO TO PROJECT TASKS ►"
                                                 type="object"
                                                 class="btn-secondary"/>  
                                     </div>
-                                    <field name="project_events" style="margin-top:10px" readonly="1">
-                                        <tree default_order='due_date' groupby="type" decoration-muted="complete" decoration-bf="due_date==current_date and complete==False" decoration-primary="due_date==current_date and complete==False" decoration-danger="due_date&lt;current_date and complete==False">
-                                            <field name="complete" invisible="1"/>
-                                            <field name="status"/>
-                                            <field name="name"/>
-                                            <field name="initiator"/>
-                                            <field name="assignee"/>
-                                            <field name="due_date"/>
-                                        </tree>
-                                    </field> 
+                                    <field name="project_project_tasks" style="margin-top:10px" readonly="1"/>
                                 </page>
                                 <page string="Results" invisible="state != 'assigned'">
                                     <group string="Student Uploads">

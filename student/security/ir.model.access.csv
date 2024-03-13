@@ -87,3 +87,17 @@ student_proposal_manager,Proposal for Manager,model_student_proposal,student.gro
 student_proposal_supervisor,Proposal for Supervisor,model_student_proposal,student.group_supervisor,1,0,0,0
 student_proposal_professor,Proposal for Professor,model_student_proposal,student.group_professor,1,1,0,0
 student_proposal_student,Proposal for Student,model_student_proposal,student.group_student,1,1,1,1
+
+
+
+student_project_project_admin,Odoo Project for Administrator,project.model_project_project,student.group_administrator,1,1,1,1
+student_project_project_manager,Odoo Project for Manager,project.model_project_project,student.group_manager,1,0,0,0
+student_project_project_supervisor,Odoo Project for Supervisor,project.model_project_project,student.group_supervisor,1,1,1,1
+student_project_project_professor,Odoo Project for Professor,project.model_project_project,student.group_professor,1,1,1,0
+student_project_project_student,Odoo Project for Student,project.model_project_project,student.group_student,1,1,0,0
+
+student_mail_followers_admin,Followers for Administrator,mail.model_mail_followers,student.group_administrator,1,1,1,1
+student_mail_followers_manager,Followers for Manager,mail.model_mail_followers,student.group_manager,1,0,0,0
+student_mail_followers_supervisor,Followers for Supervisor,mail.model_mail_followers,student.group_supervisor,1,1,1,1
+student_mail_followers_professor,Followers for Professor,mail.model_mail_followers,student.group_professor,1,1,1,0
+student_mail_followers_student,Followers for Student,mail.model_mail_followers,student.group_student,1,0,0,0

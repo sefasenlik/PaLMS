@@ -1,3 +1,4 @@
+from markupsafe import Markup
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError, AccessError
 from dateutil.relativedelta import relativedelta
@@ -167,7 +168,7 @@ class Application(models.Model):
 			message_text = f'<strong>Application Received</strong><p> ' + self.applicant_account.name + " sent an application for " + self.project_id.name + ". Please evaluate the application.</p>"
 
 			# Use the send_message utility function to send the message
-			self.env['student.utils'].send_message('application', message_text, self.application_professor, self.applicant_account, (str(self.id),str(self.project_id.name)))
+			self.env['student.utils'].send_message('application', Markup(message_text), self.application_professor, self.applicant_account, (str(self.id),str(self.project_id.name)))
 
 			self.sent_date = fields.Date.today()
 
@@ -237,7 +238,7 @@ class Application(models.Model):
 			message_text = f'<strong>Application Accepted</strong><p> This application submitted for «' + self.project_id.name + '» is accepted by the professor. You can contact the project professor to start working on it.</p>'
 
 			# Use the send_message utility function to send the message
-			self.env['student.utils'].send_message('application', message_text, self.applicant_account, self.application_professor, (str(self.id),str(self.project_id.name)))
+			self.env['student.utils'].send_message('application', Markup(message_text), self.applicant_account, self.application_professor, (str(self.id),str(self.project_id.name)))
 
 			self.mark_other_applications()
 
@@ -270,7 +271,7 @@ class Application(models.Model):
 			message_text = f'<strong>Application Rejected</strong><p> This application submitted for <i>' + self.project_id.name + '</i> is rejected by the professor. Please check the <b>Feedback</b> section to learn about the reason.</p>'
 
 			# Use the send_message utility function to send the message
-			self.env['student.utils'].send_message('application', message_text, self.applicant_account, self.application_professor, (str(self.id),str(self.project_id.name)))
+			self.env['student.utils'].send_message('application', Markup(message_text), self.applicant_account, self.application_professor, (str(self.id),str(self.project_id.name)))
 
 			return self.env['student.utils'].message_display('Rejection', 'The application is rejected.', False)
 		else:
@@ -291,4 +292,4 @@ class Application(models.Model):
 			message_text = f'<strong>Application Rejected</strong><p> This application submitted for <i>' + self.project_id.name + '</i> is automatically rejected since another one is chosen by the professor.</p>'
 
 			# Use the send_message utility function to send the message
-			self.env['student.utils'].send_message('Auto Reject', message_text, self.applicant_account, odoobot, (str(self.id),str(self.project_id.name)))
+			self.env['student.utils'].send_message('Auto Reject', Markup(message_text), self.applicant_account, odoobot, (str(self.id),str(self.project_id.name)))

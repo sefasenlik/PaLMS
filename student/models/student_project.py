@@ -1,8 +1,7 @@
-
 from markupsafe import Markup
 from odoo import fields, models, api, _
 from odoo.exceptions import UserError, AccessError, ValidationError
-import copy
+import copy, ast
 
 class Project(models.Model):
     _name = "student.project"
@@ -31,7 +30,7 @@ class Project(models.Model):
 
     name = fields.Char('Project Name', required=True, translate=True)
     name_ru = fields.Char('Название проекта', required=True, translate=True)
-    format = fields.Selection([('research', 'Research'), ('project', 'Project'), ('startup', 'Start-up')], string="Format", required=True)
+    format = fields.Selection([('research', 'Research'), ('project', 'Project'), ('startup', 'Start-up')], string="Format", default="research", required=True)
     language = fields.Selection([('en', 'English'), ('ru', 'Russian')], default="en", string="Language", required=True)
 
     create_date = fields.Datetime("Created", readonly=True)
@@ -343,7 +342,7 @@ class Project(models.Model):
             message_text = f'<strong>Project Proposal Received</strong><p> {self.professor_account.name} sent a project proposal: <b><a href="/web#id={self.id}&model=student.project">{self.name}</a></b></p> <p><i>Please evaluate the submission.</i></p>'
 
             # Use the send_message utility function to send the message
-            self.env['student.utils'].send_message('project', message_text, self.program_supervisors, self.professor_account, (str(self.id),str(self.name)))
+            self.env['student.utils'].send_message('project', Markup(message_text), self.program_supervisors, self.professor_account, (str(self.id),str(self.name)))
 
             return self.env['student.utils'].message_display('Confirmation', 'The project is successfully submitted.', False)
             # ♦ This strangely prevents the project status to be immediately updated in the UI.
@@ -428,7 +427,7 @@ class Project(models.Model):
             message_text = f'<strong>Project Proposal Approved</strong><p> ' + self.env.user.name + ' has accepted your project «' + self.name + '».</p><p>Eligible students can see and apply for the project after all supervisors complete their evaluation.</p>'
 
             # Use the send_message utility function to send the message
-            self.env['student.utils'].send_message('project', message_text, self.professor_account, self.env.user, (str(self.id),str(self.name)))
+            self.env['student.utils'].send_message('project', Markup(message_text), self.professor_account, self.env.user, (str(self.id),str(self.name)))
 
             return self.env['student.utils'].message_display('Approval', 'The project is successfully approved.', False)
         else:
@@ -516,7 +515,7 @@ class Project(models.Model):
             message_text = f'<strong>Project Proposal Rejected</strong><p> ' + self.env.user.name + ' has rejected your project «' + self.name + '».</p><p>You can check the <b>project log</b> to learn about the reason.</p>'
 
             # Use the send_message utility function to send the message
-            self.env['student.utils'].send_message('project', message_text, self.professor_account, self.env.user, (str(self.id),str(self.name)))
+            self.env['student.utils'].send_message('project', Markup(message_text), self.professor_account, self.env.user, (str(self.id),str(self.name)))
 
             return self.env['student.utils'].message_display('Rejection', 'The project is rejected.', False)
         else:
@@ -559,7 +558,7 @@ class Project(models.Model):
             message_text = f'<strong>Project Proposal Returned</strong><p> ' + self.env.user.name + ' has returned your proposal "' + self.name + '".</p><p>You can check the <b>Supervisor Feedback</b> section on the project page to learn about the reason. After making necessary changes, you can resubmit the project.</p>'
 
             # Use the send_message utility function to send the message
-            self.env['student.utils'].send_message('project', message_text, self.professor_account, self.env.user, (str(self.id),str(self.name)))
+            self.env['student.utils'].send_message('project', Markup(message_text), self.professor_account, self.env.user, (str(self.id),str(self.name)))
 
             return self.env['student.utils'].message_display('Return', 'The project is returned.', False)
 
@@ -604,15 +603,36 @@ class Project(models.Model):
     
     # Navigates to events of this project
     def action_view_project_events(self):
-        action = self.env.ref('student.action_event').read()[0]
-        action['context'] = {'project_id': self.id}
-        action['domain'] = [('related_projects', 'in', self.ids)]
+        action = self.env.ref('student.action_open_project_tasks').read()[0]
+        action['context'] = {'default_project_id': self.project_project_id.id}
+        action['domain'] = [('project_id', '=', self.project_project_id.id)]
         return action
-    
-    project_project_id = fields.Many2one('project.project', string="Odoo Project", compute='create_project_project')
+
+    project_project_tasks = fields.One2many('project.task', compute="_compute_project_project_tasks")
+    project_project_id = fields.Many2one('project.project', string="Odoo Project")
     # Creates the project.project for student.project
     def create_project_project(self):
         self.project_project_id = self.env['project.project'].create({
             'name': self.name,
             'privacy_visibility': 'followers'
         }).id
+
+        student_follower = self.env['mail.followers'].create({
+            'res_model': "project.project",
+            'partner_id': self.student_elected.student_account.id+1,
+            'res_id': self.project_project_id.id,
+            'subtype_ids': self.env['mail.message.subtype'].search([('id', '=', 1)])
+        }).id
+
+        professor_follower = self.env['mail.followers'].create({
+            'res_model': "project.project",
+            'partner_id': self.professor_account.id+1,
+            'res_id': self.project_project_id.id,
+            'subtype_ids': self.env['mail.message.subtype'].search([('id', '=', 1)])
+        }).id
+
+        self.project_project_id.message_follower_ids = [student_follower, professor_follower]
+
+    def _compute_project_project_tasks(self):
+        self.project_project_tasks = self.project_project_id.tasks
+        print(self.project_project_tasks)

@@ -1,3 +1,4 @@
+from markupsafe import Markup
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError, AccessError
 
@@ -108,7 +109,7 @@ class Proposal(models.Model):
 			message_text = f'<strong>Project Proposal Received</strong><p> ' + self.proponent_account.name + " sent a project proposal «" + self.name + "». Please evaluate the proposal.</p>"
 
 			# Use the send_message utility function to send the message
-			self.env['student.utils'].send_message('proposal', message_text, self.professor_account, self.proponent_account, (str(self.id),str(self.name)))
+			self.env['student.utils'].send_message('proposal', Markup(message_text), self.professor_account, self.proponent_account, (str(self.id),str(self.name)))
 
 			self.sent_date = fields.Date.today()
 
@@ -176,7 +177,7 @@ class Proposal(models.Model):
 			message_text = f"<strong>Proposal Accepted</strong><p> The proposal is accepted by <i>" + self.professor_account.name + "</i> and converted to a project submission. It can be assigned to the student after supervisor's approval.</p>"
 
 			# Use the send_message utility function to send the message
-			self.env['student.utils'].send_message('proposal', message_text, self.proponent_account, self.professor_account, (str(self.id),str(self.name)))
+			self.env['student.utils'].send_message('proposal', Markup(message_text), self.proponent_account, self.professor_account, (str(self.id),str(self.name)))
 			
 			return self.env['student.utils'].message_display('Accepted', 'The proposal is accepted and converted to a project.', False)
 		else:
@@ -206,7 +207,7 @@ class Proposal(models.Model):
 			message_text = f'<strong>Proposal Rejected</strong><p> This project proposal is rejected by <i>' + self.professor_account.name + '</i>. Please check the <b>Feedback</b> section to learn about the reason.</p>'
 
 			# Use the send_message utility function to send the message
-			self.env['student.utils'].send_message('proposal', message_text, self.proponent_account, self.professor_account, (str(self.id),str(self.name)))
+			self.env['student.utils'].send_message('proposal', Markup(message_text), self.proponent_account, self.professor_account, (str(self.id),str(self.name)))
 
 			return self.env['student.utils'].message_display('Rejection', 'The proposal is rejected.', False)
 		else:

@@ -11,7 +11,7 @@
     'installable': True,
     'auto_install': False,
     'application': True,
-    'depends' : ['mail'],
+    'depends' : ['mail','project'],
     'data': [
         'data/student_groups.xml',
         'data/student_email_templates.xml',

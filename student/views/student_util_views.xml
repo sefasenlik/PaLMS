@@ -115,4 +115,15 @@
             </form>
         </field>
     </record>
+
+    <!-- Define the action to open the Tree View of events from the project form -->
+    <record id="action_open_project_tasks" model="ir.actions.act_window">
+        <field name="name">Project Tasks</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">kanban,calendar,tree,form</field>
+        <!-- Dynamic domain to filter tasks by project_id -->
+        <field name="domain">[('project_id', '=', context.get('default_project_id'))]</field>
+        <field name="context">{'search_default_project_id': context.get('default_project_id')}</field>
+    </record>
 </odoo>
