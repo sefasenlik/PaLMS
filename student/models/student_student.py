@@ -15,7 +15,7 @@ class Student(models.Model):
     student_email = fields.Char("Email", default="N/A", compute="_get_from_account", store=True, required=True)
     student_phone = fields.Char("Phone")
 
-    # ♦ Why can I not add 'required' attribute to computed fields?
+    # ♥ Why can I not add 'required' attribute to computed fields?
     student_faculty = fields.Many2one('student.faculty', compute="_compute_faculty", store=True, string='Faculty')
     student_program = fields.Many2one('student.program', string='Enrolled Program', required=True)
     enrolled = fields.Char(string='Year of Enrollment', help='Enter year in yyyy format.')

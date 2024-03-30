@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="student_availability_view_action" model="ir.actions.act_window">
+        <field name="name">Project Availability</field>
+        <field name="res_model">student.availability</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Define a new project availability.
+            </p>
+        </field>
+    </record>
+
+    <record id="student_availability_view_form" model="ir.ui.view">
+        <field name="name">student.availability.form</field>
+        <field name="model">student.availability</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_view_availability_approve"
+                        string="APPROVE"
+                        type="object"
+                        class="btn-success"
+                        confirm="Are you sure you want to accept this project?"
+                        invisible="state != 'pending'"
+                        groups="student.group_supervisor"/>
+                    <button name="action_view_availability_reject"
+                        string="REJECT"
+                        type="object"
+                        class="btn-danger"
+                        confirm="Are you sure you want to reject this project?"
+                        invisible="state != 'pending'"
+                        groups="student.group_supervisor"/>
+                    <button name="action_view_availability_return"
+                        string="RETURN"
+                        type="object"
+                        class="oe_highlight"
+                        confirm="Are you sure you want to return this project?"
+                        invisible="state != 'pending'"
+                        groups="student.group_supervisor"/>
+
+                    <button name="action_view_availability_open_full"
+                        string="OPEN FULL VIEW"
+                        type="object"
+                        class="oe_highlight"
+                        icon="fa-eye"
+                        invisible="not access_from_project"
+                        groups="student.group_supervisor"/>
+                </header>
+                <sheet>
+                    <group string="Project Status">
+                        <group>
+                            <field name="state" readonly="1"/>
+                            <field name="project_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="type" readonly="state in ['accepted', 'rejected']"/>
+                            <field name="program_id" readonly="state != 'waiting'" domain="[('program_faculty_id.id', '=', program_id_faculty_domain)]"/>
+                            <field name="degree_ids" widget="many2many_tags" domain="[('level', '=', degree_ids_level_domain)]" readonly="state != 'waiting'"/>                    
+                        </group>
+                        <group colspan="2">
+                            <field name="reason" readonly="state != 'pending'" invisible="state in ['waiting','approved']" placeholder="Please specify the reason if the project will be rejected or returned. The reason will registered in the log."/>    
+                        </group>
+
+                        <field name="program_id_faculty_domain" invisible="1"/>
+                        <field name="degree_ids_level_domain" invisible="1"/>
+                    </group>
+
+                    <field name="access_from_project" invisible="1" view_id="False"/>
+                    <group string="Project Details" invisible="access_from_project">
+                        <group>
+                            <field name="name"/>
+                            <field name="name_ru"/>
+                        </group>
+                        <group>
+                            <field name="format"/>
+                            <field name="language"/>
+                        </group>
+                        <group colspan="2">
+                            <field name="description"/>
+                            <field name="requirements"/>
+                            <field name="results"/>
+                            <field name="additional_files" widget="many2many_binary" string="Attached files" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="student_availability_kanban_view_supervision" model="ir.ui.view">
+        <field name="name">Availability - Kanban View for Supervisors</field>
+        <field name="model">student.availability</field>
+        <field name="arch" type="xml">
+            <kanban create="false"
+                    quick_create="false" 
+                    records_draggable="false" 
+                    default_group_by="state" 
+                    class="o_res_partner_kanban o_kanban_large_column" 
+                    name="student_availability_kanban"
+                    default_order="write_date desc">
+                <field name="state"/>
+                <field name="name"/>
+                <field name="program_supervisor_account" invisible="1"/>
+
+                <templates>
+                    <field name="color_supervision"/>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="#{kanban_color(record.color_supervision.raw_value)} oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <div class="oe_kanban_title">
+                                    <strong>State: </strong>
+                                    <field name="state"/><br/>
+                                    <strong>Project Name: </strong>
+                                    <field name="name"/>
+                                </div>
+                                <div class="oe_kanban_subtitle" style="color:gray; margin-top: 5px;font-style: italic">
+                                    <strong>Type: </strong>
+                                    <field name="type"/><br/>
+                                    <strong>Format: </strong>
+                                    <field name="format"/><br/>
+                                    <strong>Language: </strong>
+                                    <field name="language"/><br/>
+                                </div>
+                                <div style="margin-top: 10px">
+                                    <field name="degree_ids"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- student_menus.xml refers to this in the menu (for supervisors) -->
+    <record id="student_availability_kanban_supervision" model="ir.actions.act_window">
+        <field name="name">Project Supervision Board</field>
+        <field name="res_model">student.availability</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_id" ref="student_availability_kanban_view_supervision"/>
+        <field name="context">{'search_default_my_projects': 1, 'search_default_supervised_by_me': 1, 'view_type': 'project_board'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                There are no projects sent for supervision.
+            </p>
+        </field>
+        <field name="domain">[('state', '!=', 'waiting'), ('program_supervisor_account', '=', uid)]</field>
+    </record>
+
+    <!-- ♥ Finish it -->
+    <record id="student_availability_view_search" model="ir.ui.view">
+        <field name="name">student.availability.search</field>
+        <field name="model">student.availability</field>
+        <field name="arch" type="xml">
+            <search string="Availability List">
+                <field name="project_id" string="Related Project" />
+                <field name="program_id" string="Submitted to" />
+                <field name="degree_ids" string="Available for"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="student_availability_view_list" model="ir.ui.view">
+        <field name="name">Availability - Tree View</field>
+        <field name="model">student.availability</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="project_id"/>
+                <field name="state" string="Submission State"/>
+                <field name="program_id" string="Submitted to"/>
+                <field name="type" string="Type"/>
+                <field name="degree_ids" widget="many2many_tags" string="Available for"/>
+            </tree>
+        </field>
+    </record>
+
+</odoo>

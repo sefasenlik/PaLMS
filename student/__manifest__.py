@@ -3,10 +3,10 @@
 
 {
     'name': 'PaLMS',
-    'version': '0.3.6',
+    'version': '0.4.1',
     'category': 'Human Resources/Student',
     'sequence': 15,
-    'summary': 'A prototype ERP solution for handling course work submissions. Created by Sefa Şenlik - 2023',
+    'summary': 'A prototype ERP solution for handling course work submissions. Created by Sefa Şenlik - 2024',
     'website': 'https://github.com/sefasenlik/PaLMS',
     'installable': True,
     'auto_install': False,
@@ -18,7 +18,7 @@
         'data/student_regulations.xml',
         'security/ir.model.access.csv',
         'views/student_application_views.xml',
-        'views/student_event_views.xml',
+        'views/student_availability_views.xml',
         'views/student_faculty_views.xml',
         'views/student_professor_views.xml',
         'views/student_program_views.xml',

@@ -2,12 +2,6 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 
 student_utils_admin,Utilities for Administrator,model_student_utils,student.group_administrator,1,1,1,1
 
-student_event_admin,Event for Administrator,model_student_event,student.group_administrator,1,1,1,1
-student_event_manager,Event for Manager,model_student_event,student.group_manager,1,0,0,0
-student_event_supervisor,Event for Supervisor,model_student_event,student.group_supervisor,1,1,1,1
-student_event_professor,Event for Professor,model_student_event,student.group_professor,1,1,1,1
-student_event_student,Event for Student,model_student_event,student.group_student,1,1,1,1
-
 student_subtype_admin,Subtype for Administrator,model_student_message_subtype,student.group_administrator,1,0,0,0
 
 
@@ -95,6 +89,18 @@ student_project_project_manager,Odoo Project for Manager,project.model_project_p
 student_project_project_supervisor,Odoo Project for Supervisor,project.model_project_project,student.group_supervisor,1,1,1,1
 student_project_project_professor,Odoo Project for Professor,project.model_project_project,student.group_professor,1,1,1,0
 student_project_project_student,Odoo Project for Student,project.model_project_project,student.group_student,1,1,0,0
+
+student_project_task_admin,Project Task for Administrator,project.model_project_task,student.group_administrator,1,1,1,1
+student_project_task_manager,Project Task for Manager,project.model_project_task,student.group_manager,1,0,0,0
+student_project_task_supervisor,Project Task for Supervisor,project.model_project_task,student.group_supervisor,1,0,0,0
+student_project_task_professor,Project Task for Professor,project.model_project_task,student.group_professor,1,1,1,1
+student_project_task_student,Project Task for Student,project.model_project_task,student.group_student,1,1,1,1
+
+student_project_task_type_admin,Project Task Type for Administrator,project.model_project_task_type,student.group_administrator,1,1,1,1
+student_project_task_type_manager,Project Task Type for Manager,project.model_project_task_type,student.group_manager,1,0,0,0
+student_project_task_type_supervisor,Project Task Type for Supervisor,project.model_project_task_type,student.group_supervisor,1,0,0,0
+student_project_task_type_professor,Project Task Type for Professor,project.model_project_task_type,student.group_professor,1,1,1,1
+student_project_task_type_student,Project Task Type for Student,project.model_project_task_type,student.group_student,1,1,1,1
 
 student_mail_followers_admin,Followers for Administrator,mail.model_mail_followers,student.group_administrator,1,1,1,1
 student_mail_followers_manager,Followers for Manager,mail.model_mail_followers,student.group_manager,1,0,0,0

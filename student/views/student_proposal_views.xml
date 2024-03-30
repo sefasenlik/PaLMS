@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <odoo>
     <record id="student_proposal_view_professor" model="ir.actions.act_window">
-        <field name="name">Proposals Received</field>
+        <field name="name">Project Proposals</field>
         <field name="res_model">student.proposal</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('professor_account','=',uid)]</field>
@@ -13,7 +13,7 @@
     </record>
     
     <record id="student_proposal_view_personal" model="ir.actions.act_window">
-        <field name="name">My Proposals</field>
+        <field name="name">Proposals</field>
         <field name="res_model">student.proposal</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('proponent_account','=',uid)]</field>
@@ -21,7 +21,7 @@
             <p class="o_view_nocontent_smiling_face">
                 Send your first proposal to your favorite professors!
             </p>
-            <!-- ♦ The link doesn't work! -->
+            <!-- ♥ The link doesn't work! -->
             <a t-attf-href="/web#action={{ env.ref('student_project_view_action_list').id }} ">View projects</a>
         </field>
     </record>
@@ -62,14 +62,14 @@
             <form string="Proposal" on_load="trigger_func()">
                 <header>
                     <button name="action_view_proposal_send"
-                        string="Send Proposal"
+                        string="SEND PROPOSAL"
                         type="object"
                         confirm="Are you sure you want to send your proposal to the chosen professor?"
                         groups="student.group_student"
                         class="oe_highlight"
                         invisible="state != 'draft'"/>
                     <button name="action_view_proposal_cancel"
-                        string="Cancel Proposal"
+                        string="CANCEL PROPOSAL"
                         type="object"
                         confirm="Are you sure you want to cancel your proposal?"
                         groups="student.group_student"

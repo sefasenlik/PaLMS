@@ -33,7 +33,7 @@ class Proposal(models.Model):
 		self.proponent_account = self.proponent.student_account
 		self.proponent_faculty = self.proponent.student_faculty
 		
-		# ♦ It doesn't work. How to filter professors based on student faculty?
+		# ♥ It doesn't work. How to filter professors based on student faculty?
 		return {'domain': {'proposal_professor': [('professor_faculty.id','=',self.proponent_faculty.id)]}}
 	
 	proponent = fields.Many2one('student.student', string='Proposed by', default=_default_proponent, readonly=True, required=True)

@@ -11,22 +11,22 @@ class Project(models.Model):
     current_user = fields.Many2one('res.users', string="Current User Account", compute='_compute_current_user')
     def _compute_current_user(self):
         self.current_user = self.env.user.id
-        self._compute_supervisor_response()
-
-    # Locks fields upon submitting
-    locked = fields.Boolean(default=False)
-            
+        
     proposal_id = fields.Many2one('student.proposal', string="Proposal", readonly=True)
 
-    state = fields.Selection([('draft', 'Draft'),       
-                              ('pending', 'Pending'),
-                              ('approved', 'Approved'),
-                              ('partially', 'Partially Approved'),
-                              ('rejected', 'Rejected'),
-                              ('returned','Returned'),
-                              ('applied', 'Application Received'),  
-                              ('assigned', 'Assigned')],           
-                              group_expand='_expand_groups', default='draft', string='State', readonly=True, store=True, tracking=False)
+    state_evaluation = fields.Selection([('draft', 'Draft'),       
+                                         ('progress', 'In Progress'),
+                                         ('approved', 'Approved'),
+                                         ('mixed', 'Mixed Evaluation'),
+                                         ('rejected', 'Rejected')],           
+                                         group_expand='_expand_evaluation_groups', default='draft', string='Evaluation State', readonly=True, tracking=True)
+    state_publication = fields.Selection([('ineligible', 'Ineligible'),
+                                          ('published', 'Published'),       
+                                          ('applied', 'Application Received'),
+                                          ('assigned', 'Assigned'),
+                                          ('completed', 'Completed'),
+                                          ('dropped', 'Dropped')],           
+                                          group_expand='_expand_publication_groups', default='ineligible', string='Publication State', readonly=True, tracking=True)
 
     name = fields.Char('Project Name', required=True, translate=True)
     name_ru = fields.Char('Название проекта', required=True, translate=True)
@@ -44,10 +44,10 @@ class Project(models.Model):
             record.write_date_date = record.write_date.date()
 
     description = fields.Text('Detailed Description', required=True)
-    requirements = fields.Text('Application Requirements')
-    results = fields.Text('Expected Results')
+    requirements = fields.Text('Application Requirements', required=True)
+    results = fields.Text('Expected Results', required=True)
 
-    # ♦ You can merge these functions
+    # ♥ You can merge these functions.
     # Assigns the professor's faculty
     @api.model
     def _default_campus(self):
@@ -66,8 +66,7 @@ class Project(models.Model):
                                    relation='student_project_program_rel',
                                    column1='project_id',
                                    column2='program_id',
-                                   string='Target Programs (TECHNICAL)',
-                                   compute="_find_programs",
+                                   string='Target Programs',
                                    store=True,
                                    readonly=False)
     program_ids_count = fields.Integer('Number of Total Submissions', compute="_compute_program_counts", store=True, readonly=True)
@@ -78,6 +77,13 @@ class Project(models.Model):
                                            string='Pending Programs (TECHNICAL)',
                                            readonly=True)
     pending_program_ids_count = fields.Integer('Number of Pending Submissions', compute="_compute_program_counts", store=True, readonly=True)
+    returned_program_ids = fields.Many2many(comodel_name='student.program',
+                                           relation='student_project_returned_program_rel',
+                                           column1='project_id',
+                                           column2='program_id',
+                                           string='Returned Programs (TECHNICAL)',
+                                           readonly=True)
+    returned_program_ids_count = fields.Integer('Number of Returned Programs', compute="_compute_program_counts", store=True, readonly=True)
     approved_program_ids = fields.Many2many(comodel_name='student.program',
                                             relation='student_project_approved_program_rel',
                                             column1='project_id',
@@ -90,13 +96,10 @@ class Project(models.Model):
     def _compute_program_counts(self):
         self.program_ids_count = len(self.program_ids)
         self.pending_program_ids_count = len(self.pending_program_ids)
+        self.returned_program_ids_count = len(self.returned_program_ids)
         self.approved_program_ids_count = len(self.approved_program_ids)
     
     availability_ids = fields.One2many('student.availability', 'project_id', string='Target Programs')
-
-    user_supervisor_response = fields.Boolean("Is the current user a supervisor who didn't respond yet?", compute="_compute_supervisor_response")
-    def _compute_supervisor_response(self):
-        self.user_supervisor_response = self.env.user.id in self.pending_program_ids.mapped('supervisor.supervisor_account.id')
 
     reason = fields.Text(string='Return/Rejection Reason')
 
@@ -110,8 +113,6 @@ class Project(models.Model):
     
     assigned = fields.Boolean('Assigned to a student?', default=False, readonly=True)
     student_elected = fields.One2many('student.student', 'current_project', string='Elected Student', readonly=True)
-    
-    project_events = fields.Many2many('student.event', string="Project Events")
 
     additional_files = fields.Many2many(
         comodel_name='ir.attachment',
@@ -124,6 +125,7 @@ class Project(models.Model):
 
     project_report_file = fields.Binary(string='Project Report')
     project_report_filename = fields.Char()
+    project_preview_toggle = fields.Boolean('Show Preview', default=False)
 
     plagiarism_check_file = fields.Binary(string='Plagiarism Check')
     plagiarism_check_filename = fields.Char()
@@ -188,14 +190,15 @@ class Project(models.Model):
     def _compute_application_count(self):
         for project in self:
             project.applications = len(project.application_ids)
-            if project.applications > 0 and project.state == 'approved':
-                project.state = 'applied'
+            if project.applications > 0 and project.state_publication == 'published':
+                project.state_publication = 'applied'
 
     # Show projects from the same faculty
     @api.model
     def search(self, args, offset=0, limit=None, order=None):
         active_view_type = self.env.context.get('view_type', False)
 
+        # ♥♥ REVISE THIS SECTION FOR THE NEW BOARD SYSTEM
         # FACULTY FILTER in 'Project Board'
         if active_view_type == 'project_board':
             user_faculty = False
@@ -215,7 +218,7 @@ class Project(models.Model):
             # If the user has a faculty, add a domain to filter projects
             if not self.env.user.has_group('student.group_administrator'):
                 if user_faculty:
-                    # ♦ Currently disabled functionality: Professor can see their projects if they sent it to another faculty
+                    # ♥ Currently disabled functionality: Professor can see their projects if they sent it to another faculty
                     if viewing_professor:
                         args.append('|')
                         args.append(('faculty_id', 'in', [user_faculty.id]))
@@ -253,33 +256,54 @@ class Project(models.Model):
 
     # COLORING #        
     # Handle the coloring of the project
-    color = fields.Integer(string="Box Color", default=4, compute='_compute_color_value', store=True)
+    color_evaluation = fields.Integer(string="Evaluation Card Color", default=4, compute='_compute_evaluation_color_value', store=True)
+    color_publication = fields.Integer(string="Publication Card Color", compute='_compute_publication_color_value', store=True)
 
     # Updates color based on the state
-    # 5 - Dark purple | 6 - Salmon pink | 7 - Medium blue
-    @api.depends('state')
-    def _compute_color_value(self):
-        if self.state == 'draft':
-            self.color = 4  # Light blue
-        elif self.state == 'pending':
-            self.color = 2  # Orange
-        elif self.state == 'partially':
-            self.color = 3  # Yellow
-        elif self.state == 'approved':
-            self.color = 10 # Green
-        elif self.state == 'rejected':
-            self.color = 1  # Red
-        elif self.state == 'returned':
-            self.color = 11 # Purple
-        elif self.state == 'applied':
-            self.color = 9  # Fushia
-        elif self.state == 'assigned':
-            self.color = 8  # Dark blue
+    # 1 - Red | 2 - Orange | 3 - Yellow | 4 - Cyan | 5 - Purple | 6 - Almond | 7 - Teal | 8 - Blue | 9 - Raspberry | 10 - Green | 11 - Violet
+    @api.depends('state_evaluation')
+    def _compute_evaluation_color_value(self):
+        # ♥ Why does 'self' bring multiple projects?
+        for project in self:
+            match project.state_evaluation:
+                case 'draft': 
+                    self.color_evaluation = 4
+                case 'progress':
+                    self.color_evaluation = 3
+                case 'approved':
+                    self.color_evaluation = 10
+                case 'mixed':
+                    self.color_evaluation = 6
+                case 'rejected':
+                    self.color_evaluation = 1
+                case _:
+                    ValidationError("This project has an invalid evaluation state. Please contact the system administrator.")
+
+    @api.depends('state_publication')
+    def _compute_publication_color_value(self):
+        for project in self:
+            match project.state_publication:
+                case 'published': 
+                    self.color_publication = 4
+                case 'applied':
+                    self.color_publication = 5
+                case 'assigned':
+                    self.color_publication = 8
+                case 'completed':
+                    self.color_publication = 10
+                case 'dropped':
+                    self.color_publication = 1
+                case _:
+                    ValidationError("This project has an invalid publication state. Please contact the system administrator.")
 
     # Orders kanban groups/stages
     @api.model
-    def _expand_groups(self, states, domain, order):
-        return ['draft', 'pending', 'returned', 'partially', 'approved', 'applied', 'assigned', 'rejected']
+    def _expand_evaluation_groups(self, states, domain, order):
+        return ['draft', 'progress', 'approved', 'mixed', 'rejected']
+    
+    @api.model
+    def _expand_publication_groups(self, states, domain, order):
+        return ['published', 'applied', 'assigned', 'completed', 'dropped'] # 'ineligible' is hidden
 
     # UTILITY #
     # Prevents the creation of the default log message
@@ -287,7 +311,7 @@ class Project(models.Model):
     def create(self, vals):
         project = super(Project, self.with_context(tracking_disable=True)).create(vals)
 
-        # ♦ Customizes the creation log message
+        # ♥ Customizes the creation log message
         if self.proposal_id:
             message = _("A new project has been created upon the proposal of %s.") % (self.student_elected)
         else:
@@ -303,15 +327,14 @@ class Project(models.Model):
             if self.professor_account != self.env.user:
                 raise AccessError("You can only modify your projects.")
 
-    # You may send different messages submission and re-submission.
+    # ♥ You may send different messages submission and re-submission.
     def action_view_project_submit(self):
         self._check_professor_identity()
         
         if len(self.availability_ids) <= 0:
             raise AccessError("You need to choose programs to submit first!")
-        elif self.state in ['draft', 'returned']:
-            self.locked = True
-            self.write({'state': 'pending'})
+        elif self.state_evaluation == 'draft':
+            self.write({'state_evaluation': 'progress'})
             self._update_additional_ownership()
 
             # Assign availability record programs to the project
@@ -345,72 +368,75 @@ class Project(models.Model):
             self.env['student.utils'].send_message('project', Markup(message_text), self.program_supervisors, self.professor_account, (str(self.id),str(self.name)))
 
             return self.env['student.utils'].message_display('Confirmation', 'The project is successfully submitted.', False)
-            # ♦ This strangely prevents the project status to be immediately updated in the UI.
+            # ♥ This strangely prevents the project status to be immediately updated in the UI.
         else:
             raise AccessError("Projects in this state cannot be submitted!")
     
-    def action_view_project_cancel(self):
-        self._check_professor_identity()
+    def action_view_project_cancel(self, automatic=False):
+        if not automatic:
+            self._check_professor_identity()
 
-        if self.state == 'pending':
-            self.locked = False
-            self.write({'state': 'draft'})
+            if self.state_evaluation == 'progress':
+                if self.env['student.availability'].search([('project_id', '=', self.id), ('state', 'not in', ['waiting','pending'])]):
+                    raise UserError("It is not possible cancel processed projects! Contact system administrator for changes.")
+                else:
+                    self.write({'state_evaluation': 'draft'})
 
-            availabilities_to_mark = self.env['student.availability'].search([('project_id', '=', self.id)])
-            for availability in availabilities_to_mark:
-                availability.state = "waiting"
+                    availabilities_to_mark = self.env['student.availability'].search([('project_id', '=', self.id)])
+                    for availability in availabilities_to_mark:
+                        availability.state = "waiting"
 
-            # Log the action --------------------
-            subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
-            body = _('The project submission is cancelled.')
-            self.message_post(body=body, subtype_id=subtype_id.id)
+                    # Log the action --------------------
+                    subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
+                    body = _('The project submission is cancelled.')
+                    self.message_post(body=body, subtype_id=subtype_id.id)
 
-            return self.env['student.utils'].message_display('Cancellation', 'The project submission is cancelled.', False)
-        
-    def _check_supervisor_identity(self,check=False):
-        if check and not self.env.user.has_group('student.group_administrator'):
-            if self.env.user not in self.program_supervisors:
-                raise AccessError("You can only react to projects sent to the program that you are supervising.")
+                    return self.env['student.utils'].message_display('Cancellation', 'The project submission is cancelled.', False)
+        else:
+            if self.env['student.availability'].search([('project_id', '=', self.id), ('state', '!=', 'returned')]):
+                raise ValidationError("Not all supervisors returned the project. Automatic cancellation is invalid, please contact the system administrator.")
+            else:
+                self.write({'state_evaluation': 'draft'})
+
+                availabilities_to_mark = self.env['student.availability'].search([('project_id', '=', self.id)])
+                for availability in availabilities_to_mark:
+                    availability.state = "waiting"
+
+                # Log the action --------------------
+                subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
+                body = _("The project is returned from all submitted programs, so it is automatically reverted to 'Draft' status.")
+                self.message_post(body=body, subtype_id=subtype_id.id)
+
+                return self.env['student.utils'].message_display('Automatic Cancellation', 'The project submission is automatically cancelled.', False)
+
          
-    # Check if all supervisors have decided. If yes, mark the project accordingly.            
+    # Check if all supervisors have decided. If yes, mark the project accordingly.      
     def _check_decisions(self):
         if len(self.pending_program_ids) == 0:
-            if self.student_elected:
-                return 'assigned'
-            elif len(self.approved_program_ids) == len(self.program_ids):
+            if len(self.approved_program_ids) == len(self.program_ids):
                 return 'approved'
+            elif len(self.returned_program_ids) == len(self.program_ids):
+                return 'draft'
             elif len(self.approved_program_ids) == 0:
                 return 'rejected'
             else:
-                return 'partially'
+                return 'mixed'
         else:
-            if len(self.approved_program_ids) > 0:
-                return 'partially'
-            else:
-                return 'pending'
+            return 'progress'
 
-    def action_view_project_approve(self):
-        self._check_supervisor_identity(True)
-
-        if self.state in ['partially', 'pending']:
+    def action_view_project_approve(self, approved_program_id):
+        if self.state_evaluation == "progress":
             if self.proposal_id:              
-                self.write({'state': 'assigned'})
+                self.write({'state_evaluation': 'approved', 'state_publication': 'assigned'})
 
                 # Assign the user to the special group for them to view "My Project" menu
                 group_id = self.env.ref('student.group_elected_student') 
                 group_id.users = [(4, self.student_elected.student_account.id)]
             else:                
-                # ♦ Can a user supervise multiple projects?
-                supervisor_programs = self.env['student.program'].search([('supervisor.supervisor_account', '=', self.env.uid),('id', 'in', self.program_ids.ids)])
-                for program in supervisor_programs:
-                    self.approved_program_ids = [(4, program.id)]
-                    self.pending_program_ids = [(3, program.id)]
+                self.approved_program_ids = [(4, approved_program_id)]
+                self.pending_program_ids = [(3, approved_program_id)]
 
-                    availabilities_to_mark = self.env['student.availability'].search([('program_id', '=', program.id),('project_id', '=', self.id)])
-                    for availability in availabilities_to_mark:
-                        availability.state = "approved"
-
-                self.write({'state': self._check_decisions()})
+                self.write({'state_evaluation': self._check_decisions(), 'state_publication': 'published'})
 
             # Log the action --------------------
             subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
@@ -431,17 +457,9 @@ class Project(models.Model):
 
             return self.env['student.utils'].message_display('Approval', 'The project is successfully approved.', False)
         else:
-            raise UserError("You can only reject projects submissions in 'Pending' or 'Partially Approved' statuses.")
+            raise UserError("You can only reject projects submissions in 'Pending' status.")
 	
-    # RESTRICTIONS #
-    @api.constrains("reason")
-    def _check_reason_modified(self):
-        if self.state in ['partially', 'pending']:
-            if not self.env.user.has_group("student.group_supervisor"):
-                raise UserError("Only academic supervisors can modify the feedback!")
-            elif self.env.user.id not in self.program_supervisors.mapped('id'):
-                raise UserError("This project is not sent to a program you are supervising.")
-            
+    # RESTRICTIONS #            
     @api.constrains("result_text", "notes", "grade")
     def _check_modifier_faculty_member(self):
         if self.env.user.has_group("student.group_student"):
@@ -454,13 +472,13 @@ class Project(models.Model):
         
     @api.constrains("project_report_file", "project_check_file", "student_feedback")
     def _check_modifier_student(self):
-        if self.state == "assigned" and self.env.user.id != self.student_elected.student_account.id:
+        if self.state_publication == "assigned" and self.env.user.id != self.student_elected.student_account.id:
             raise UserError("These fields can be modified by the assigned student.")
         
     def unlink(self):
         for record in self:
             if not record.env.user.has_group('student.group_administrator'): 
-                if record.state == "assigned":
+                if record.state_publication == "assigned":
                     raise UserError(_('Only administrators can delete assigned projects!'))
                 elif record.env.uid != record.professor_account.id or record.env.uid in record.program_supervisors.ids:
                     raise UserError(_('Only its professor or related supervisors can delete this project!'))
@@ -468,42 +486,20 @@ class Project(models.Model):
             # Remove the student from the group
             group_id = record.env.ref('student.group_elected_student') 
             group_id.users = [(3, record.student_elected.id)]
+
+            record.availability_ids.unlink()
         
         return super(Project, self).unlink()
-    
-    # ♦ Why is this function called on saving?
-    def _check_reason(self,check=False):
-        if check:
-            if not self.reason:
-                raise UserError("You need to provide a reason for rejection/return.")
-            if len(self.reason) < 20:
-                raise UserError("Please provide a more detailed reason (at least 20 characters).")
         
-    def action_view_project_reject(self):
-        self._check_supervisor_identity(True)
-
-        if self.state in ['partially', 'pending']:
-            self._check_reason(True)           
-                
-            # ♦ Can a user supervise multiple projects?
-            supervisor_programs = self.env['student.supervisor'].search([('supervisor_account', '=', self.env.uid)]).program_ids
-            for program in supervisor_programs:
-                self.pending_program_ids = [(3, program.id)]
-
-                availabilities_to_mark = self.env['student.availability'].search([('program_id', '=', program.id),('project_id', '=', self.id)])
-                for availability in availabilities_to_mark:
-                    availability.state = "rejected"
-                    availability.reason = self.reason
-
-            self.write({'state': self._check_decisions()})
+    def action_view_project_reject(self, rejected_availability_id):
+        if self.state_evaluation == "progress":            
+            self.pending_program_ids = [(3, rejected_availability_id.program_id.id)]
+            self.write({'state_evaluation': self._check_decisions()})
 
             # Log the action --------------------
             subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
-            body = _('The project is rejected by ' + self.env.user.name + '.<br><b>Rejection reason: </b>' + self.reason)
+            body = _('The project is rejected by ' + self.env.user.name + '.<br><b>Rejection reason: </b>' + rejected_availability_id.reason)
             self.message_post(body=Markup(body), subtype_id=subtype_id.id)
-
-            # Reset the reason after logging it.
-            self.reason = ""
 
             # Send the email --------------------
             subtype_id = self.env.ref('student.student_message_subtype_email')
@@ -519,56 +515,55 @@ class Project(models.Model):
 
             return self.env['student.utils'].message_display('Rejection', 'The project is rejected.', False)
         else:
-            raise UserError("You can only reject projects submissions in 'Pending' or 'Partially Approved' statuses.")
+            raise UserError("This project cannot be processed. Please contact the administrator.")
     
-    def action_view_project_return(self):
-        self._check_supervisor_identity(True)
+    def action_view_project_return(self, returned_availability_id):
+        if self.state_evaluation == "progress":     
+            self.returned_program_ids = [(4, returned_availability_id.program_id.id)]
+            self.pending_program_ids = [(3, returned_availability_id.program_id.id)]
+            if self._check_decisions() == 'draft':
+                self.action_view_project_cancel(True)
+            else:
+                self.write({'state_evaluation': self._check_decisions()})
 
-        if self.state in ['partially', 'pending']:
-            self._check_reason(True)
+                # Log the action --------------------
+                subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
+                body = _('The project is returned by ' + self.env.user.name + ' for the reason below. Resubmission after applying requested modifications is possible.<br><b>Rejection reason: </b>' + returned_availability_id.reason)
+                self.message_post(body=Markup(body), subtype_id=subtype_id.id)
 
-            self.locked = False
-            self.write({'state': 'returned'})
+                # Send the email --------------------
+                subtype_id = self.env.ref('student.student_message_subtype_email')
+                template = self.env.ref('student.email_template_project_return')
+                template.send_mail(self.id, email_values={'subtype_id': subtype_id.id}, force_send=True)
+                # -----------------------------------
 
-            # When a supervisor returns the project, all approval progress is reset    
-            # ♦ Can a user supervise multiple projects?
-            availabilities_to_mark = self.env['student.availability'].search([('project_id', '=', self.id)])
-            for availability in availabilities_to_mark:
-                availability.state = "returned"
-                availability.reason = self.reason
+                # Construct the message that is to be sent to the user
+                message_text = f'<strong>Project Proposal Returned</strong><p> ' + self.env.user.name + ' has returned your proposal "' + self.name + '".</p><p>You can check the <b>Supervisor Feedback</b> section on the project page to learn about the reason. After making necessary changes, you can resubmit the project.</p>'
+
+                # Use the send_message utility function to send the message
+                self.env['student.utils'].send_message('project', Markup(message_text), self.professor_account, self.env.user, (str(self.id),str(self.name)))
+
+                return self.env['student.utils'].message_display('Return', 'The project is returned.', False)
             
-            self.approved_program_ids = [(5, 0, 0)]
-            self.pending_program_ids = copy.copy(self.program_ids)
-
-            # Log the action --------------------
-            subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
-            body = _('The project is returned by ' + self.env.user.name + ' for the reason below. Resubmission after applying requested modifications is possible.<br><b>Rejection reason: </b>' + self.reason)
-            self.message_post(body=Markup(body), subtype_id=subtype_id.id)
-
-            # Reset the reason after logging it.
-            self.reason = ""
-
-            # Send the email --------------------
-            subtype_id = self.env.ref('student.student_message_subtype_email')
-            template = self.env.ref('student.email_template_project_return')
-            template.send_mail(self.id, email_values={'subtype_id': subtype_id.id}, force_send=True)
-            # -----------------------------------
-
-            # Construct the message that is to be sent to the user
-            message_text = f'<strong>Project Proposal Returned</strong><p> ' + self.env.user.name + ' has returned your proposal "' + self.name + '".</p><p>You can check the <b>Supervisor Feedback</b> section on the project page to learn about the reason. After making necessary changes, you can resubmit the project.</p>'
-
-            # Use the send_message utility function to send the message
-            self.env['student.utils'].send_message('project', Markup(message_text), self.professor_account, self.env.user, (str(self.id),str(self.name)))
-
-            return self.env['student.utils'].message_display('Return', 'The project is returned.', False)
+    def action_view_project_complete(self):
+        if self.project_report_file and self.plagiarism_check_file and self.professor_review_file:
+            self.state_publication = 'completed'
+        else:
+            raise ValidationError("Project report, plagiarism check and professor's review file required to complete the project.")
 
     # The reset button functionality for development purposes
     def action_view_project_reset(self):
-        self.state = "draft"
-        self.locked = False
+        self.state_evaluation = "draft"
+        self.state_publication = "ineligible"
+
         self.student_elected = None
         self.student_elected.current_project = None
         self.reason = ""
+
+        # Reset all project availabilities
+        project_availabilities = self.env['student.availability'].search([('project_id', '=', self.id)])
+        for availability in project_availabilities:
+            availability.state = "waiting"
 
         # Erase all applications for this project
         applications = self.env['student.application'].search([('project_id', '=', self.id)])
@@ -619,20 +614,30 @@ class Project(models.Model):
 
         student_follower = self.env['mail.followers'].create({
             'res_model': "project.project",
-            'partner_id': self.student_elected.student_account.id+1,
+            'partner_id': self.student_elected.student_account.partner_id.id,
             'res_id': self.project_project_id.id,
             'subtype_ids': self.env['mail.message.subtype'].search([('id', '=', 1)])
         }).id
 
         professor_follower = self.env['mail.followers'].create({
             'res_model': "project.project",
-            'partner_id': self.professor_account.id+1,
+            'partner_id': self.professor_account.partner_id.id,
             'res_id': self.project_project_id.id,
             'subtype_ids': self.env['mail.message.subtype'].search([('id', '=', 1)])
         }).id
 
+        # Create stages
+        stages_data = [
+            {'name': 'Backlog', 'sequence': 10, 'fold': False},
+            {'name': 'In Progress', 'sequence': 20, 'fold': False},
+            {'name': 'Complete', 'sequence': 30, 'fold': False},
+            {'name': 'Approved', 'sequence': 40, 'fold': False},
+            {'name': 'Canceled', 'sequence': 50, 'fold': True}
+        ]
+        stages = self.env['project.task.type'].create(stages_data)
+
+        self.project_project_id.write({'type_ids': [(6, 0, stages.ids)]})
         self.project_project_id.message_follower_ids = [student_follower, professor_follower]
 
     def _compute_project_project_tasks(self):
         self.project_project_tasks = self.project_project_id.tasks
-        print(self.project_project_tasks)

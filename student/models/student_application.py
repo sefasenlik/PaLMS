@@ -65,7 +65,7 @@ class Application(models.Model):
 			else:
 				record.urgency_category = 'missed'
 
-	project_id = fields.Many2one('student.project', string='Project', required=True, domain=[('state','in',['approved','applied'])])
+	project_id = fields.Many2one('student.project', string='Project', required=True, domain=[('state_publication','in',['published','applied'])])
 
 	@api.depends('applicant')
 	def _compute_applicant_account(self):
@@ -125,13 +125,13 @@ class Application(models.Model):
 			if self.applicant_account != self.env.user:
 				raise AccessError("You can only modify applications that you created. If you require assistance, contact the supervisor.")
 
-	@api.depends('project_id.state')
+	@api.depends('project_id.state_publication')
 	def action_view_application_send(self):
 		self._check_user_identity()
 
 		if self.state != 'draft':
 			raise UserError("The application is already sent!")
-		elif self.project_id.state not in ['partially', 'applied', 'approved']:
+		elif self.project_id.state_publication not in ['published', 'applied']:
 			raise UserError("The chosen project is not available for applications, please try another one.")
 		elif self.env['student.application'].search([
 				('applicant_account', '=', self.env.user.id),
@@ -214,8 +214,8 @@ class Application(models.Model):
 			self.write({'state': 'accepted'})
 
 			# student.project operations
-			self.project_id.write({'state': 'assigned', 'assigned': True, 'student_elected': [(4, self.applicant.id)]})
-			self.project_id.create_project_project()
+			self.project_id.write({'state_publication': 'assigned', 'assigned': True, 'student_elected': [(4, self.applicant.id)]})
+			self.project_id.sudo().create_project_project()
 
 			# Assign the user to the special group for them to view "My Project" menu
 			group_id = self.env.ref('student.group_elected_student') 

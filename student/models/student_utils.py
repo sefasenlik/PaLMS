@@ -25,21 +25,20 @@ class StudentUtils(models.AbstractModel):
         # If no suitable channel is found, create a new channel
         if not channel:
             channel = context.env['discuss.channel'].with_context(mail_create_nosubscribe=True).sudo().create({
-                'channel_partner_ids': [(6, 0, author.id+1)],
+                'channel_partner_ids': [(6, 0, author.partner_id.id)],
                 'channel_type': 'channel',
                 'name': channel_name,
                 'display_name': channel_name
             })
-
-            # ♦ For some reason, I need to add 1 to all user ids. Strange...
+            
             channel.write({
-                'channel_partner_ids': [(4, recipient.id+1) for recipient in recipients]
+                'channel_partner_ids': [(4, recipient.partner_id.id) for recipient in recipients]
             })
 
         # Send a message to the related user
         channel.sudo().message_post(
             body=Markup(message_text),
-            author_id=author.id+1,
+            author_id=author.partner_id.id,
             message_type="comment",
             subtype_xmlid='mail.mt_comment'
         )
@@ -89,7 +88,8 @@ class StudentDegree(models.Model):
             "prep": "Preparatory Year"
         }
 
-        self.name = text_dictionary[self.level] + ' - ' + text_dictionary[self.year]
+        for record in self:
+            record.name = text_dictionary[record.level] + ' - ' + text_dictionary[record.year]
 
 class StudentCampus(models.Model):
     _name = 'student.campus'
@@ -101,46 +101,6 @@ class StudentCampus(models.Model):
 
     faculty_id = fields.One2many('student.faculty', 'campus', string='Faculties', readonly=True)
     project_ids = fields.Many2many('student.project', string='Projects', readonly=True)
-
-class ProjectAvailability(models.Model):
-    _name = 'student.availability'
-    _description = 'PaLMS - Project Availability'
-
-    def _set_default_project(self):
-        return self._context.get('project_id', False)
-
-    project_id = fields.Many2one('student.project', string='Project', default=_set_default_project)
-    state = fields.Selection([('waiting', 'Waiting for submission'),
-                              ('pending', 'Pending'), 
-                              ('approved', 'Approved'),
-                              ('rejected', 'Rejected'),
-                              ('returned','Returned')], default='waiting', string='State')
-    program_id = fields.Many2one('student.program', string='Program', required=True)
-    type = fields.Selection([('cw', 'Course Work (Курсовая работа)'), ('fqw', 'Final Qualifying Work (ВКР)')], string="Type", required=True)
-
-    degree_ids = fields.Many2many('student.degree', string='Degree', required=True)
-    degree_ids_domain = fields.Binary(string="Degree Domain", help="Dynamic domain used for degree choice.", compute="_compute_degree_ids_domain")
-    @api.depends('program_id')
-    def _compute_degree_ids_domain(self):
-        self.degree_ids_domain = [('level', '=', self.program_id.degree)]
-
-    reason = fields.Text(string='Return/Rejection Reason')
-    
-    # RESTRICTIONS #
-    @api.constrains("degree_ids")
-    def _check_degree_ids_modified(self):
-        for record in self:
-            if record.env.user.has_group("student.group_professor"):
-                if record.project_id.professor_account.id != record.env.user.id:
-                    raise ValidationError("You cannot modify the details of projects of other professors!")
-                elif record.state == "pending":
-                    raise UserError("This project is already submitted, cancel the submission to modify this section.")
-            elif record.env.user.has_group("student.group_supervisor") and record.program_id.supervisor.supervisor_account.id != record.env.user.id:
-                raise UserError("This project is not sent to a program you are supervising.")
-    
-    _sql_constraints = [
-        ('check_uniqueness', 'UNIQUE(program_id, project_id)', 'You have specified duplicate target programs.')
-	]
 
 class CustomMessageSubtype(models.Model):
     _name = 'student.message.subtype'

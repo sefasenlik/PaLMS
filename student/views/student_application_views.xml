@@ -50,7 +50,7 @@
     </record>
 
     <record id="student_application_view_professor" model="ir.actions.act_window">
-        <field name="name">Applications Received</field>
+        <field name="name">Applications for My Projects</field>
         <field name="res_model">student.application</field>
         <field name="view_mode">tree,kanban,form</field>
         <field name="view_id" ref="student_application_kanban_view"/>
@@ -63,7 +63,7 @@
     </record>
     
     <record id="student_application_view_personal" model="ir.actions.act_window">
-        <field name="name">My Applications</field>
+        <field name="name">Applications</field>
         <field name="res_model">student.application</field>
         <field name="view_mode">kanban,form</field>
         <field name="view_id" ref="student_application_kanban_view"/>
@@ -72,7 +72,7 @@
             <p class="o_view_nocontent_smiling_face">
                 Send your first application to one of the available projects!
             </p>
-            <!-- ♦ The link doesn't work! -->
+            <!-- ♥ The link doesn't work! -->
             <a t-attf-href="/web#action={{ env.ref('student_project_view_action_list').id }} ">View projects</a>
         </field>
     </record>
@@ -82,7 +82,7 @@
         <field name="model">student.application</field>
         <field name="arch" type="xml">
             <tree default_order="sent_date">
-                <!-- ♦ How to change the color of the field value? -->
+                <!-- ♥ How to change the color of the field value? -->
                 <field name="state"/>
                 <field name="sent_date"/>
                 <field name="applicant"/>
@@ -104,14 +104,14 @@
             <form string="Application" on_load="trigger_func()">
                 <header>
                     <button name="action_view_application_send"
-                        string="Send Application"
+                        string="SEND APPLICATION"
                         type="object"
                         confirm="Are you sure you want to send your application for the chosen project?"
                         groups="student.group_student"
                         class="oe_highlight"
                         invisible= "state != 'draft'"/>
                     <button name="action_view_application_cancel"
-                        string="Cancel Application"
+                        string="CANCEL APPLICATION"
                         type="object"
                         confirm="Are you sure you want to cancel your application?"
                         groups="student.group_student"
