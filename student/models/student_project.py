@@ -8,9 +8,13 @@ class Project(models.Model):
     _description = "PaLMS - Projects"
     _inherit = ['mail.thread', 'mail.activity.mixin', 'student.utils']
 
-    current_user = fields.Many2one('res.users', string="Current User Account", compute='_compute_current_user')
-    def _compute_current_user(self):
-        self.current_user = self.env.user.id
+    current_user_follower = fields.Boolean(string="Is the current user among the project followers?", compute='_compute_current_user_follower')
+    def _compute_current_user_follower(self):
+        if self.state_publication not in ['ineligible', 'published', 'applied'] and self.project_project_id:
+            partner_ids = self.env['project.project'].sudo().browse(self.project_project_id.id).message_follower_ids.mapped('partner_id.id')
+            self.current_user_follower = True if self.env['res.users'].browse(self.env.user.id).partner_id.id in partner_ids else False
+        else:
+            self.current_user_follower = False
         
     proposal_id = fields.Many2one('student.proposal', string="Proposal", readonly=True)
 
@@ -29,7 +33,6 @@ class Project(models.Model):
                                           group_expand='_expand_publication_groups', default='ineligible', string='Publication State', readonly=True, tracking=True)
 
     name = fields.Char('Project Name', required=True, translate=True)
-    name_ru = fields.Char('Название проекта', required=True, translate=True)
     format = fields.Selection([('research', 'Research'), ('project', 'Project'), ('startup', 'Start-up')], string="Format", default="research", required=True)
     language = fields.Selection([('en', 'English'), ('ru', 'Russian')], default="en", string="Language", required=True)
 
@@ -428,6 +431,7 @@ class Project(models.Model):
         if self.state_evaluation == "progress":
             if self.proposal_id:              
                 self.write({'state_evaluation': 'approved', 'state_publication': 'assigned'})
+                self.sudo().create_project_project()
 
                 # Assign the user to the special group for them to view "My Project" menu
                 group_id = self.env.ref('student.group_elected_student') 
@@ -465,7 +469,7 @@ class Project(models.Model):
         if self.env.user.has_group("student.group_student"):
             raise UserError("Only faculty members can change these fields.")
             
-    @api.constrains("name", "name_ru", "format", "language", "description", "requirements", "results", "additional_files", "professor_review_file")
+    @api.constrains("name", "format", "language", "description", "requirements", "results", "additional_files", "professor_review_file")
     def _check_modifier_professor(self):
         if self.env.user.id != self.professor_account.id:
             raise UserError("You cannot modify projects of other professors.")
@@ -640,4 +644,4 @@ class Project(models.Model):
         self.project_project_id.message_follower_ids = [student_follower, professor_follower]
 
     def _compute_project_project_tasks(self):
-        self.project_project_tasks = self.project_project_id.tasks
+        self.project_project_tasks = self.env['project.project'].sudo().browse(self.project_project_id.id).tasks

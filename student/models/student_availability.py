@@ -26,20 +26,20 @@ class ProjectAvailability(models.Model):
     # ♥ Might be better to implement a view-based approach (e.g. iframes, <form>, etc.) to not duplicate the values below.
     @api.depends('project_id')
     def _set_default_project_values(self):
-        project_source = self.env['student.project'].sudo().search([('id', '=', self._context.get('project_id', False))], limit=1)
+        project_source = self.env['student.project'].sudo().search([('id', '=', self._context.get('project_id', False))], limit=1) if self._context.get('project_id', False) else self.project_id
         
         if project_source:
             self.name = project_source.name
-            self.name_ru = project_source.name_ru
             self.format = project_source.format
             self.language = project_source.language
             self.description = project_source.description
             self.requirements = project_source.requirements
             self.results = project_source.results
             self.additional_files = project_source.additional_files
+        else:
+            raise ValidationError("Error! Cannot find the source project.")
 
     name = fields.Char('Project Name', compute=_set_default_project_values, store=True, translate=True)
-    name_ru = fields.Char('Название проекта', compute=_set_default_project_values, store=True, translate=True)
     format = fields.Selection([('research', 'Research'), ('project', 'Project'), ('startup', 'Start-up')], string="Format", compute=_set_default_project_values, store=True)
     language = fields.Selection([('en', 'English'), ('ru', 'Russian')], string="Language", compute=_set_default_project_values, store=True)
 
@@ -169,7 +169,7 @@ class ProjectAvailability(models.Model):
             'view_mode': 'form',
             'view_type': 'form',
             'target': 'current',
-            'res_id': self.id,  
+            'res_id': self.id,
             'context': {'project_id': False}
         }
         return action

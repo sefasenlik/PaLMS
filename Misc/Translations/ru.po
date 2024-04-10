@@ -1,0 +1,2967 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* student
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-04-06 10:48+0000\n"
+"PO-Revision-Date: 2024-04-06 10:48+0000\n"
+"Last-Translator: Sefa Şenlik\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: student
+#: model:mail.template,body_html:student.email_template_project_submission
+msgid ""
+"\n"
+"                <h2>Hello there!</h2>\n"
+"                <p>The program you are supervising has received a new project proposal. Please examine and decide on the eligibility of this proposal.\n"
+"                <br>\n"
+"                Best wishes,<br>\n"
+"                PaLMS Notification Service\n"
+"                </p>\n"
+"            "
+msgstr ""
+
+#. module: student
+#: model:mail.template,body_html:student.email_template_application_accept
+msgid ""
+"\n"
+"                <h2>Hello, <t t-out=\"object.applicant_account.name\"/>!</h2>\n"
+"                <p>Your application for the following project is accepted. Your PaLMS account is now assigned to this project, you can contact the supervising professor and start working on it.<br>\n"
+"                <b>Professor name: </b><t t-out=\"object.application_professor.name\"/><br>\n"
+"                <b>Project name: </b><t t-out=\"object.project_id.name\"/><br>\n"
+"                <br>\n"
+"                Best wishes,<br>\n"
+"                PaLMS Notification Service\n"
+"                </p>\n"
+"            "
+msgstr ""
+
+#. module: student
+#: model:mail.template,body_html:student.email_template_application_reject
+msgid ""
+"\n"
+"                <h2>Hello, <t t-out=\"object.applicant_account.name\"/>!</h2>\n"
+"                <p>Your application for the following project is rejected. You can apply to other available applications and provide more details next time. Good luck!<br>\n"
+"                <b>Professor name: </b><t t-out=\"object.application_professor.name\"/><br>\n"
+"                <b>Project name: </b><t t-out=\"object.project_id.name\"/><br>\n"
+"                <br>\n"
+"                Best wishes,<br>\n"
+"                PaLMS Notification Service\n"
+"                </p>\n"
+"            "
+msgstr ""
+
+#. module: student
+#: model:mail.template,body_html:student.email_template_application_send
+msgid ""
+"\n"
+"                <h2>Hello, <t t-out=\"object.application_professor.name\"/>!</h2>\n"
+"                <p>You have received an application for one of your projects. Please log in to your PaLMS account and review the application in 3 days.<br>\n"
+"                <b>Project name: </b><t t-out=\"object.project_id.name\"/><br>\n"
+"                <b>Applicant name: </b><t t-out=\"object.applicant_account.name\"/><br>\n"
+"                <br>\n"
+"                Best wishes,<br>\n"
+"                PaLMS Notification Service\n"
+"                </p>\n"
+"            "
+msgstr ""
+
+#. module: student
+#: model:mail.template,body_html:student.email_template_project_approval
+msgid ""
+"\n"
+"                <h2>Hello, <t t-out=\"object.professor_account.name\"/>!</h2>\n"
+"                <p>The following project you have submitted is approved. Now students can view it and send applications.<br>\n"
+"                <b>Project name: </b><t t-out=\"object.name\"/><br>\n"
+"                <b>Approved by: </b><t t-out=\"user.name\"/><br>\n"
+"                <br>\n"
+"                Best wishes,<br>\n"
+"                PaLMS Notification Service\n"
+"                </p>\n"
+"            "
+msgstr ""
+
+#. module: student
+#: model:mail.template,body_html:student.email_template_project_rejection
+msgid ""
+"\n"
+"                <h2>Hello, <t t-out=\"object.professor_account.name\"/>!</h2>\n"
+"                <p>The following project you have submitted is rejected. You can see the reason for this decision below. Additional details can be found in project details.<br>\n"
+"                <b>Project name: </b><t t-out=\"object.name\"/><br>\n"
+"                <b>Rejected by: </b><t t-out=\"user.email\"/><br>\n"
+"                <b>Rejection reason: </b><t t-out=\"object.reason\"/><br>\n"
+"                <br>\n"
+"                Best wishes,<br>\n"
+"                PaLMS Notification Service\n"
+"                </p>\n"
+"            "
+msgstr ""
+
+#. module: student
+#: model:mail.template,body_html:student.email_template_project_return
+msgid ""
+"\n"
+"                <h2>Hello, <t t-out=\"object.professor_account.name\"/>!</h2>\n"
+"                <p>The following project you have submitted is returned. You can see the reason for this decision below. Additional details can be found in project details.<br>\n"
+"                <b>Project name: </b><t t-out=\"object.name\"/><br>\n"
+"                <b>Returned by: </b><t t-out=\"user.email\"/><br>\n"
+"                <b>Return reason: </b><t t-out=\"object.reason\"/><br>\n"
+"                <br>\n"
+"                Best wishes,<br>\n"
+"                PaLMS Notification Service\n"
+"                </p>\n"
+"            "
+msgstr ""
+
+#. module: student
+#: model:mail.template,body_html:student.email_template_proposal_send
+msgid ""
+"\n"
+"                <h2>Hello, <t t-out=\"object.professor_account.name\"/>!</h2>\n"
+"                <p>You have received a proposal from a student. Please log in to your PaLMS account to review it.<br>\n"
+"                <b>Proposal name: </b><t t-out=\"object.name\"/><br>\n"
+"                <b>Proposed by: </b><t t-out=\"object.proponent_account.name\"/><br>\n"
+"                <br>\n"
+"                Best wishes,<br>\n"
+"                PaLMS Notification Service\n"
+"                </p>\n"
+"            "
+msgstr ""
+
+#. module: student
+#: model:mail.template,body_html:student.email_template_proposal_reject
+msgid ""
+"\n"
+"                <h2>Hello, <t t-out=\"object.proponent_account.name\"/>!</h2>\n"
+"                <p>Your proposal for is rejected by the professor. You can apply to available projects or send your proposal to other professors. Good luck!<br>\n"
+"                <b>Professor name: </b><t t-out=\"object.proposal_professor.name\"/><br>\n"
+"                <b>Proposal name: </b><t t-out=\"object.name\"/><br>\n"
+"                <br>\n"
+"                Best wishes,<br>\n"
+"                PaLMS Notification Service\n"
+"                </p>\n"
+"            "
+msgstr ""
+
+#. module: student
+#: model:mail.template,body_html:student.email_template_proposal_accept
+msgid ""
+"\n"
+"                <h2>Hello, <t t-out=\"object.proponent_account.name\"/>!</h2>\n"
+"                <p>Your proposal is accepted by the professor and sent to the program supervisor for approval. You can start working on it after the supervisor's confirmation is received.<br>\n"
+"                <b>Professor name: </b><t t-out=\"object.proposal_professor.name\"/><br>\n"
+"                <b>Proposal name: </b><t t-out=\"object.name\"/><br>\n"
+"                <br>\n"
+"                Best wishes,<br>\n"
+"                PaLMS Notification Service\n"
+"                </p>\n"
+"            "
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_kanban_view_evaluation
+msgid "(Reacted:"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_student_view_form
+msgid "+7 XXX XXX XXXX"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_project__grade__10
+msgid "10"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_degree__year__1
+msgid "1st Year"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_degree__year__2
+msgid "2nd Year"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_degree__year__3
+msgid "3rd Year"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_degree__year__4
+msgid "4th Year"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_degree__year__5
+msgid "5th Year"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_degree__year__6
+msgid "6th Year"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_kanban_view_supervision
+msgid ""
+"<br/>\n"
+"                                    <strong>Format: </strong>"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_kanban_view_supervision
+msgid ""
+"<br/>\n"
+"                                    <strong>Language: </strong>"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_kanban_view_supervision
+msgid ""
+"<br/>\n"
+"                                    <strong>Project Name: </strong>"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_kanban_view
+msgid "<i>E-mail:  </i>"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_kanban_view
+msgid "<i>Project Name:  </i>"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_form
+msgid "<i>Save the application to add additional files.</i>"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "<i>Save the project to add additional files.</i>"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid ""
+"<i>Save the project to set up the academic programs for submission.</i>"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_form
+msgid "<i>Save the proposal to add additional files.</i>"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_kanban_view_evaluation
+#: model_terms:ir.ui.view,arch_db:student.student_project_kanban_view_publication
+msgid "<strong>Last update: </strong>"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_kanban_view_supervision
+msgid "<strong>State: </strong>"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_kanban_view_supervision
+msgid "<strong>Type: </strong>"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid ""
+"> Expected outcomes at the end of given implementation/research period. \n"
+"> Please use bullet points."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid ""
+"> Minimum requirements for applications can be listed here. \n"
+"> Please use bullet points."
+msgstr ""
+
+#. module: student
+#. odoo-python
+#: code:addons/student/models/student_application.py:0
+#, python-format
+msgid "A new application has been created by %s."
+msgstr ""
+
+#. module: student
+#. odoo-python
+#: code:addons/student/models/student_project.py:0
+#, python-format
+msgid "A new project has been created by %s."
+msgstr ""
+
+#. module: student
+#. odoo-python
+#: code:addons/student/models/student_project.py:0
+#, python-format
+msgid "A new project has been created upon the proposal of %s."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_form
+msgid "ACCEPT APPLICATION"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_form
+msgid "ACCEPT PROPOSAL"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "APPLY"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_view_form
+msgid "APPROVE"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_form
+msgid "Academic"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_student_view_form
+msgid "Academic Info"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_program__supervisor
+msgid "Academic Supervisor"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__student_degree
+#: model:ir.model.fields,field_description:student.field_student_degree__year
+#: model:ir.model.fields,field_description:student.field_student_proposal__student_degree
+msgid "Academic Year"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Accept ✔"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_application__state__accepted
+#: model:ir.model.fields.selection,name:student.selection__student_proposal__state__accepted
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_search
+msgid "Accepted"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__message_needaction
+#: model:ir.model.fields,field_description:student.field_student_project__message_needaction
+#: model:ir.model.fields,field_description:student.field_student_proposal__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_message_subtype__default
+msgid "Activated by default when subscribing."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_manager__active
+#: model:ir.model.fields,field_description:student.field_student_professor__active
+#: model:ir.model.fields,field_description:student.field_student_student__active
+#: model:ir.model.fields,field_description:student.field_student_supervisor__active
+#: model_terms:ir.ui.view,arch_db:student.student_professor_view_search
+msgid "Active"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__activity_ids
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Activities"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__result_files
+msgid "Add Files"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.actions.act_window,help:student.student_application_view_public
+msgid "Add a new application!"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.actions.act_window,help:student.student_proposal_view_public
+msgid "Add a new proposal."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_form
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_form
+msgid "Additional Contacts"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Additional Details"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__additional_email
+#: model:ir.model.fields,field_description:student.field_student_proposal__additional_email
+msgid "Additional Email"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__additional_files
+#: model:ir.model.fields,field_description:student.field_student_proposal__additional_files
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_form
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_form
+msgid "Additional Files"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__additional_phone
+#: model:ir.model.fields,field_description:student.field_student_proposal__additional_phone
+msgid "Additional Phone"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid ""
+"Additional files that may include reports, source files, analysis, etc."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Additional files to describe the content of the project further."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_faculty__address
+msgid "Address"
+msgstr ""
+
+#. module: student
+#. odoo-python
+#: code:addons/student/models/student_application.py:0
+#, python-format
+msgid "An application is sent by %s."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_search
+msgid "Applicable Program"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__approved_program_ids
+msgid "Applicable Programs"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__applicant
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_search
+msgid "Applicant"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__applicant_account
+msgid "Applicant Account"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_form
+msgid "Application"
+msgstr ""
+
+#. module: student
+#: model:mail.template,name:student.email_template_application_accept
+msgid "Application Accepted Notification"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_form
+msgid "Application Details"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.student_application_view_public
+#: model:ir.ui.menu,name:student.project_application_public
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_search
+msgid "Application List"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__message
+msgid "Application Message"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_project__state_publication__applied
+msgid "Application Received"
+msgstr ""
+
+#. module: student
+#: model:mail.template,name:student.email_template_application_reject
+msgid "Application Rejected Notification"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_availability__requirements
+#: model:ir.model.fields,field_description:student.field_student_project__requirements
+msgid "Application Requirements"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__state
+msgid "Application State"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.student_application_view_personal
+#: model:ir.model.fields,field_description:student.field_student_project__application_ids
+#: model:ir.ui.menu,name:student.personal_application_private
+#: model:ir.ui.menu,name:student.project_first_application_menu
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+#: model_terms:ir.ui.view,arch_db:student.student_student_view_form
+msgid "Applications"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.student_application_view_professor
+#: model:ir.ui.menu,name:student.personal_application_professor
+msgid "Applications for My Projects"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_student__application_ids
+msgid "Applications of the Student"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_kanban_view_evaluation
+#: model_terms:ir.ui.view,arch_db:student.student_project_kanban_view_publication
+msgid "Applications:"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_availability__state__approved
+#: model:ir.model.fields.selection,name:student.selection__student_project__state_evaluation__approved
+msgid "Approved"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid ""
+"Are you sure to accept the application? Other applications will be rejected "
+"automatically."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Are you sure to reject the application?"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_form
+msgid "Are you sure you want to accept this application?"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_view_form
+msgid "Are you sure you want to accept this project?"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_form
+msgid "Are you sure you want to accept this proposal?"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_form
+msgid "Are you sure you want to cancel your application?"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Are you sure you want to cancel your project submission?"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_form
+msgid "Are you sure you want to cancel your proposal?"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Are you sure you want to complete this project?"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Are you sure you want to create a new branch for this project?"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_form
+msgid "Are you sure you want to reject this application?"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_view_form
+msgid "Are you sure you want to reject this project?"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_form
+msgid "Are you sure you want to reject this proposal?"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_view_form
+msgid "Are you sure you want to return this project?"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_form
+msgid "Are you sure you want to send your application for the chosen project?"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_form
+msgid "Are you sure you want to send your proposal to the chosen professor?"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Are you sure you want to submit this project?"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_project__state_publication__assigned
+msgid "Assigned"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_student__current_project
+#: model_terms:ir.ui.view,arch_db:student.student_student_view_search
+msgid "Assigned Project"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_student_view_search
+msgid "Assigned to a Project"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__assigned
+msgid "Assigned to a student?"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Assignment"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Attach a file"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_view_form
+msgid "Attached files"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__message_attachment_count
+#: model:ir.model.fields,field_description:student.field_student_project__message_attachment_count
+#: model:ir.model.fields,field_description:student.field_student_proposal__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_availability__additional_files
+#: model:ir.model.fields,field_description:student.field_student_project__additional_files
+msgid "Attachments"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_view_search
+msgid "Availability List"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.student_project_view_action_list
+#: model:ir.ui.menu,name:student.project_project_list
+msgid "Available Projects"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_view_list
+#: model_terms:ir.ui.view,arch_db:student.student_availability_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Available for"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_search
+msgid "Available for application"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "BRANCH"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_degree__level__ba
+#: model:ir.model.fields.selection,name:student.selection__student_program__degree__ba
+msgid "Bachelor's"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_program_view_form
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+#: model_terms:ir.ui.view,arch_db:student.student_student_view_form
+msgid "Basic Info"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_availability__type__both
+msgid "Both (КР/ВКР)"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__color
+msgid "Box Color"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_form
+msgid "CANCEL APPLICATION"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_form
+msgid "CANCEL PROPOSAL"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "CANCEL SUBMISSION"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "COMPLETE"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "CREATE PROJECT"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_faculty__campus
+#: model:ir.model.fields,field_description:student.field_student_project__campus_id
+msgid "Campus"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_campus_view_form
+msgid "Campus Details"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_campus__name
+msgid "City Name"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Common"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_project__state_publication__completed
+msgid "Completed"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_proposal__state__confirmed
+msgid "Confirmed"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_form
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_form
+msgid "Contacts"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_proposal__project_id
+msgid "Converted to"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_availability__type__cw
+#: model:ir.model.fields.selection,name:student.selection__student_proposal__type__cw
+msgid "Course Work (Курсовая работа)"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__create_date
+msgid "Created"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__create_uid
+#: model:ir.model.fields,field_description:student.field_student_availability__create_uid
+#: model:ir.model.fields,field_description:student.field_student_campus__create_uid
+#: model:ir.model.fields,field_description:student.field_student_degree__create_uid
+#: model:ir.model.fields,field_description:student.field_student_faculty__create_uid
+#: model:ir.model.fields,field_description:student.field_student_manager__create_uid
+#: model:ir.model.fields,field_description:student.field_student_message_subtype__create_uid
+#: model:ir.model.fields,field_description:student.field_student_professor__create_uid
+#: model:ir.model.fields,field_description:student.field_student_program__create_uid
+#: model:ir.model.fields,field_description:student.field_student_project__create_uid
+#: model:ir.model.fields,field_description:student.field_student_proposal__create_uid
+#: model:ir.model.fields,field_description:student.field_student_student__create_uid
+#: model:ir.model.fields,field_description:student.field_student_supervisor__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__create_date
+#: model:ir.model.fields,field_description:student.field_student_availability__create_date
+#: model:ir.model.fields,field_description:student.field_student_campus__create_date
+#: model:ir.model.fields,field_description:student.field_student_degree__create_date
+#: model:ir.model.fields,field_description:student.field_student_faculty__create_date
+#: model:ir.model.fields,field_description:student.field_student_manager__create_date
+#: model:ir.model.fields,field_description:student.field_student_message_subtype__create_date
+#: model:ir.model.fields,field_description:student.field_student_professor__create_date
+#: model:ir.model.fields,field_description:student.field_student_program__create_date
+#: model:ir.model.fields,field_description:student.field_student_proposal__create_date
+#: model:ir.model.fields,field_description:student.field_student_student__create_date
+#: model:ir.model.fields,field_description:student.field_student_supervisor__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__create_date_date
+msgid "Creation Date"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_student_view_search
+msgid "Current Academic Year"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__current_user
+msgid "Current User Account"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_faculty_view_search
+msgid "Dean"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_message_subtype__default
+msgid "Default"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.actions.act_window,help:student.student_campus_view_action
+msgid "Define a new campus for the university."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.actions.act_window,help:student.student_degree_view_action
+msgid "Define a new degree of education."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.actions.act_window,help:student.student_faculty_view_action
+msgid "Define a new faculty registry."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.actions.act_window,help:student.student_manager_view_action
+msgid "Define a new manager registry."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.actions.act_window,help:student.student_professor_view_action
+msgid "Define a new professor registry."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.actions.act_window,help:student.student_program_view_action
+msgid "Define a new program registry."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.actions.act_window,help:student.student_availability_view_action
+msgid "Define a new project availability."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.actions.act_window,help:student.student_student_view_action
+msgid "Define a new student registry."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.actions.act_window,help:student.student_supervisor_view_action
+msgid "Define a new supervisor registry."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_availability__degree_ids
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_search
+msgid "Degree"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_availability__degree_ids_level_domain
+msgid "Degree - Level Domain"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_degree__name
+msgid "Degree Description"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_degree_view_form
+msgid "Degree Details"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_program_view_search
+msgid "Degree of Education"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.student_degree_view_action
+#: model:ir.ui.menu,name:student.degree_model_menu_action
+msgid "Degrees of Education"
+msgstr ""
+
+#. module: student
+#: model:ir.ui.menu,name:student.faculty_first_department_menu
+msgid "Departments"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_message_subtype__description
+msgid "Description"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_message_subtype__description
+msgid ""
+"Description that will be added in the message posted for this subtype. If "
+"void, the name will be added instead."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_availability__description
+#: model:ir.model.fields,field_description:student.field_student_project__description
+#: model:ir.model.fields,field_description:student.field_student_proposal__description
+msgid "Detailed Description"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_form
+msgid "Details"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__display_name
+#: model:ir.model.fields,field_description:student.field_student_availability__display_name
+#: model:ir.model.fields,field_description:student.field_student_campus__display_name
+#: model:ir.model.fields,field_description:student.field_student_degree__display_name
+#: model:ir.model.fields,field_description:student.field_student_faculty__display_name
+#: model:ir.model.fields,field_description:student.field_student_manager__display_name
+#: model:ir.model.fields,field_description:student.field_student_message_subtype__display_name
+#: model:ir.model.fields,field_description:student.field_student_professor__display_name
+#: model:ir.model.fields,field_description:student.field_student_program__display_name
+#: model:ir.model.fields,field_description:student.field_student_project__display_name
+#: model:ir.model.fields,field_description:student.field_student_proposal__display_name
+#: model:ir.model.fields,field_description:student.field_student_student__display_name
+#: model:ir.model.fields,field_description:student.field_student_supervisor__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_application__state__draft
+#: model:ir.model.fields.selection,name:student.selection__student_project__state_evaluation__draft
+#: model:ir.model.fields.selection,name:student.selection__student_proposal__state__draft
+msgid "Draft"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_project__state_publication__dropped
+msgid "Dropped"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_availability__degree_ids_level_domain
+msgid "Dynamic domain used for degree choice."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_availability__program_id_faculty_domain
+msgid "Dynamic domain used for program choice."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__student_elected
+msgid "Elected Student"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Eligibility"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__email
+#: model:ir.model.fields,field_description:student.field_student_proposal__email
+#: model:ir.model.fields,field_description:student.field_student_student__student_email
+#: model_terms:ir.ui.view,arch_db:student.student_student_view_search
+msgid "Email"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_availability__language__en
+#: model:ir.model.fields.selection,name:student.selection__student_program__language__en
+#: model:ir.model.fields.selection,name:student.selection__student_project__language__en
+#: model:ir.model.fields.selection,name:student.selection__student_proposal__language__en
+msgid "English"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_student__student_program
+msgid "Enrolled Program"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_student__enrolled
+msgid "Enter year in yyyy format."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__color_evaluation
+msgid "Evaluation Card Color"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__state_evaluation
+msgid "Evaluation State"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_student__graduation
+msgid "Expected Graduation Year"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_availability__results
+#: model:ir.model.fields,field_description:student.field_student_project__results
+#: model:ir.model.fields,field_description:student.field_student_proposal__results
+msgid "Expected Results"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.student_faculty_view_action
+#: model:ir.model.fields,field_description:student.field_student_campus__faculty_id
+#: model:ir.ui.menu,name:student.faculty_model_menu_action
+msgid "Faculties"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_res_users__faculty
+#: model:ir.model.fields,field_description:student.field_student_manager__manager_faculty
+#: model:ir.model.fields,field_description:student.field_student_professor__professor_faculty
+#: model:ir.model.fields,field_description:student.field_student_program__program_faculty_id
+#: model:ir.model.fields,field_description:student.field_student_project__faculty_id
+#: model:ir.model.fields,field_description:student.field_student_student__student_faculty
+#: model:ir.model.fields,field_description:student.field_student_supervisor__supervisor_faculty
+#: model:ir.ui.menu,name:student.faculty_first_level_menu
+#: model_terms:ir.ui.view,arch_db:student.student_manager_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_professor_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_supervisor_view_search
+msgid "Faculty"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_faculty__dean
+msgid "Faculty Dean"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_faculty_view_search
+msgid "Faculty List"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Faculty Member Response"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_faculty__name
+#: model_terms:ir.ui.view,arch_db:student.student_faculty_view_search
+msgid "Faculty Name"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_faculty__project_ids
+#: model:ir.model.fields,field_description:student.field_student_program__project_ids
+msgid "Faculty Projects"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_faculty_view_form
+msgid "Faculty in Numbers"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_form
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_form
+msgid "Feedback"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__student_feedback
+msgid "Feedback from the Student"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_message_subtype__relation_field
+msgid ""
+"Field used to link the related model to the subtype model when using "
+"automatic subscription on a related document. The field is used to compute "
+"getattr(related_document.relation_field)."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_student__progress__5
+msgid "Fifth Year"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Files"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_availability__type__fqw
+#: model:ir.model.fields.selection,name:student.selection__student_proposal__type__fqw
+msgid "Final Qualifying Work (ВКР)"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_student__progress__1
+msgid "First Year"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__message_follower_ids
+#: model:ir.model.fields,field_description:student.field_student_project__message_follower_ids
+#: model:ir.model.fields,field_description:student.field_student_proposal__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__message_partner_ids
+#: model:ir.model.fields,field_description:student.field_student_project__message_partner_ids
+#: model:ir.model.fields,field_description:student.field_student_proposal__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_project__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_availability__format
+#: model:ir.model.fields,field_description:student.field_student_project__format
+#: model:ir.model.fields,field_description:student.field_student_proposal__format
+msgid "Format"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_student__progress__4
+msgid "Fourth Year"
+msgstr ""
+
+#. module: student
+#: model:ir.ui.menu,name:student.personal_first_professor_student_menu
+msgid "From Students"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "GO TO PROJECT TASKS ►"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_faculty_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_professor_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_program_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_student_view_search
+msgid "Group By"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_application__urgency_category__handled
+msgid "Handled"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__has_message
+#: model:ir.model.fields,field_description:student.field_student_project__has_message
+#: model:ir.model.fields,field_description:student.field_student_proposal__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_faculty_view_search
+msgid "Has professors"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_faculty_view_search
+msgid "Has programs"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_faculty_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_program_view_search
+msgid "Has projects"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_program_view_search
+msgid "Has students"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid ""
+"Here you can express what you liked/did not like about the project or other "
+"aspects."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_message_subtype__hidden
+msgid "Hidden"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_message_subtype__hidden
+msgid "Hide the subtype in the follower options"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_program__type__hrd
+msgid "Hybrid"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__id
+#: model:ir.model.fields,field_description:student.field_student_availability__id
+#: model:ir.model.fields,field_description:student.field_student_campus__id
+#: model:ir.model.fields,field_description:student.field_student_degree__id
+#: model:ir.model.fields,field_description:student.field_student_faculty__id
+#: model:ir.model.fields,field_description:student.field_student_manager__id
+#: model:ir.model.fields,field_description:student.field_student_message_subtype__id
+#: model:ir.model.fields,field_description:student.field_student_professor__id
+#: model:ir.model.fields,field_description:student.field_student_program__id
+#: model:ir.model.fields,field_description:student.field_student_project__id
+#: model:ir.model.fields,field_description:student.field_student_proposal__id
+#: model:ir.model.fields,field_description:student.field_student_student__id
+#: model:ir.model.fields,field_description:student.field_student_supervisor__id
+#: model_terms:ir.ui.view,arch_db:student.student_student_view_search
+msgid "ID"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_project__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_application__message_needaction
+#: model:ir.model.fields,help:student.field_student_project__message_needaction
+#: model:ir.model.fields,help:student.field_student_proposal__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_application__message_has_error
+#: model:ir.model.fields,help:student.field_student_application__message_has_sms_error
+#: model:ir.model.fields,help:student.field_student_project__message_has_error
+#: model:ir.model.fields,help:student.field_student_project__message_has_sms_error
+#: model:ir.model.fields,help:student.field_student_proposal__message_has_error
+#: model:ir.model.fields,help:student.field_student_proposal__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_project__state_evaluation__progress
+msgid "In Progress"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_project__state_publication__ineligible
+msgid "Ineligible"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_message_subtype__internal
+msgid "Internal Only"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__message_is_follower
+#: model:ir.model.fields,field_description:student.field_student_project__message_is_follower
+#: model:ir.model.fields,field_description:student.field_student_proposal__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_availability__language
+#: model:ir.model.fields,field_description:student.field_student_program__language
+#: model:ir.model.fields,field_description:student.field_student_project__language
+#: model:ir.model.fields,field_description:student.field_student_proposal__language
+#: model_terms:ir.ui.view,arch_db:student.student_program_view_search
+msgid "Language"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_professor__last_seen
+msgid "Last Seen"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__write_date
+msgid "Last Update"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__write_date_date
+msgid "Last Update Date"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__write_uid
+#: model:ir.model.fields,field_description:student.field_student_availability__write_uid
+#: model:ir.model.fields,field_description:student.field_student_campus__write_uid
+#: model:ir.model.fields,field_description:student.field_student_degree__write_uid
+#: model:ir.model.fields,field_description:student.field_student_faculty__write_uid
+#: model:ir.model.fields,field_description:student.field_student_manager__write_uid
+#: model:ir.model.fields,field_description:student.field_student_message_subtype__write_uid
+#: model:ir.model.fields,field_description:student.field_student_professor__write_uid
+#: model:ir.model.fields,field_description:student.field_student_program__write_uid
+#: model:ir.model.fields,field_description:student.field_student_project__write_uid
+#: model:ir.model.fields,field_description:student.field_student_proposal__write_uid
+#: model:ir.model.fields,field_description:student.field_student_student__write_uid
+#: model:ir.model.fields,field_description:student.field_student_supervisor__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__write_date
+#: model:ir.model.fields,field_description:student.field_student_availability__write_date
+#: model:ir.model.fields,field_description:student.field_student_campus__write_date
+#: model:ir.model.fields,field_description:student.field_student_degree__write_date
+#: model:ir.model.fields,field_description:student.field_student_faculty__write_date
+#: model:ir.model.fields,field_description:student.field_student_manager__write_date
+#: model:ir.model.fields,field_description:student.field_student_message_subtype__write_date
+#: model:ir.model.fields,field_description:student.field_student_professor__write_date
+#: model:ir.model.fields,field_description:student.field_student_program__write_date
+#: model:ir.model.fields,field_description:student.field_student_proposal__write_date
+#: model:ir.model.fields,field_description:student.field_student_student__write_date
+#: model:ir.model.fields,field_description:student.field_student_supervisor__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_campus__legal_address
+msgid "Legal Address"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_degree__level
+msgid "Level of Education"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid ""
+"List project results (summary, links, etc.) here. Additional files can be "
+"added in the section below."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_manager__program_ids
+msgid "Managed Programs"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_program_view_form
+msgid "Management"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_manager__name
+msgid "Manager Name"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.student_manager_view_action
+#: model:ir.ui.menu,name:student.faculty_manager_menu_action
+msgid "Managers"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_degree__level__ms
+#: model:ir.model.fields.selection,name:student.selection__student_program__degree__ms
+msgid "Master's"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__message_has_error
+#: model:ir.model.fields,field_description:student.field_student_project__message_has_error
+#: model:ir.model.fields,field_description:student.field_student_proposal__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_message_subtype__name
+msgid "Message Type"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_message_subtype__name
+msgid ""
+"Message subtype gives a more precise type on the message, especially for "
+"system notifications. For example, it can be a notification related to a new"
+" record (New), or to a stage change in a process (Stage change). Message "
+"subtypes allow to precisely tune the notifications the user want to receive "
+"on its wall."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__message_ids
+#: model:ir.model.fields,field_description:student.field_student_project__message_ids
+#: model:ir.model.fields,field_description:student.field_student_proposal__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_message_subtype__internal
+msgid ""
+"Messages with internal subtypes will be visible only by employees, aka "
+"members of base_user group"
+msgstr ""
+
+#. module: student
+#: model:ir.ui.menu,name:student.util_second_level_menu_a
+msgid "Miscellaneous"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_application__urgency_category__missed
+msgid "Missed"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_project__state_evaluation__mixed
+msgid "Mixed Evaluation"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_program__type
+#: model_terms:ir.ui.view,arch_db:student.student_program_view_search
+msgid "Mode of Education"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_message_subtype__res_model
+msgid "Model"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_message_subtype__res_model
+msgid ""
+"Model the subtype applies to. If False, this subtype applies to all models."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.server,name:student.student_project_view_personal
+#: model:ir.ui.menu,name:student.personal_project_student
+msgid "My Project"
+msgstr ""
+
+#. module: student
+#: model:ir.ui.menu,name:student.personal_first_student_menu
+msgid "My Submissions"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.server,name:student.student_menu_action_server_my_tasks
+#: model:ir.ui.menu,name:student.personal_tasks_private
+msgid "My Tasks"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_search
+msgid "My projects"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_student_view_search
+msgid "Name"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__notes
+msgid "Notes & Comments"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__message_needaction_counter
+#: model:ir.model.fields,field_description:student.field_student_project__message_needaction_counter
+#: model:ir.model.fields,field_description:student.field_student_proposal__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__applications
+#: model:ir.model.fields,field_description:student.field_student_student__application_number
+msgid "Number of Applications"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__approved_program_ids_count
+msgid "Number of Approved Submissions"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_faculty__manager_number
+msgid "Number of Managers"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_professor__offered_projects
+msgid "Number of Offered Projects"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__pending_program_ids_count
+msgid "Number of Pending Submissions"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_faculty__professor_number
+msgid "Number of Professors"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_faculty__program_number
+msgid "Number of Programs"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_faculty__project_number
+#: model:ir.model.fields,field_description:student.field_student_program__project_number
+msgid "Number of Projects"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__returned_program_ids_count
+msgid "Number of Returned Programs"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_faculty__student_number
+#: model:ir.model.fields,field_description:student.field_student_program__student_number
+msgid "Number of Students"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_faculty__supervisor_number
+msgid "Number of Supervisors"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__program_ids_count
+msgid "Number of Total Submissions"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__file_count
+msgid "Number of attached files"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__message_has_error_counter
+#: model:ir.model.fields,field_description:student.field_student_project__message_has_error_counter
+#: model:ir.model.fields,field_description:student.field_student_proposal__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_application__message_needaction_counter
+#: model:ir.model.fields,help:student.field_student_project__message_needaction_counter
+#: model:ir.model.fields,help:student.field_student_proposal__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_application__message_has_error_counter
+#: model:ir.model.fields,help:student.field_student_project__message_has_error_counter
+#: model:ir.model.fields,help:student.field_student_proposal__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_student__proposal_number
+msgid "Number of proposals"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_view_form
+msgid "OPEN FULL VIEW"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__project_project_id
+msgid "Odoo Project"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_program__type__off
+msgid "Offline"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_program__type__on
+msgid "Online"
+msgstr ""
+
+#. module: student
+#. odoo-python
+#: code:addons/student/models/student_project.py:0
+#, python-format
+msgid "Only administrators can delete assigned projects!"
+msgstr ""
+
+#. module: student
+#. odoo-python
+#: code:addons/student/models/student_project.py:0
+#, python-format
+msgid "Only its professor or related supervisors can delete this project!"
+msgstr ""
+
+#. module: student
+#. odoo-python
+#: code:addons/student/models/student_proposal.py:0
+#, python-format
+msgid "Only the proposing student can delete the proposal!"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_professor_view_form
+msgid "Other Details"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_form
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_form
+msgid "Overview"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_professor_view_form
+msgid "PROJECTS"
+msgstr ""
+
+#. module: student
+#: model:res.groups,name:student.group_administrator
+msgid "PaLMS - Administrators"
+msgstr ""
+
+#. module: student
+#: model:ir.model,name:student.model_student_application
+msgid "PaLMS - Application for Project"
+msgstr ""
+
+#. module: student
+#: model:ir.model,name:student.model_student_campus
+msgid "PaLMS - Campuses"
+msgstr ""
+
+#. module: student
+#: model:ir.model,name:student.model_student_degree
+msgid "PaLMS - Degrees of Education"
+msgstr ""
+
+#. module: student
+#: model:ir.model,name:student.model_student_faculty
+msgid "PaLMS - Faculties"
+msgstr ""
+
+#. module: student
+#: model:ir.model,name:student.model_student_manager
+#: model:res.groups,name:student.group_manager
+msgid "PaLMS - Managers"
+msgstr ""
+
+#. module: student
+#: model:ir.model,name:student.model_student_professor
+#: model:res.groups,name:student.group_professor
+msgid "PaLMS - Professors"
+msgstr ""
+
+#. module: student
+#: model:ir.model,name:student.model_student_program
+msgid "PaLMS - Programs"
+msgstr ""
+
+#. module: student
+#: model:ir.model,name:student.model_student_availability
+msgid "PaLMS - Project Availability"
+msgstr ""
+
+#. module: student
+#: model:ir.model,name:student.model_student_proposal
+msgid "PaLMS - Project Proposal"
+msgstr ""
+
+#. module: student
+#: model:ir.model,name:student.model_student_project
+msgid "PaLMS - Projects"
+msgstr ""
+
+#. module: student
+#: model:ir.model,name:student.model_student_student
+#: model:res.groups,name:student.group_student
+msgid "PaLMS - Students"
+msgstr ""
+
+#. module: student
+#: model:res.groups,name:student.group_elected_student
+msgid "PaLMS - Students with Projects"
+msgstr ""
+
+#. module: student
+#: model:ir.model,name:student.model_student_supervisor
+#: model:res.groups,name:student.group_supervisor
+msgid "PaLMS - Supervisors"
+msgstr ""
+
+#. module: student
+#: model:ir.model,name:student.model_student_utils
+msgid "PaLMS - Utility Methods"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_message_subtype__parent_id
+msgid "Parent"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_message_subtype__parent_id
+msgid ""
+"Parent subtype, used for automatic subscription. This field is not correctly"
+" named. For example on a project, the parent_id of project subtypes refers "
+"to task-related subtypes."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_application__urgency_category__pending
+#: model:ir.model.fields.selection,name:student.selection__student_availability__state__pending
+msgid "Pending"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__pending_program_ids
+msgid "Pending Programs (TECHNICAL)"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_professor_view_search
+msgid "Permanent Faculty Member"
+msgstr ""
+
+#. module: student
+#: model:ir.ui.menu,name:student.personal_first_level_menu
+msgid "Personal"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_degree__level__phd
+#: model:ir.model.fields.selection,name:student.selection__student_program__degree__phd
+msgid "PhD"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__phone
+#: model:ir.model.fields,field_description:student.field_student_proposal__phone
+#: model:ir.model.fields,field_description:student.field_student_student__student_phone
+#: model_terms:ir.ui.view,arch_db:student.student_student_view_search
+msgid "Phone"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__plagiarism_check_file
+msgid "Plagiarism Check"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__plagiarism_check_filename
+msgid "Plagiarism Check Filename"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_view_form
+msgid ""
+"Please specify the reason if the project will be rejected or returned. The "
+"reason will registered in the log."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_degree__year__prep
+#: model:ir.model.fields.selection,name:student.selection__student_student__progress__prep
+msgid "Preparatory Year"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__professor_id
+#: model:ir.model.fields,field_description:student.field_student_proposal__proposal_professor
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_professor_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_search
+msgid "Professor"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__professor_account
+#: model:ir.model.fields,field_description:student.field_student_proposal__professor_account
+msgid "Professor Account"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__feedback
+#: model:ir.model.fields,field_description:student.field_student_proposal__feedback
+msgid "Professor Feedback"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_professor_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_search
+msgid "Professor List"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_professor__name
+msgid "Professor Name"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__professor_review_file
+msgid "Professor Review"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__professor_review_filename
+msgid "Professor Review Filename"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Professor Uploads"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__application_professor
+msgid "Professor of the Applied Project"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_kanban_view_evaluation
+#: model_terms:ir.ui.view,arch_db:student.student_project_kanban_view_publication
+msgid "Professor:"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.student_professor_view_action
+#: model:ir.model.fields,field_description:student.field_student_faculty__professor_ids
+#: model:ir.ui.menu,name:student.faculty_professor_menu_action
+#: model_terms:ir.ui.view,arch_db:student.student_faculty_view_form
+msgid "Professors"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_availability__program_id
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_student_view_search
+msgid "Program"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_availability__program_id_faculty_domain
+msgid "Program - Faculty Domain"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_program__degree
+msgid "Program Degree"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_program_view_search
+msgid "Program Faculty"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_program__length
+#: model_terms:ir.ui.view,arch_db:student.student_program_view_search
+msgid "Program Length"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_program_view_search
+msgid "Program List"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_program__manager
+msgid "Program Manager"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_faculty__manager_ids
+#: model_terms:ir.ui.view,arch_db:student.student_faculty_view_form
+msgid "Program Managers"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_program__name
+#: model_terms:ir.ui.view,arch_db:student.student_program_view_search
+msgid "Program Name"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_availability__program_supervisor_account
+msgid "Program Supervisor"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__program_supervisors
+msgid "Program Supervisors"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.student_program_view_action
+#: model:ir.model.fields,field_description:student.field_student_faculty__program_ids
+#: model:ir.ui.menu,name:student.program_model_menu_action
+#: model_terms:ir.ui.view,arch_db:student.student_faculty_view_form
+#: model_terms:ir.ui.view,arch_db:student.student_manager_view_form
+#: model_terms:ir.ui.view,arch_db:student.student_supervisor_view_form
+msgid "Programs"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_student__progress
+msgid "Progress"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__project_id
+#: model:ir.model.fields,field_description:student.field_student_availability__project_id
+#: model:ir.model.fields.selection,name:student.selection__student_availability__format__project
+#: model:ir.model.fields.selection,name:student.selection__student_project__format__project
+#: model:ir.model.fields.selection,name:student.selection__student_proposal__format__project
+#: model:ir.ui.menu,name:student.project_first_level_menu
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_search
+msgid "Project"
+msgstr ""
+
+#. module: student
+#: model:mail.template,name:student.email_template_project_approval
+msgid "Project Approval Notification"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.student_availability_view_action
+#: model:ir.ui.menu,name:student.availability_model_menu_action
+msgid "Project Availability"
+msgstr ""
+
+#. module: student
+#: model:ir.ui.menu,name:student.util_second_level_menu_b
+#: model_terms:ir.ui.view,arch_db:student.student_availability_view_form
+msgid "Project Details"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.student_project_kanban_professor_evaluation
+#: model:ir.ui.menu,name:student.project_project_kanban_evaluation
+msgid "Project Evaluation Board"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_search
+msgid "Project Format"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__grade
+msgid "Project Grade (Out of 10)"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_availability__name
+#: model:ir.model.fields,field_description:student.field_student_project__name
+msgid "Project Name"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_kanban_view_evaluation
+#: model_terms:ir.ui.view,arch_db:student.student_project_kanban_view_publication
+msgid "Project Name:"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__project_project_tasks
+msgid "Project Project Tasks"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.student_proposal_view_professor
+#: model:ir.ui.menu,name:student.personal_proposal_professor
+msgid "Project Proposals"
+msgstr ""
+
+#. module: student
+#: model:mail.template,name:student.email_template_project_rejection
+msgid "Project Rejection Notification"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__project_report_file
+msgid "Project Report"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__project_report_filename
+msgid "Project Report Filename"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_view_form
+msgid "Project Status"
+msgstr ""
+
+#. module: student
+#: model:mail.template,name:student.email_template_project_submission
+msgid "Project Submission Notification"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.student_availability_kanban_supervision
+#: model:ir.ui.menu,name:student.availability_kanban_supervision
+msgid "Project Supervision Board"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.action_open_project_tasks
+msgid "Project Tasks"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.action_project
+#: model:ir.model.fields,field_description:student.field_student_campus__project_ids
+#: model:ir.model.fields,field_description:student.field_student_professor__project_ids
+#: model:ir.ui.menu,name:student.project_first_project_menu
+#: model_terms:ir.ui.view,arch_db:student.student_faculty_view_form
+#: model_terms:ir.ui.view,arch_db:student.student_professor_view_form
+#: model_terms:ir.ui.view,arch_db:student.student_professor_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_program_view_form
+msgid "Projects"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_degree__project_ids
+msgid "Projects for This Degree"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__proposal_id
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_form
+msgid "Proposal"
+msgstr ""
+
+#. module: student
+#: model:mail.template,name:student.email_template_proposal_accept
+msgid "Proposal Accepted Notification"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_form
+msgid "Proposal Details"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.student_proposal_view_public
+#: model:ir.ui.menu,name:student.project_proposal_list
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_search
+msgid "Proposal List"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_proposal__name
+msgid "Proposal Name"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_proposal__type
+msgid "Proposal Project Type"
+msgstr ""
+
+#. module: student
+#: model:mail.template,name:student.email_template_proposal_reject
+msgid "Proposal Rejected Notification"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_proposal__state
+msgid "Proposal State"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.student_proposal_view_personal
+#: model:ir.ui.menu,name:student.personal_proposal_private
+#: model:ir.ui.menu,name:student.project_first_proposal_menu
+#: model_terms:ir.ui.view,arch_db:student.student_student_view_form
+msgid "Proposals"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_student__proposal_ids
+msgid "Proposals of the Student"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_proposal__proponent
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_search
+msgid "Proposed by"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_proposal__proponent_account
+msgid "Proposing Account"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_proposal__proponent_faculty
+msgid "Proposing Student Faculty"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__color_publication
+msgid "Publication Card Color"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__state_publication
+msgid "Publication State"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_project__state_publication__published
+msgid "Published"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.student_project_kanban_professor_publication
+#: model:ir.ui.menu,name:student.project_project_kanban_publication
+msgid "Published Projects Board"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_view_form
+msgid "REJECT"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_form
+msgid "REJECT APPLICATION"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_form
+msgid "REJECT PROPOSAL"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "RESET"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_view_form
+msgid "RETURN"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__rating_ids
+#: model:ir.model.fields,field_description:student.field_student_project__rating_ids
+#: model:ir.model.fields,field_description:student.field_student_proposal__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: student
+#: model:mail.template,name:student.email_template_application_send
+msgid "Received Application Notification"
+msgstr ""
+
+#. module: student
+#: model:mail.template,name:student.email_template_proposal_send
+msgid "Received Proposal Notification"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Reject ✘"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_application__state__rejected
+#: model:ir.model.fields.selection,name:student.selection__student_availability__state__rejected
+#: model:ir.model.fields.selection,name:student.selection__student_project__state_evaluation__rejected
+#: model:ir.model.fields.selection,name:student.selection__student_proposal__state__rejected
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_search
+msgid "Rejected"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_view_search
+msgid "Related Project"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_message_subtype__relation_field
+msgid "Relation field"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_search
+msgid "Requires attention"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_availability__format__research
+#: model:ir.model.fields.selection,name:student.selection__student_project__format__research
+#: model:ir.model.fields.selection,name:student.selection__student_proposal__format__research
+msgid "Research"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__result_text
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Results"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_availability__reason
+#: model:ir.model.fields,field_description:student.field_student_project__reason
+msgid "Return/Rejection Reason"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_availability__state__returned
+msgid "Returned"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__returned_program_ids
+msgid "Returned Programs (TECHNICAL)"
+msgstr ""
+
+#. module: student
+#: model:mail.template,name:student.email_template_project_return
+msgid "Returned Project Notification"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_availability__language__ru
+#: model:ir.model.fields.selection,name:student.selection__student_program__language__ru
+#: model:ir.model.fields.selection,name:student.selection__student_project__language__ru
+#: model:ir.model.fields.selection,name:student.selection__student_proposal__language__ru
+msgid "Russian"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_form
+msgid "SEND APPLICATION"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_form
+msgid "SEND PROPOSAL"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__message_has_sms_error
+#: model:ir.model.fields,field_description:student.field_student_project__message_has_sms_error
+#: model:ir.model.fields,field_description:student.field_student_proposal__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "SUBMIT"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_student__progress__2
+msgid "Second Year"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.actions.act_window,help:student.student_application_view_personal
+msgid "Send your first application to one of the available projects!"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.actions.act_window,help:student.student_proposal_view_personal
+msgid "Send your first proposal to your favorite professors!"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_application__state__sent
+#: model:ir.model.fields.selection,name:student.selection__student_proposal__state__sent
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_search
+msgid "Sent"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__sent_date
+#: model:ir.model.fields,field_description:student.field_student_proposal__sent_date
+msgid "Sent Date"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_message_subtype__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid ""
+"Short project description to inspire potential applicants. \n"
+"Description in both English and Russian is suggested."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__project_preview_toggle
+msgid "Show Preview"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_student__progress__6
+msgid "Sixth Year"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_availability__format__startup
+#: model:ir.model.fields.selection,name:student.selection__student_project__format__startup
+#: model:ir.model.fields.selection,name:student.selection__student_proposal__format__startup
+msgid "Start-up"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_availability__state
+#: model_terms:ir.ui.view,arch_db:student.student_proposal_view_search
+msgid "State"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_project__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: student
+#: model:mail.message.subtype,name:student.student_message_subtype_email
+msgid "Student - Email"
+msgstr ""
+
+#. module: student
+#: model:ir.model,name:student.model_student_message_subtype
+msgid "Student - Message Subtype"
+msgstr ""
+
+#. module: student
+#: model:mail.message.subtype,name:student.student_message_subtype_professor_supervisor
+msgid "Student - Professor/Supervisor Conversation"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_student__degree
+msgid "Student Academic Degree"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__student_id
+#: model:ir.model.fields,field_description:student.field_student_proposal__student_id
+#: model:ir.model.fields,field_description:student.field_student_student__student_id
+msgid "Student ID"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_form
+msgid "Student Info"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_student_view_search
+msgid "Student List"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_student__name
+msgid "Student Name"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__student_program
+#: model:ir.model.fields,field_description:student.field_student_proposal__student_program
+msgid "Student Track"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Student Uploads"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.student_student_view_action
+#: model:ir.model.fields,field_description:student.field_student_faculty__student_ids
+#: model:ir.model.fields,field_description:student.field_student_program__student_ids
+#: model:ir.ui.menu,name:student.faculty_student_menu_action
+#: model_terms:ir.ui.view,arch_db:student.student_faculty_view_form
+#: model_terms:ir.ui.view,arch_db:student.student_program_view_form
+msgid "Students"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_view_list
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Submission State"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_availability_view_list
+#: model_terms:ir.ui.view,arch_db:student.student_availability_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Submitted to"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_supervisor__program_ids
+msgid "Supervised Programs"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_search
+msgid "Supervised by me"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_availability__color_supervision
+msgid "Supervision Card Color"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_program_view_search
+#: model_terms:ir.ui.view,arch_db:student.student_supervisor_view_search
+msgid "Supervisor"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_supervisor_view_search
+msgid "Supervisor List"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_supervisor__name
+msgid "Supervisor Name"
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.student_supervisor_view_action
+#: model:ir.model.fields,field_description:student.field_student_faculty__supervisor_ids
+#: model:ir.ui.menu,name:student.faculty_supervisor_menu_action
+#: model_terms:ir.ui.view,arch_db:student.student_faculty_view_form
+msgid "Supervisors"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_search
+msgid "Target Program"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_project__availability_ids
+#: model:ir.model.fields,field_description:student.field_student_project__program_ids
+msgid "Target Programs"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_form
+msgid "Technical Log"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Technical Log & Details"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__telegram
+#: model:ir.model.fields,field_description:student.field_student_proposal__telegram
+msgid "Telegram ID"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_professor_view_form
+#: model_terms:ir.ui.view,arch_db:student.student_supervisor_view_form
+msgid "Test"
+msgstr ""
+
+#. module: student
+#. odoo-python
+#: code:addons/student/models/student_application.py:0
+#, python-format
+msgid "The application is sent to the professor, %s, for evaluation."
+msgstr ""
+
+#. module: student
+#. odoo-python
+#: code:addons/student/models/student_application.py:0
+#, python-format
+msgid "The application sent by %s is accepted."
+msgstr ""
+
+#. module: student
+#. odoo-python
+#: code:addons/student/models/student_application.py:0
+#, python-format
+msgid "The application sent by %s is rejected."
+msgstr ""
+
+#. module: student
+#. odoo-python
+#: code:addons/student/models/student_application.py:0
+#, python-format
+msgid "The application submission is cancelled."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "The campus is automatically assigned based on the project professor."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "The faculty is automatically assigned based on the project professor."
+msgstr ""
+
+#. module: student
+#. odoo-python
+#: code:addons/student/models/student_project.py:0
+#, python-format
+msgid "The project is approved by ."
+msgstr ""
+
+#. module: student
+#. odoo-python
+#: code:addons/student/models/student_project.py:0
+#, python-format
+msgid "The project is rejected by .<br><b>Rejection reason: </b>"
+msgstr ""
+
+#. module: student
+#. odoo-python
+#: code:addons/student/models/student_project.py:0
+#, python-format
+msgid ""
+"The project is returned by  for the reason below. Resubmission after "
+"applying requested modifications is possible.<br><b>Rejection reason: </b>"
+msgstr ""
+
+#. module: student
+#. odoo-python
+#: code:addons/student/models/student_project.py:0
+#, python-format
+msgid ""
+"The project is returned from all submitted programs, so it is automatically "
+"reverted to 'Draft' status."
+msgstr ""
+
+#. module: student
+#. odoo-python
+#: code:addons/student/models/student_project.py:0
+#, python-format
+msgid "The project submission is cancelled."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.actions.act_window,help:student.student_availability_kanban_supervision
+msgid "There are no projects sent for supervision."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.actions.act_window,help:student.action_project
+#: model_terms:ir.actions.act_window,help:student.student_project_kanban_professor_evaluation
+#: model_terms:ir.actions.act_window,help:student.student_project_view_action_list
+msgid "There are no projects yet. You can create the first one. Yay!"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.actions.act_window,help:student.student_project_kanban_professor_publication
+msgid ""
+"There are no published projects. You can create the first one and send it "
+"for approval."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_student__progress__3
+msgid "Third Year"
+msgstr ""
+
+#. module: student
+#. odoo-python
+#: code:addons/student/models/student_application.py:0
+#, python-format
+msgid "This application is accepted by the professor."
+msgstr ""
+
+#. module: student
+#. odoo-python
+#: code:addons/student/models/student_application.py:0
+#, python-format
+msgid ""
+"This application is rejected as another one is accepted by the professor."
+msgstr ""
+
+#. module: student
+#. odoo-python
+#: code:addons/student/models/student_application.py:0
+#, python-format
+msgid "This application is rejected by the professor."
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_message_subtype__track_recipients
+msgid "Track Recipients"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_availability__type
+#: model_terms:ir.ui.view,arch_db:student.student_availability_view_list
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Type"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_project__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: student
+#: model:ir.actions.act_window,name:student.student_campus_view_action
+#: model:ir.ui.menu,name:student.campus_model_menu_action
+msgid "University Campuses"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_campus__university_name
+msgid "University Name"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__urgency_category
+#: model_terms:ir.ui.view,arch_db:student.student_application_view_search
+msgid "Urgency"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_application__urgency_category__urgent
+msgid "Urgent"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_availability__access_from_project
+msgid ""
+"Used to hide project details when accessed from the project itself "
+"(TECHNICAL)"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_message_subtype__sequence
+msgid "Used to order subtypes."
+msgstr ""
+
+#. module: student
+#: model:ir.model,name:student.model_res_users
+msgid "User"
+msgstr "Пользователь"
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_manager__manager_account
+#: model:ir.model.fields,field_description:student.field_student_professor__professor_account
+#: model:ir.model.fields,field_description:student.field_student_student__student_account
+#: model:ir.model.fields,field_description:student.field_student_supervisor__supervisor_account
+msgid "User Account"
+msgstr ""
+
+#. module: student
+#: model:ir.ui.menu,name:student.faculty_first_member_menu
+msgid "Users"
+msgstr ""
+
+#. module: student
+#: model:ir.ui.menu,name:student.util_first_level_menu
+msgid "Utility"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.actions.act_window,help:student.student_application_view_personal
+#: model_terms:ir.actions.act_window,help:student.student_proposal_view_personal
+msgid "View projects"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_professor__visiting_professor
+msgid "Visiting professor?"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid ""
+"WARNING! This is a development command. Are you sure that you want create "
+"the Odoo project?"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid ""
+"WARNING! This is a development command. Are you sure that you want to reset "
+"the project?"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields.selection,name:student.selection__student_availability__state__waiting
+msgid "Waiting for submission"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_application__website_message_ids
+#: model:ir.model.fields,field_description:student.field_student_project__website_message_ids
+#: model:ir.model.fields,field_description:student.field_student_proposal__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_application__website_message_ids
+#: model:ir.model.fields,help:student.field_student_project__website_message_ids
+#: model:ir.model.fields,help:student.field_student_proposal__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,help:student.field_student_message_subtype__track_recipients
+msgid "Whether to display all the recipients or only the important ones."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_view_form
+msgid "Workflow"
+msgstr ""
+
+#. module: student
+#: model:ir.model.fields,field_description:student.field_student_student__enrolled
+#: model_terms:ir.ui.view,arch_db:student.student_student_view_search
+msgid "Year of Enrollment"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.actions.act_window,help:student.student_application_view_professor
+msgid "You have no pending applications."
+msgstr ""
+
+#. module: student
+#: model_terms:ir.actions.act_window,help:student.student_proposal_view_professor
+msgid "You have no pending proposals."
+msgstr ""
+
+#. module: student
+#: model:mail.template,subject:student.email_template_application_accept
+msgid "Your application for «{{object.project_id.name}}» is accepted!"
+msgstr ""
+
+#. module: student
+#: model:mail.template,subject:student.email_template_application_reject
+msgid "Your application for «{{object.project_id.name}}» is rejected"
+msgstr ""
+
+#. module: student
+#: model:mail.template,subject:student.email_template_proposal_accept
+msgid "Your proposal «{{object.name}}» is accepted!"
+msgstr ""
+
+#. module: student
+#: model:mail.template,subject:student.email_template_proposal_reject
+msgid "Your proposal «{{object.project_id.name}}» is rejected"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_manager_view_search
+msgid "manager"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_manager_view_search
+msgid "manager List"
+msgstr ""
+
+#. module: student
+#: model:mail.template,subject:student.email_template_application_send
+msgid ""
+"{{object.applicant_account.name}} sent a an application for "
+"«{{object.project_id.name}}»"
+msgstr ""
+
+#. module: student
+#: model:mail.template,subject:student.email_template_proposal_send
+msgid "{{object.proponent.name}} sent a a proposal"
+msgstr ""
+
+#. module: student
+#: model:mail.template,subject:student.email_template_project_approval
+msgid "«{{object.name}}» is approved!"
+msgstr ""
+
+#. module: student
+#: model:mail.template,subject:student.email_template_project_rejection
+msgid "«{{object.name}}» is rejected"
+msgstr ""
+
+#. module: student
+#: model:mail.template,subject:student.email_template_project_return
+msgid "«{{object.name}}» is returned"
+msgstr ""
+
+#. module: student
+#: model:mail.template,subject:student.email_template_project_submission
+msgid "«{{object.name}}» is submitted for review"
+msgstr ""
+
+#. module: student
+#: model_terms:ir.ui.view,arch_db:student.student_project_kanban_view_evaluation
+msgid "• Approved:"
+msgstr ""
+
+#. module: student
+#: model:ir.ui.menu,name:student.student_menu_root
+msgid "𝗣𝗔𝗟𝗠𝗦"
+msgstr "𝗣𝗔𝗟𝗠𝗦"

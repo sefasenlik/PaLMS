@@ -33,7 +33,6 @@
             <tree default_order="sent_date">
                 <field name="state"/>
                 <field name="name"/>
-                <field name="name_ru"/>
                 <field name="sent_date"/>
                 <field name="proponent"/>
                 <field name="student_program"/>
@@ -95,7 +94,6 @@
                     <group>
                         <group string="Overview">
                             <field name="name" readonly="state != 'draft'"/>
-                            <field name="name_ru" readonly="state != 'draft'"/>
                             <field name="proposal_professor" readonly="state != 'draft'"/>
                             <field name="state"/>
                             <field name="project_id" invisible="state in ['draft', 'rejected']"/>

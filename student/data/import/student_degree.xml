@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="degree_phd_1" model="student.degree">
+        <field name="level">phd</field>        
+        <field name="year">1</field>
+    </record>    
+    <record id="degree_phd_2" model="student.degree">
+        <field name="level">phd</field>        
+        <field name="year">2</field>
+    </record>   
+    <record id="degree_master_1" model="student.degree">
+        <field name="level">ms</field>        
+        <field name="year">1</field>
+    </record>    
+    <record id="degree_master_2" model="student.degree">
+        <field name="level">ms</field>     
+        <field name="year">2</field>
+    </record>    
+    <record id="degree_bachelor_1" model="student.degree">
+        <field name="level">ba</field>        
+        <field name="year">1</field>
+    </record>   
+    <record id="degree_bachelor_2" model="student.degree">
+        <field name="level">ba</field>        
+        <field name="year">2</field>
+    </record>    
+    <record id="degree_bachelor_3" model="student.degree">
+        <field name="level">ba</field>        
+        <field name="year">3</field>
+    </record>    
+    <record id="degree_bachelor_4" model="student.degree">
+        <field name="level">ba</field>        
+        <field name="year">4</field>
+    </record>     
+</odoo>

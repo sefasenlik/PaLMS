@@ -71,7 +71,6 @@
                     <group string="Project Details" invisible="access_from_project">
                         <group>
                             <field name="name"/>
-                            <field name="name_ru"/>
                         </group>
                         <group>
                             <field name="format"/>

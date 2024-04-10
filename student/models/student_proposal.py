@@ -9,7 +9,6 @@ class Proposal(models.Model):
 
 
 	name = fields.Char('Proposal Name', required=True, translate=True)
-	name_ru = fields.Char('Название предложения проекта', required=True, translate=True)
 		
 	@api.depends('proponent')
 	def _compute_student_details(self):
@@ -63,9 +62,9 @@ class Proposal(models.Model):
 	format = fields.Selection([('research', 'Research'), ('project', 'Project'), ('startup', 'Start-up')], string="Format", required=True)
 	language = fields.Selection([('en', 'English'), ('ru', 'Russian')], default="en", string="Language", required=True)
 
-	description = fields.Text('Detailed Description', required=True)
-	results = fields.Text('Expected Results')
-	feedback = fields.Text('Professor Feedback')
+	description = fields.Text('Detailed Description', required=True, translate=True)
+	results = fields.Text('Expected Results', translate=True)
+	feedback = fields.Text('Professor Feedback', translate=True)
 
 	additional_files = fields.Many2many(comodel_name="ir.attachment", string="Additional Files") 
 
@@ -139,7 +138,6 @@ class Proposal(models.Model):
 		if self.state == 'sent':
 			self.project_id = self.env['student.project'].create({
 				'name': self.name,
-				'name_ru': self.name_ru,
 				'description': self.description,
 				'requirements': 'Not applicable for proposed projects...',
 				'results': self.results,
@@ -160,7 +158,7 @@ class Proposal(models.Model):
 				'state': 'waiting',
 				'program_id': self.proponent.student_program.id,
 				'type': self.type,
-				'degree_ids': self.proponent.degree,
+				'degree_ids': self.proponent.degree
 			})
 
 			self.project_id.write({'availability_ids': project_availability})
@@ -214,7 +212,7 @@ class Proposal(models.Model):
 			raise UserError("The proposal is already processed or still a draft!")
 		
     # RESTRICTIONS #
-	@api.constrains('name', 'name_ru', 'proposal_professor', 'type', 'format', 'language', 'additional_email', 'additional_phone', 'telegram', 'description', 'results', 'additional_files')
+	@api.constrains('name', 'proposal_professor', 'type', 'format', 'language', 'additional_email', 'additional_phone', 'telegram', 'description', 'results', 'additional_files')
 	def _check_initiator_identity(self):
 		if self.env.uid != self.proponent_account.id:
 			raise ValidationError("Only the creator of the proposal can modify details.")

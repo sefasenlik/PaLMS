@@ -55,13 +55,12 @@
                     </header>
                     <sheet>
                         <group>
-                            <field name="current_user" invisible="1"/>
+                            <field name="current_user_follower" invisible="1"/>
                             
                             <group string="Basic Info" cols="2"> 
                                 <group colspan="2">
                                     <field name="name" readonly="state_evaluation != 'draft'"/> 
-                                    <field name="name_ru" readonly="state_evaluation != 'draft'"/> 
-                                    <field name="project_project_id" readonly="1" invisible="state_publication not in ['assigned', 'completed', 'dropped']"/>
+                                    <field name="project_project_id" readonly="1" invisible="state_publication not in ['assigned', 'completed', 'dropped'] or not current_user_follower"/>
                                 </group>   
                                 <group>
                                     <field name="professor_id"/>
@@ -96,12 +95,16 @@
                                         <field name="results" placeholder="> Expected outcomes at the end of given implementation/research period. &#10;> Please use bullet points." style="margin-bottom:20 px" readonly="state_evaluation != 'draft'"/>
                                     </group>
                                     
-                                    <group string="Files" invisible="state_evaluation != 'draft' and file_count == 0">
+                                    <group string="Files" invisible="state_evaluation != 'draft' and file_count == 0" col="3">
                                         <p colspan="2" style="color:gray" invisible="id != False">
                                             <i>Save the project to add additional files.</i>
                                         </p>
-                                        <field name="file_count" invisible="id == False"/>
-                                        <field name="additional_files" widget="many2many_binary" string="Attach a file" readonly="state_evaluation != 'draft'" invisible="id == False" help="Additional files to describe the content of the project further."/>
+                                        <group colspan="2">
+                                            <field name="additional_files" widget="many2many_binary" string="Attach a file" readonly="state_evaluation != 'draft'" invisible="id == False" help="Additional files to describe the content of the project further."/>
+                                        </group>
+                                        <group colspan="1">
+                                            <field name="file_count" invisible="id == False"/>
+                                        </group>
                                     </group>
                                 </page>
                                 <page string="Applications" invisible="state_publication not in ['published', 'applied']">
@@ -133,7 +136,7 @@
                                         </tree>
                                     </field>
                                 </page>
-                                <page string="Activities" invisible="state_publication not in ['assigned', 'completed', 'dropped']">
+                                <page string="Activities" invisible="state_publication not in ['assigned', 'completed', 'dropped'] or not current_user_follower">
                                     <div class="text-center">
                                         <button name="action_view_project_events" 
                                                 string="GO TO PROJECT TASKS ►"
@@ -197,7 +200,7 @@
                                 </group>
                             </group>
                             <group colspan="2">
-                                <field name="availability_ids" context="{'project_id': active_id, 'project_faculty_id': faculty_id}" readonly="state_evaluation != 'draft'">
+                                <field name="availability_ids" context="{'project_id': active_id, 'project_faculty_id': faculty_id}" readonly="state_evaluation != 'draft' or assigned">
                                     <tree>
                                         <field name="state" string="Submission State"/>
                                         <field name="program_id" string="Submitted to"/>
@@ -230,7 +233,6 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
-                    <field name="name_ru"/>
                     <field name="professor_id"/>
                     <field name="format"/>
                     <field name="language"/>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- English Language -->
+    <record id="base.lang_en" model="res.lang">
+        <field name="name">English</field>
+        <field name="code">en_US</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Russian Language -->
+    <record id="base.lang_ru" model="res.lang">
+        <field name="name">Russian / русский язык</field>
+        <field name="code">ru_RU</field>
+        <field name="active">True</field>
+    </record>
+</odoo>
