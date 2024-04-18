@@ -32,6 +32,10 @@
                 <menuitem id="faculty_professor_menu_action" sequence="3" action="student_professor_view_action"/>
                 <menuitem id="faculty_student_menu_action" sequence="4" action="student_student_view_action"/>
             </menuitem>
+            
+            <menuitem id="faculty_first_group_menu" name="Groups">
+                <menuitem id="committee_model_menu_action" action="student_committee_view_action"/>
+            </menuitem>
 
         </menuitem>
 
@@ -44,7 +48,7 @@
             <menuitem id="project_first_project_menu" name="Projects">
                 <menuitem id="project_project_kanban_evaluation" action="student_project_kanban_professor_evaluation" groups="student.group_manager,student.group_professor"/>
                 <menuitem id="project_project_kanban_publication" action="student_project_kanban_professor_publication" groups="student.group_manager,student.group_professor"/>
-                <menuitem id="availability_kanban_supervision" action="student_availability_kanban_supervision" groups="student.group_manager,student.group_supervisor"/>
+                <menuitem id="availability_kanban_supervision" action="student_availability_kanban_supervision" groups="student.group_supervisor"/>
                 <menuitem id="project_project_list" action="student_project_view_action_list" groups="student.group_student"/>
             </menuitem>
 
@@ -63,6 +67,7 @@
 
             <menuitem id="util_second_level_menu_a" name="Miscellaneous">
                 <menuitem id="campus_model_menu_action" action="student_campus_view_action"/>
+                <menuitem id="defense_model_menu_action" action="student_defense_view_action"/>
             </menuitem>
 
         </menuitem>

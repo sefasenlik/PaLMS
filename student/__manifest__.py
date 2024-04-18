@@ -30,6 +30,7 @@
         'views/student_supervisor_views.xml',
         'views/student_manager_views.xml',
         'views/student_util_views.xml',
+        'views/student_committee_views.xml',
         'views/student_menus.xml',
         'data/import/student_degree.xml'
     ],

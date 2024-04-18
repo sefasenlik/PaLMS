@@ -46,9 +46,9 @@ class Project(models.Model):
         for record in self:
             record.write_date_date = record.write_date.date()
 
-    description = fields.Text('Detailed Description', required=True)
-    requirements = fields.Text('Application Requirements', required=True)
-    results = fields.Text('Expected Results', required=True)
+    description = fields.Text('Detailed Description', required=True, translate=True)
+    requirements = fields.Text('Application Requirements', required=True, translate=True)
+    results = fields.Text('Expected Results', required=True, translate=True)
 
     # ♥ You can merge these functions.
     # Assigns the professor's faculty
@@ -532,7 +532,7 @@ class Project(models.Model):
 
                 # Log the action --------------------
                 subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
-                body = _('The project is returned by ' + self.env.user.name + ' for the reason below. Resubmission after applying requested modifications is possible.<br><b>Rejection reason: </b>' + returned_availability_id.reason)
+                body = _('The project is returned by ' + self.env.user.name + ' for the reason below. Resubmission after applying requested modifications is possible.<br><b>Return reason: </b>' + returned_availability_id.reason)
                 self.message_post(body=Markup(body), subtype_id=subtype_id.id)
 
                 # Send the email --------------------

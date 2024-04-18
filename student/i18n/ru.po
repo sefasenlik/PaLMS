@@ -2606,7 +2606,7 @@ msgstr "Запуск"
 #: model:ir.model.fields,field_description:student.field_student_availability__state
 #: model_terms:ir.ui.view,arch_db:student.student_proposal_view_search
 msgid "State"
-msgstr "Государство"
+msgstr "Состояние"
 
 #. module: student
 #: model:ir.model.fields,help:student.field_student_project__activity_state

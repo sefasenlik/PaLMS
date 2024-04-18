@@ -68,6 +68,18 @@ student_project_supervisor,Project for Supervisor,model_student_project,student.
 student_project_professor,Project for Professor,model_student_project,student.group_professor,1,1,1,1
 student_project_student,Project for Student,model_student_project,student.group_student,1,1,0,0
 
+student_committee_admin,Committee for Administrator,model_student_committee,student.group_administrator,1,1,1,1
+student_committee_manager,Committee for Manager,model_student_committee,student.group_manager,1,1,1,1
+student_committee_supervisor,Committee for Supervisor,model_student_committee,student.group_supervisor,1,0,0,0
+student_committee_professor,Committee for Professor,model_student_committee,student.group_professor,1,0,0,0
+student_committee_student,Committee for Student,model_student_committee,student.group_student,1,0,0,0
+
+student_defense_admin,Defense for Administrator,model_student_defense,student.group_administrator,1,1,1,1
+student_defense_manager,Defense for Manager,model_student_defense,student.group_manager,1,1,1,1
+student_defense_supervisor,Defense for Supervisor,model_student_defense,student.group_supervisor,1,0,0,0
+student_defense_professor,Defense for Professor,model_student_defense,student.group_professor,1,0,0,0
+student_defense_student,Defense for Student,model_student_defense,student.group_student,1,0,0,0
+
 
 
 student_application_admin,Application for Administrator,model_student_application,student.group_administrator,1,1,1,1
