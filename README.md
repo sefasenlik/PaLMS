@@ -1,6 +1,6 @@
-<img src="https://github.com/sefasenlik/PaLMS/assets/43667807/a27ff24d-6e9c-4a50-bf22-e925e7257683" alt="PaLMS" width="300"/>
+# PALMS
+<img src="https://github.com/sefasenlik/PaLMS/assets/43667807/a27ff24d-6e9c-4a50-bf22-e925e7257683" alt="PaLMS" width="300" align="left"/>
 
-# Short Description
 PaLMS is a comprehensive ERP project intended to cover various needs of higher education institutes as an Odoo module. The initial goal of the project is to provide an efficient and secure platform for students, professors, academic supervisors and program managers to handle course work and final qualification work submissions and workflows. Instead of using Excel tables for project publication or Telegram for communication, every party involved can handle any task related to the process on PaLMS platform itself. In the future, PaLMS is expected to be a highly customizable and versatile product that addresses other needs of higher education institutions as well.
 
 In the current status of the project, there are 15 models in total which are `application`, `availability`, `campus`, `commission`, `defense`, `degree`, `faculty`, `grade`, `manager`, `professor, program`, `project`, `proposal`, `student` and `supervisor`. These models are encapsulated in a single module called “Student” _(technical representation among resource files is “student”, like “hr” for the “Discuss” module)_. Their purposes can be briefly explained as follows:
@@ -20,3 +20,11 @@ The PALMS _student.project_ model, which addresses an academic purpose, should n
 - **Proposal:** They are designed to enable students to submit their academic project ideas in a systematic way for professors' evaluation. Proposals are created by students and evaluated by professors. Approved proposals become projects.
 - **Student:** Represents corresponding _res.users_ objects (of student user group) that send applications and be assigned to a project, for supervisor’s ease. 
 - **Supervisor:** A collection of utility functions, views, and module functionalities shared across models, allowing easy code maintenance.
+
+## PALMS Console
+
+<img src="https://github.com/sefasenlik/PaLMS/assets/43667807/1bcd6fa0-9792-4a15-a0fa-132bdf200c65" alt="PaLMS Console" width="150" align="left"/>
+
+In order to turn PALMS into a sustainable solution and to enable it to adapt to changing conditions, it is necessary to provide an interface, especially for system administrators, where the features and settings of the application can be changed. This interface should be specifically designed to be able to tweak the functionality of PALMS and, if necessary, even change the existing business process. In order to add these features to the project and to create a low-code environment, a Flask web application has been developed that can directly interfere with the code of both the back-end and the front-end of the PALMS module.
+
+The Flask application, named “PALMS Console”, serves as an interactive interface for visualizing and manipulating Odoo view files (.xml) and module files (.py). The application is designed to parse the structure of Odoo views and modules, display the content in a user-friendly format, and allow users to make changes that are reflected back to the original files.
