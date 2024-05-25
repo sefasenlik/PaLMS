@@ -192,5 +192,22 @@
                 &lt;/p&gt;
             </field>
         </record>
+
+        <!-- COMMISSION -->
+        <record id="email_template_commission_set" model="mail.template">
+            <field name="name">Commission Member Notification</field>
+            <field name="model_id" ref="student.model_student_commission"/>
+            <field name="auto_delete" eval="False"/>
+            <field name="email_from">{{user.email}}</field>
+            <field name="subject">Commission №«{{object.commission_number}}» is set.</field>
+            <field name="body_html">
+                &lt;h2&gt;Hello, there!&lt;/h2&gt;
+                &lt;p&gt;You are assigned to to a commission to evaluate and grade academic projects. Please log in to PaLMS to check the commission dates and other details.&lt;br&gt;
+                &lt;br&gt;
+                Best wishes,&lt;br&gt;
+                PaLMS Notification Service
+                &lt;/p&gt;
+            </field>
+        </record>
     </data>
 </odoo>

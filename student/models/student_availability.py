@@ -36,12 +36,14 @@ class ProjectAvailability(models.Model):
             self.requirements = project_source.requirements
             self.results = project_source.results
             self.additional_files = project_source.additional_files
+            self.professor_id = project_source.professor_id
         else:
             raise ValidationError("Error! Cannot find the source project.")
 
     name = fields.Char('Project Name', compute=_set_default_project_values, store=True, translate=True)
     format = fields.Selection([('research', 'Research'), ('project', 'Project'), ('startup', 'Start-up')], string="Format", compute=_set_default_project_values, store=True)
     language = fields.Selection([('en', 'English'), ('ru', 'Russian')], string="Language", compute=_set_default_project_values, store=True)
+    professor_id = fields.Many2one('student.professor', string='Professor', compute=_set_default_project_values, store=True)
 
     description = fields.Text('Detailed Description', compute=_set_default_project_values, store=True)
     requirements = fields.Text('Application Requirements', compute=_set_default_project_values, store=True)
@@ -110,6 +112,15 @@ class ProjectAvailability(models.Model):
     def action_view_availability_approve(self):
         if self.state == "pending":
             self._check_supervisor_identity(True)
+
+            # Create grading entries 
+            for degree in self.degree_ids:
+                new_approval = self.env['student.approval'].sudo().create({
+                    'type': self.type,
+                    'program_id': self.program_id.id,
+                    'degree_id': degree.id
+                }).id
+                self.project_id.approval_ids = [(4, new_approval)]
             
             self.state = "approved"
             self.project_id.action_view_project_approve(self.program_id.id)
@@ -195,6 +206,4 @@ class ProjectAvailability(models.Model):
             elif record.env.user.has_group("student.group_supervisor") and record.program_id.supervisor.supervisor_account.id != record.env.user.id:
                 raise UserError("This project is not sent to a program you are supervising.")
     
-    _sql_constraints = [
-        ('check_uniqueness', 'UNIQUE(program_id, project_id)', 'You have specified duplicate target programs.')
-	]
+    _sql_constraints = [('check_uniqueness', 'UNIQUE(program_id, project_id)', 'You have specified duplicate target programs.')]

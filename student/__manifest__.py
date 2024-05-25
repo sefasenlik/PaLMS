@@ -3,10 +3,11 @@
 
 {
     'name': 'PaLMS',
-    'version': '0.4.2',
-    'category': 'Human Resources/Student',
+    'version': '0.5.3',
+    'category': 'Academic',
     'sequence': 15,
-    'summary': 'A prototype ERP solution for handling КР and ВКР submissions. Sefa Şenlik (CC BY-NC) 2024',
+    'summary': 'A prototype ERP solution for handling КР and ВКР submissions',
+    'author': 'Sefa Şenlik (CC BY-NC) 2024',
     'website': 'https://github.com/sefasenlik/PaLMS',
     'installable': True,
     'auto_install': True,
@@ -30,7 +31,7 @@
         'views/student_supervisor_views.xml',
         'views/student_manager_views.xml',
         'views/student_util_views.xml',
-        'views/student_committee_views.xml',
+        'views/student_commission_views.xml',
         'views/student_menus.xml',
         'data/import/student_degree.xml'
     ],

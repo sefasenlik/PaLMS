@@ -50,7 +50,7 @@ class Faculty(models.Model):
         self.student_number = len(self.student_ids)
 
     project_number = fields.Integer(string='Number of Projects', compute='_compute_project_count', store=True, readonly=True)
-    project_ids = fields.Many2many('student.project', string='Faculty Projects', readonly=True)
+    project_ids = fields.Many2many('student.project', string='Faculty Projects', readonly=True, domain=[('state_publication','!=','ineligible')])
 
     @api.depends('project_ids')
     @api.model

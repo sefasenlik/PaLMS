@@ -27,7 +27,7 @@ student_professor_student,Professor for Student,model_student_professor,student.
 student_student_admin,Student for Administrator,model_student_student,student.group_administrator,1,1,1,1
 student_student_manager,Student for Manager,model_student_student,student.group_manager,1,1,0,0
 student_student_supervisor,Student for Supervisor,model_student_student,student.group_supervisor,1,0,0,0
-student_student_professor,Student for Professor,model_student_student,student.group_professor,1,1,0,0
+student_student_professor,Student for Professor,model_student_student,student.group_professor,1,0,0,0
 student_student_student,Student for Student,model_student_student,student.group_student,1,0,0,0
 
 
@@ -43,6 +43,12 @@ student_availability_manager,Availability for Manager,model_student_availability
 student_availability_supervisor,Availability for Supervisor,model_student_availability,student.group_supervisor,1,1,0,0
 student_availability_professor,Availability for Professor,model_student_availability,student.group_professor,1,1,1,1
 student_availability_student,Availability for Student,model_student_availability,student.group_student,1,0,0,0
+
+student_approval_admin,Approval for Administrator,model_student_approval,student.group_administrator,1,1,1,1
+student_approval_manager,Approval for Manager,model_student_approval,student.group_manager,1,0,0,0
+student_approval_supervisor,Approval for Supervisor,model_student_approval,student.group_supervisor,1,1,1,1
+student_approval_professor,Approval for Professor,model_student_approval,student.group_professor,1,0,0,0
+student_approval_student,Approval for Student,model_student_approval,student.group_student,1,0,0,0
 
 student_campus_admin,Campus for Administrator,model_student_campus,student.group_administrator,1,1,1,1
 student_campus_manager,Campus for Manager,model_student_campus,student.group_manager,1,0,0,0
@@ -68,17 +74,25 @@ student_project_supervisor,Project for Supervisor,model_student_project,student.
 student_project_professor,Project for Professor,model_student_project,student.group_professor,1,1,1,1
 student_project_student,Project for Student,model_student_project,student.group_student,1,1,0,0
 
-student_committee_admin,Committee for Administrator,model_student_committee,student.group_administrator,1,1,1,1
-student_committee_manager,Committee for Manager,model_student_committee,student.group_manager,1,1,1,1
-student_committee_supervisor,Committee for Supervisor,model_student_committee,student.group_supervisor,1,0,0,0
-student_committee_professor,Committee for Professor,model_student_committee,student.group_professor,1,0,0,0
-student_committee_student,Committee for Student,model_student_committee,student.group_student,1,0,0,0
+
+
+student_commission_admin,Commission for Administrator,model_student_commission,student.group_administrator,1,1,1,1
+student_commission_manager,Commission for Manager,model_student_commission,student.group_manager,1,1,1,1
+student_commission_supervisor,Commission for Supervisor,model_student_commission,student.group_supervisor,1,0,0,0
+student_commission_professor,Commission for Professor,model_student_commission,student.group_professor,1,1,0,0
+student_commission_student,Commission for Student,model_student_commission,student.group_student,1,0,0,0
 
 student_defense_admin,Defense for Administrator,model_student_defense,student.group_administrator,1,1,1,1
 student_defense_manager,Defense for Manager,model_student_defense,student.group_manager,1,1,1,1
 student_defense_supervisor,Defense for Supervisor,model_student_defense,student.group_supervisor,1,0,0,0
-student_defense_professor,Defense for Professor,model_student_defense,student.group_professor,1,0,0,0
+student_defense_professor,Defense for Professor,model_student_defense,student.group_professor,1,1,0,0
 student_defense_student,Defense for Student,model_student_defense,student.group_student,1,0,0,0
+
+student_grade_admin,Grade for Administrator,model_student_grade,student.group_administrator,1,1,1,1
+student_grade_manager,Grade for Manager,model_student_grade,student.group_manager,1,1,1,1
+student_grade_supervisor,Grade for Supervisor,model_student_grade,student.group_supervisor,0,0,0,0
+student_grade_professor,Grade for Professor,model_student_grade,student.group_professor,1,1,0,0
+student_grade_student,Grade for Student,model_student_grade,student.group_student,0,0,0,0
 
 
 

@@ -78,7 +78,7 @@ class Student(models.Model):
     def _compute_application_count(self):
         self.application_number = len(self.application_ids)
 
-    proposal_number = fields.Integer(string='Number of proposals', compute='_compute_proposal_count', store=True, readonly=True)
+    proposal_number = fields.Integer(string='Number of Proposals', compute='_compute_proposal_count', store=True, readonly=True)
     proposal_ids = fields.One2many('student.proposal', 'proponent', string='Proposals of the Student', readonly=True)
 
     @api.depends('proposal_ids')

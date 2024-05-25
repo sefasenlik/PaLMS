@@ -109,14 +109,14 @@
                         confirm="Are you sure you want to send your application for the chosen project?"
                         groups="student.group_student"
                         class="oe_highlight"
-                        invisible= "state != 'draft'"/>
+                        invisible= "state != 'draft' or create_uid != uid"/>
                     <button name="action_view_application_cancel"
                         string="CANCEL APPLICATION"
                         type="object"
                         confirm="Are you sure you want to cancel your application?"
                         groups="student.group_student"
                         class="oe_highlight"
-                        invisible= "state != 'sent'"/>
+                        invisible= "state != 'sent' or create_uid != uid"/>
 
                     <button name="action_view_application_accept"
                         string="ACCEPT APPLICATION"
@@ -135,6 +135,8 @@
                 </header>
                 <sheet>
                     <group>
+                        <field name="create_uid" invisible="1"/>
+                        
                         <group string="Overview">
                             <field name="state"/>
                             <field name="project_id" readonly="True"/>

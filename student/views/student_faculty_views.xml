@@ -84,7 +84,7 @@
                             </page>
                             <page string="Program Managers">
                                 <p>
-                                    <label for="manager_number" class="oe_inline"/>
+                                    <label for="manager_number" string="Managers" class="oe_inline"/>
                                     <field name="manager_number" style="margin-left:10px" class="oe_inline"/>
                                 </p>
                                 <field name="manager_ids"/>
@@ -105,7 +105,7 @@
                             </page>
                             <page string="Projects">
                                 <p>
-                                    <label for="project_number" class="oe_inline"/>
+                                    <label for="project_number" string="Published Projects" class="oe_inline"/>
                                     <field name="project_number" style="margin-left:10px" class="oe_inline"/>
                                 </p>
                                 <field name="project_ids"/>

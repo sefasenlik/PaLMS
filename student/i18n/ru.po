@@ -858,7 +858,7 @@ msgstr "Доступно для применения"
 #. module: student
 #: model_terms:ir.ui.view,arch_db:student.student_project_view_form
 msgid "BRANCH"
-msgstr "ВЕТКА"
+msgstr "ПЕРЕСОЗДАТЬ"
 
 #. module: student
 #: model:ir.model.fields.selection,name:student.selection__student_degree__level__ba
@@ -2228,7 +2228,7 @@ msgstr "Формат проекта"
 
 #. module: student
 #: model:ir.model.fields,field_description:student.field_student_project__grade
-msgid "Project Grade (Out of 10)"
+msgid "Project Grade (1-10)"
 msgstr "Оценка проекта (из 10)"
 
 #. module: student
@@ -2600,7 +2600,7 @@ msgstr "Шестой год"
 #: model:ir.model.fields.selection,name:student.selection__student_project__format__startup
 #: model:ir.model.fields.selection,name:student.selection__student_proposal__format__startup
 msgid "Start-up"
-msgstr "Запуск"
+msgstr "Стартап"
 
 #. module: student
 #: model:ir.model.fields,field_description:student.field_student_availability__state
@@ -2739,13 +2739,13 @@ msgstr "Академические руководители"
 #. module: student
 #: model_terms:ir.ui.view,arch_db:student.student_project_view_search
 msgid "Target Program"
-msgstr "Целевая программа"
+msgstr "Доступная программа"
 
 #. module: student
 #: model:ir.model.fields,field_description:student.field_student_project__availability_ids
 #: model:ir.model.fields,field_description:student.field_student_project__program_ids
 msgid "Target Programs"
-msgstr "Целевые программы"
+msgstr "Доступные программы"
 
 #. module: student
 #: model_terms:ir.ui.view,arch_db:student.student_application_view_form

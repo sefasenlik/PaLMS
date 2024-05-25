@@ -5,7 +5,7 @@
             <field name="name">student.project.form</field>
             <field name="model">student.project</field>
             <field name="arch" type="xml">
-                <form>
+                <form duplicate="0">
                     <header>
                         <button name="action_view_project_submit"
                             string="SUBMIT"
@@ -13,14 +13,14 @@
                             class="oe_highlight"
                             confirm="Are you sure you want to submit this project?"
                             groups="student.group_professor"
-                            invisible="state_evaluation != 'draft'"/>
+                            invisible="state_evaluation != 'draft' or create_uid != uid"/>
                         <button name="action_view_project_cancel"
                             string="CANCEL SUBMISSION"
                             type="object"
                             class="oe_highlight"
                             confirm="Are you sure you want to cancel your project submission?"
                             groups="student.group_professor"
-                            invisible="state_evaluation != 'progress'"/>
+                            invisible="state_evaluation != 'progress' or state_publication not in ['ineligible','published'] or create_uid != uid"/>
 
                         <!-- DEBUG COMMANDS - MAY DELETE -->
                         <button name="action_view_project_reset"
@@ -52,14 +52,20 @@
                             confirm="Are you sure you want to complete this project?"
                             groups="student.group_professor,student.group_student"
                             invisible="state_publication != 'assigned'"/>
+                        <field name="state_publication" 
+                               widget="statusbar" 
+                               statusbar_visible="published,applied,assigned,completed"
+                               invisible="state_publication in ['ineligible','dropped']" 
+                               readonly="1"/>
                     </header>
                     <sheet>
                         <group>
                             <field name="current_user_follower" invisible="1"/>
+                            <field name="create_uid" invisible="1"/>
                             
                             <group string="Basic Info" cols="2"> 
                                 <group colspan="2">
-                                    <field name="name" readonly="state_evaluation != 'draft'"/> 
+                                    <field name="name" style="color: #384f85; font-weight: bold" readonly="state_evaluation != 'draft'"/> 
                                     <field name="project_project_id" readonly="1" invisible="state_publication not in ['assigned', 'completed', 'dropped'] or not current_user_follower"/>
                                 </group>   
                                 <group>
@@ -106,6 +112,42 @@
                                             <field name="file_count" invisible="id == False"/>
                                         </group>
                                     </group>
+
+                                    <group string="Eligibility" invisible="id != False">
+                                        <p colspan="2" style="color:gray">
+                                            <i>Save the project to set up the academic programs for submission.</i>
+                                        </p>
+                                    </group>
+                                    <group string="Eligibility" invisible="id == False or state_publication == 'assigned'">
+                                        <!-- ♥ COPY THE BUTTONS HERE FOR USER CONVENIENCE -->
+
+                                        <group col="6" colspan="2">
+                                            <group colspan="2">
+                                                <field name="campus_id" help="The campus is automatically assigned based on the project professor." widget="many2many_tags" readonly="1"/>
+                                            </group>
+                                            <group colspan="4">
+                                                <field name="faculty_id" help="The faculty is automatically assigned based on the project professor." widget="many2many_tags" readonly="1"/>
+                                            </group>
+                                        </group>
+                                        <group colspan="2">
+                                            <field name="availability_ids" context="{'project_id': active_id, 'project_faculty_id': faculty_id}" readonly="state_evaluation != 'draft' or assigned"
+                                                   help="Professors can define the application criteria for each academic program. Once a program supervisor approves the project, it becomes available for applications of students from this particular program. Students of other programs can view the project, but cannot apply.">
+                                                <tree>
+                                                    <field name="state" string="Submission State"/>
+                                                    <field name="program_id" string="Submitted to"/>
+                                                    <field name="type" string="Type"/>
+                                                    <field name="degree_ids" widget="many2many_tags" string="Available for"/>
+                                                    <button name="action_view_availability_branch"
+                                                        string="BRANCH"
+                                                        type="object"
+                                                        class="oe_highlight"
+                                                        confirm="Are you sure you want to create a new branch for this project?"
+                                                        invisible="state != 'returned'"
+                                                        groups="student.group_professor"/>
+                                                </tree>
+                                            </field>
+                                        </group>
+                                    </group>
                                 </page>
                                 <page string="Applications" invisible="state_publication not in ['published', 'applied']">
                                     <p>
@@ -146,31 +188,49 @@
                                     <field name="project_project_tasks" style="margin-top:10px"/>
                                 </page>
                                 <page string="Results" invisible="state_publication not in ['assigned', 'completed']">
-                                    <group string="Student Uploads">
+                                    <group string="Student">
+                                        <field name="student_account" invisible="1"/>
+
+                                        <p colspan="2" style="color:gray;font-style: italic;" invisible="student_account == uid"> Only the assigned student can edit this section. </p>
+                                        
                                         <group>
-                                            <field name="project_report_file" filename="project_report_filename"/>
+                                            <field name="project_report_file" filename="project_report_filename" readonly="student_account != uid"/>
                                             <field name="project_report_filename" invisible="1"/>
                                         </group>
                                         <group>
-                                            <field name="project_preview_toggle"/>
+                                            <div style="width: 200px">
+                                                <button name="hide_show_report_preview" 
+                                                    string="Show/Hide Report Preview"
+                                                    type="object"
+                                                    invisible="not project_report_file"/>
+                                            </div>
+                                            <field name="project_preview_toggle" invisible="1"/>
                                         </group>
                                         <field name="project_report_file" widget="pdf_viewer" invisible="not project_preview_toggle" readonly="1"/>
 
                                         <group colspan="2">
-                                        <field name="plagiarism_check_file" filename="plagiarism_check_filename"/>
-                                        <field name="plagiarism_check_filename" invisible="1"/>
+                                            <field name="plagiarism_check_file" filename="plagiarism_check_filename" readonly="student_account != uid"/>
+                                            <field name="plagiarism_check_filename" invisible="1"/>
 
-                                        <field name="student_feedback" placeholder="Here you can express what you liked/did not like about the project or other aspects."/>
+                                            <field name="additional_resources" placeholder="Specify if there are any additional links, resources or repositories related to the project. Files can be added to 'Additional Files' section." readonly="student_account != uid"/>
+                                            <field name="student_feedback" placeholder="Here the student can express negative or positive experiences related to the project." readonly="student_account != uid"/>
                                         </group>
                                     </group>
-                                    <group string="Professor Uploads">
-                                        <field name="professor_review_file" filename="professor_review_filename"/>
+                                    <group string="Professor">
+                                        <field name="professor_account" invisible="1"/>
+
+                                        <p colspan="2" style="color:gray;font-style: italic;" invisible="professor_account == uid"> Only the project professor can edit this section. </p>
+                        
+                                        <field name="professor_review_file" filename="professor_review_filename" readonly="professor_account != uid"/>
                                         <field name="professor_review_filename" invisible="1"/>
+                                        <field name="professor_feedback" placeholder="Here the professor can express their experience of working on the project with the assigned student." readonly="professor_account != uid"/>
+                                        <field name="professor_grade" readonly="professor_account != uid"/>
                                     </group>
-                                    <group string="Faculty Member Response">
+                                    <group string="Commission" invisible="state_publication != 'completed'">
+                                        <field name="commission_id" readonly="1" invisible="not commission_id"/>
                                         <field name="result_text" placeholder="List project results (summary, links, etc.) here. Additional files can be added in the section below."/>
                                         <field name="notes"/>
-                                        <field name="grade"/>
+                                        <field name="grade" readonly="1" help="Please use the Commission interface to grade the project."/>
                                     </group>
                                     <group string="Common">
                                         <field colspan="2" name="result_files" widget="many2many_binary" string="Additional Files" readonly="state_publication != 'assigned'" help="Additional files that may include reports, source files, analysis, etc."/>
@@ -182,40 +242,6 @@
                                     <field name="message_ids"/>
                                 </page>
                             </notebook>
-                        </group>
-                        <group string="Eligibility" invisible="id != False">
-                            <p colspan="2" style="color:gray">
-                                <i>Save the project to set up the academic programs for submission.</i>
-                            </p>
-                        </group>
-                        <group string="Eligibility" invisible="id == False or state_publication == 'assigned'">
-                            <!-- ♥ COPY THE BUTTONS HERE FOR USER CONVENIENCE -->
-
-                            <group col="6" colspan="2">
-                                <group colspan="2">
-                                    <field name="campus_id" help="The campus is automatically assigned based on the project professor." widget="many2many_tags" readonly="1"/>
-                                </group>
-                                <group colspan="4">
-                                    <field name="faculty_id" help="The faculty is automatically assigned based on the project professor." widget="many2many_tags" readonly="1"/>
-                                </group>
-                            </group>
-                            <group colspan="2">
-                                <field name="availability_ids" context="{'project_id': active_id, 'project_faculty_id': faculty_id}" readonly="state_evaluation != 'draft' or assigned">
-                                    <tree>
-                                        <field name="state" string="Submission State"/>
-                                        <field name="program_id" string="Submitted to"/>
-                                        <field name="type" string="Type"/>
-                                        <field name="degree_ids" widget="many2many_tags" string="Available for"/>
-                                        <button name="action_view_availability_branch"
-                                            string="BRANCH"
-                                            type="object"
-                                            class="oe_highlight"
-                                            confirm="Are you sure you want to create a new branch for this project?"
-                                            invisible="state != 'returned'"
-                                            groups="student.group_professor"/>
-                                    </tree>
-                                </field>
-                            </group>
                         </group>
                     </sheet>
                     <div class="oe_chatter" groups="student.group_administrator, student.group_supervisor, student.group_professor">
@@ -237,8 +263,33 @@
                     <field name="format"/>
                     <field name="language"/>
                     <field name="program_ids" widget="many2many_tags"/>
+                    <field name="approval_ids" widget="many2many_tags"/>
                     <field name="applications"/>
                 </tree>
+            </field>
+        </record>
+        
+        <record id="student_project_graph_view" model="ir.ui.view">
+            <field name="name">Projects - Graph View</field>
+            <field name="model">student.project</field>
+            <field name="type">graph</field>
+            <field name="arch" type="xml">
+                <graph string="Project Evaluation" type="pie">
+                    <field name="state_evaluation"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- The graph view that student_menus.xml refers to -->
+        <record id="student_project_view_action_graph" model="ir.actions.act_window">
+            <field name="name">Project Status Report</field>
+            <field name="res_model">student.project</field>
+            <field name="view_mode">graph</field>
+            <field name="view_id" ref="student_project_graph_view"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    There are no projects yet. Report cannot be generated.
+                </p>
             </field>
         </record>
 
@@ -301,12 +352,13 @@
             <field name="res_model">student.project</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="view_id" ref="student_project_kanban_view_evaluation"/>
-            <field name="context">{'search_default_my_projects': 1, 'search_default_supervised_by_me': 1, 'view_type': 'project_board'}</field>
+            <field name="context">{'view_type': 'project_board'}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
                     There are no projects yet. You can create the first one. Yay!
                 </p>
             </field>
+            <field name="domain">[('professor_account', '=', uid)]</field>
         </record>
 
         <record id="student_project_kanban_view_publication" model="ir.ui.view">
@@ -366,7 +418,7 @@
             <field name="res_model">student.project</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="view_id" ref="student_project_kanban_view_publication"/>
-            <field name="context">{'search_default_my_projects': 1, 'search_default_supervised_by_me': 1, 'view_type': 'project_board'}</field>
+            <field name="context">{'search_default_my_projects': 1, 'view_type': 'project_board'}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
                     There are no published projects. You can create the first one and send it for approval.
@@ -412,12 +464,10 @@
             <search string="Professor List">
                 <field name="name" string="Project" />
                 <filter string="My projects" groups="student.group_professor" name="my_projects" domain="[('professor_account', '=', uid)]"/>
-                <filter string="Supervised by me" groups="student.group_supervisor" name="supervised_by_me" domain="[('program_supervisors', 'in', uid)]"/>
                 <filter string="Available for application" groups="student.group_student" name="available" domain="[('state_publication', 'in', ['published', 'applied'])]"/>
-                <filter string="Requires attention" groups="student.group_professor" name="attention_professor" domain="['&amp;', ('professor_account', '=', uid), ('state_publication', '=', 'applied')]"/>
+                <filter string="Requires attention" groups="student.group_professor" name="attention_professor" domain="[('professor_account', '=', uid), ('state_publication', '=', 'applied')]"/>
                 <group expand="1" string="Group By">
                     <filter string="Professor" name="professor" context="{'group_by':'professor_id'}"/>
-                    <!-- <filter string="Project Type" name="project_type" context="{'group_by':'type'}"/> -->
                     <filter string="Project Format" name="project_format" context="{'group_by':'format'}"/>
                     <filter string="Faculty" name="faculty" context="{'group_by':'faculty_id'}"/>
                     <filter string="Target Program" name="program" context="{'group_by':'program_ids'}" groups="student.group_administrator, student.group_supervisor, student.group_professor"/>
@@ -428,7 +478,7 @@
     </record>   
 
     <record id="student_project_view_personal" model="ir.actions.server">
-        <field name="name">My Project</field>
+        <field name="name">𝗠𝘆 𝗣𝗿𝗼𝗷𝗲𝗰𝘁</field>
         <field name="model_id" ref="model_student_project"/>
         <field name="state">code</field>
         <field name="code">

@@ -34,7 +34,7 @@
             </menuitem>
             
             <menuitem id="faculty_first_group_menu" name="Groups">
-                <menuitem id="committee_model_menu_action" action="student_committee_view_action"/>
+                <menuitem id="commission_model_menu_action" action="student_commission_view_action"/>
             </menuitem>
 
         </menuitem>
@@ -50,6 +50,11 @@
                 <menuitem id="project_project_kanban_publication" action="student_project_kanban_professor_publication" groups="student.group_manager,student.group_professor"/>
                 <menuitem id="availability_kanban_supervision" action="student_availability_kanban_supervision" groups="student.group_supervisor"/>
                 <menuitem id="project_project_list" action="student_project_view_action_list" groups="student.group_student"/>
+                
+                <menuitem id="project_second_project_menu" name="Reports">
+                    <menuitem id="project_graph_manager" action="student_project_view_action_graph" groups="student.group_manager"/>
+                    <menuitem id="program_graph_manager" action="student_program_view_action_graph" groups="student.group_manager"/>
+                </menuitem>
             </menuitem>
 
             <menuitem id="project_first_application_menu" name="Applications">
@@ -60,14 +65,18 @@
 
         <menuitem sequence="4" id="util_first_level_menu" name="Utility" groups="student.group_administrator">
 
-            <menuitem id="util_second_level_menu_b" name="Project Details">
+            <menuitem sequence="1" id="util_second_level_menu_a" name="Project Details">
                 <menuitem id="degree_model_menu_action" action="student_degree_view_action"/>
                 <menuitem id="availability_model_menu_action" action="student_availability_view_action"/>
             </menuitem>
 
-            <menuitem id="util_second_level_menu_a" name="Miscellaneous">
-                <menuitem id="campus_model_menu_action" action="student_campus_view_action"/>
+            <menuitem sequence="2" id="util_second_level_menu_b" name="Commission Objects">
                 <menuitem id="defense_model_menu_action" action="student_defense_view_action"/>
+                <menuitem id="grade_model_menu_action" action="student_grade_view_action"/>
+            </menuitem>
+
+            <menuitem sequence="3" id="util_second_level_menu_c" name="Miscellaneous">
+                <menuitem id="campus_model_menu_action" action="student_campus_view_action"/>
             </menuitem>
 
         </menuitem>

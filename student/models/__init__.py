@@ -1,1 +1,1 @@
-from . import student_utils, student_application, student_proposal, student_faculty, student_professor, student_program, student_project, student_student, student_supervisor, student_manager, student_availability, student_committee
+from . import student_utils, student_application, student_proposal, student_faculty, student_professor, student_program, student_project, student_student, student_supervisor, student_manager, student_availability, student_commission

@@ -102,6 +102,28 @@ class StudentCampus(models.Model):
     faculty_id = fields.One2many('student.faculty', 'campus', string='Faculties', readonly=True)
     project_ids = fields.Many2many('student.project', string='Projects', readonly=True)
 
+class StudentApproval(models.Model):
+    _name = 'student.approval'
+    _description = 'PaLMS - Approvals'
+
+    name = fields.Char('Approval Record Name', compute="_compute_approval_name", store=True)
+    type = fields.Selection([('cw', 'Course Work (Курсовая работа)'), ('fqw', 'Final Qualifying Work (ВКР)'), ('both', 'Both (КР/ВКР)')], string="Type", required=True)
+    program_id = fields.Many2one('student.program', string='Program', required=True)
+    degree_id = fields.Many2one('student.degree', string='Degree', required=True)
+
+    @api.depends('type', 'program_id', 'degree_id')
+    def _compute_approval_name(self):
+        for record in self:
+            type_label = ""
+            match record.type:
+                case 'cw': 
+                    type_label = "КР"
+                case 'fqw': 
+                    type_label = "ВКР"
+                case 'both': 
+                    type_label = "КР/ВКР"
+            record.name = type_label + " • " + record.program_id.name + " • " + record.degree_id.name
+
 class CustomMessageSubtype(models.Model):
     _name = 'student.message.subtype'
     _description = 'Student - Message Subtype'

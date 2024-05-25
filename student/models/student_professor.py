@@ -10,17 +10,18 @@ class Professor(models.Model):
     active = fields.Boolean(default=True)
     last_seen = fields.Datetime("Last Seen", default=lambda self: fields.Datetime.now())
     visiting_professor = fields.Boolean('Visiting professor?', default=False)
+    about = fields.Text("About the Professor")
 
     professor_account = fields.Many2one('res.users', string='User Account', default=lambda self: self.env.user, required=True)
     professor_faculty = fields.Many2one('student.faculty', string='Faculty', required=True)
-    project_ids = fields.One2many('student.project', 'professor_id', string='Projects')
+    project_ids = fields.One2many('student.project', 'professor_id', string='Projects', domain=[('state_publication','!=','ineligible')])
 
     @api.depends("professor_account")
     def _compute_name(self):
         self.name = self.professor_account.name
 
     # Computed Fields
-    offered_projects = fields.Integer(string='Number of Offered Projects', compute='_compute_project_count', store=True, readonly=True)
+    offered_projects = fields.Integer(string='Number of Published Projects', compute='_compute_project_count', store=True, readonly=True)
 
     @api.onchange("professor_account")
     def _set_professor_faculty(self):

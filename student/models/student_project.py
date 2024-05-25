@@ -87,6 +87,7 @@ class Project(models.Model):
                                            string='Returned Programs (TECHNICAL)',
                                            readonly=True)
     returned_program_ids_count = fields.Integer('Number of Returned Programs', compute="_compute_program_counts", store=True, readonly=True)
+    approval_ids = fields.Many2many('student.approval', string='Approved for', readonly=False)
     approved_program_ids = fields.Many2many(comodel_name='student.program',
                                             relation='student_project_approved_program_rel',
                                             column1='project_id',
@@ -116,6 +117,13 @@ class Project(models.Model):
     
     assigned = fields.Boolean('Assigned to a student?', default=False, readonly=True)
     student_elected = fields.One2many('student.student', 'current_project', string='Elected Student', readonly=True)
+    student_account = fields.Many2one('res.users', string="Student Account", compute='_compute_student_account', store=True)
+
+    @api.depends('student_elected')
+    def _compute_student_account(self):
+        for project in self:
+            project.student_account = project.student_elected.student_account
+
 
     additional_files = fields.Many2many(
         comodel_name='ir.attachment',
@@ -130,11 +138,19 @@ class Project(models.Model):
     project_report_filename = fields.Char()
     project_preview_toggle = fields.Boolean('Show Preview', default=False)
 
+    def hide_show_report_preview(self):
+        self.project_preview_toggle = not self.project_preview_toggle
+
+    @api.onchange("project_report_file")
+    def _reset_project_preview_toggle(self):
+        self.project_preview_toggle = False
+
     plagiarism_check_file = fields.Binary(string='Plagiarism Check')
     plagiarism_check_filename = fields.Char()
 
     professor_review_file = fields.Binary(string='Professor Review')
     professor_review_filename = fields.Char()
+    professor_feedback = fields.Text(string='Professor Feedback')
 
     @api.onchange("additional_files")
     def _update_additional_ownership(self):
@@ -155,7 +171,18 @@ class Project(models.Model):
         string='Add Files'
     )
 
-    student_feedback = fields.Text(string='Feedback from the Student')   
+    additional_resources = fields.Text(string='Additional Resources')  
+    student_feedback = fields.Text(string='Student Feedback')   
+    professor_grade = fields.Selection([('1', '1'),       
+                                        ('2', '2'),
+                                        ('3', '3'),
+                                        ('4', '4'),
+                                        ('5', '5'),
+                                        ('6', '6'),
+                                        ('7', '7'),  
+                                        ('8', '8'),  
+                                        ('9', '9'),  
+                                        ('10', '10')], string='Professor Grade (1-10)')   
     notes = fields.Text(string='Notes & Comments')        
     grade = fields.Selection([('1', '1'),       
                               ('2', '2'),
@@ -166,7 +193,13 @@ class Project(models.Model):
                               ('7', '7'),  
                               ('8', '8'),  
                               ('9', '9'),  
-                              ('10', '10')], string='Project Grade (Out of 10)')
+                              ('10', '10')], string='Commission Grade (1-10)')  
+    commission_id = fields.Many2one('student.commission', string='Defense Commission')
+
+    @api.depends('student_elected')
+    def _compute_student_account(self):
+        for project in self:
+            project.student_account = project.student_elected.student_account
 
     # Assigns the professor account created for this user
     @api.model
@@ -178,7 +211,7 @@ class Project(models.Model):
             raise ValidationError("The user is not registered as a professor. Contact the administrator for the fix.")
 
     professor_id = fields.Many2one('student.professor', default=_default_professor, string='Professor', readonly=True, required=True)
-    professor_account= fields.Many2one('res.users', string="Professor Account", compute='_compute_professor_account', store=True)
+    professor_account = fields.Many2one('res.users', string="Professor Account", compute='_compute_professor_account', store=True)
 
     @api.depends('professor_id')
     def _compute_professor_account(self):
@@ -442,6 +475,8 @@ class Project(models.Model):
 
                 self.write({'state_evaluation': self._check_decisions(), 'state_publication': 'published'})
 
+            self.env['student.program'].sudo().browse(approved_program_id).project_ids = [(4, self.id)]
+
             # Log the action --------------------
             subtype_id = self.env.ref('student.student_message_subtype_professor_supervisor')
             body = _('The project is approved by ' + self.env.user.name + '.')
@@ -464,17 +499,22 @@ class Project(models.Model):
             raise UserError("You can only reject projects submissions in 'Pending' status.")
 	
     # RESTRICTIONS #            
-    @api.constrains("result_text", "notes", "grade")
+    @api.constrains("result_text", "notes")
     def _check_modifier_faculty_member(self):
-        if self.env.user.has_group("student.group_student"):
-            raise UserError("Only faculty members can change these fields.")
+        if self.state_publication == 'completed':
+            commission_head_account = self.commission_id.commission_head.professor_account   
+            if commission_head_account:
+                if commission_head_account.id != self.env.user.id:
+                    raise UserError("Only the commission head (" + commission_head_account.name + ") can modify these fields.")
+            else:
+                raise ValidationError("There is no commission assigned for this project, please contact the program manager.")
             
-    @api.constrains("name", "format", "language", "description", "requirements", "results", "additional_files", "professor_review_file")
+    @api.constrains("name", "format", "language", "description", "requirements", "results", "additional_files", "professor_review_file", "professor_feedback", "professor_grade")
     def _check_modifier_professor(self):
         if self.env.user.id != self.professor_account.id:
             raise UserError("You cannot modify projects of other professors.")
         
-    @api.constrains("project_report_file", "project_check_file", "student_feedback")
+    @api.constrains("project_report_file", "project_check_file", "student_feedback", "additional_resources")
     def _check_modifier_student(self):
         if self.state_publication == "assigned" and self.env.user.id != self.student_elected.student_account.id:
             raise UserError("These fields can be modified by the assigned student.")
@@ -492,6 +532,7 @@ class Project(models.Model):
             group_id.users = [(3, record.student_elected.id)]
 
             record.availability_ids.unlink()
+            record.approval_ids.unlink()
         
         return super(Project, self).unlink()
         
@@ -553,7 +594,7 @@ class Project(models.Model):
         if self.project_report_file and self.plagiarism_check_file and self.professor_review_file:
             self.state_publication = 'completed'
         else:
-            raise ValidationError("Project report, plagiarism check and professor's review file required to complete the project.")
+            raise ValidationError("Project report, plagiarism check and professor's review file are required to complete the project.")
 
     # The reset button functionality for development purposes
     def action_view_project_reset(self):
@@ -608,7 +649,7 @@ class Project(models.Model):
         return action
 
     project_project_tasks = fields.One2many('project.task', compute="_compute_project_project_tasks")
-    project_project_id = fields.Many2one('project.project', string="Odoo Project")
+    project_project_id = fields.Many2one('project.project', string="Project Management")
     # Creates the project.project for student.project
     def create_project_project(self):
         self.project_project_id = self.env['project.project'].create({
