@@ -194,7 +194,7 @@
                                         <p colspan="2" style="color:gray;font-style: italic;" invisible="student_account == uid"> Only the assigned student can edit this section. </p>
                                         
                                         <group>
-                                            <field name="project_report_file" filename="project_report_filename" readonly="student_account != uid"/>
+                                            <field name="project_report_file" filename="project_report_filename" readonly="student_account != uid or state_publication != 'assigned'"/>
                                             <field name="project_report_filename" invisible="1"/>
                                         </group>
                                         <group>
@@ -209,11 +209,11 @@
                                         <field name="project_report_file" widget="pdf_viewer" invisible="not project_preview_toggle" readonly="1"/>
 
                                         <group colspan="2">
-                                            <field name="plagiarism_check_file" filename="plagiarism_check_filename" readonly="student_account != uid"/>
+                                            <field name="plagiarism_check_file" filename="plagiarism_check_filename" readonly="student_account != uid or state_publication != 'assigned'"/>
                                             <field name="plagiarism_check_filename" invisible="1"/>
 
-                                            <field name="additional_resources" placeholder="Specify if there are any additional links, resources or repositories related to the project. Files can be added to 'Additional Files' section." readonly="student_account != uid"/>
-                                            <field name="student_feedback" placeholder="Here the student can express negative or positive experiences related to the project." readonly="student_account != uid"/>
+                                            <field name="additional_resources" placeholder="Specify if there are any additional links, resources or repositories related to the project. Files can be added to 'Additional Files' section." readonly="student_account != uid or state_publication != 'assigned'"/>
+                                            <field name="student_feedback" placeholder="Here the student can express negative or positive experiences related to the project." readonly="student_account != uid or state_publication != 'assigned'"/>
                                         </group>
                                     </group>
                                     <group string="Professor">
@@ -221,10 +221,10 @@
 
                                         <p colspan="2" style="color:gray;font-style: italic;" invisible="professor_account == uid"> Only the project professor can edit this section. </p>
                         
-                                        <field name="professor_review_file" filename="professor_review_filename" readonly="professor_account != uid"/>
+                                        <field name="professor_review_file" filename="professor_review_filename" readonly="professor_account != uid or state_publication != 'assigned'"/>
                                         <field name="professor_review_filename" invisible="1"/>
-                                        <field name="professor_feedback" placeholder="Here the professor can express their experience of working on the project with the assigned student." readonly="professor_account != uid"/>
-                                        <field name="professor_grade" readonly="professor_account != uid"/>
+                                        <field name="professor_feedback" placeholder="Here the professor can express their experience of working on the project with the assigned student." readonly="professor_account != uid or state_publication != 'assigned'"/>
+                                        <field name="professor_grade" readonly="professor_account != uid or state_publication != 'assigned'"/>
                                     </group>
                                     <group string="Commission" invisible="state_publication != 'completed'">
                                         <field name="commission_id" readonly="1" invisible="not commission_id"/>

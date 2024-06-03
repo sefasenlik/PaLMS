@@ -16,8 +16,6 @@ class StudentUtils(models.AbstractModel):
             channel_name = "Applicaton №" + tuple_id + " for " + tuple_name
         elif source == 'proposal':
             channel_name = "Project Proposal №" + tuple_id + " (" + tuple_name + ")"
-        else:
-            channel_name = source + " №" + id
 
         # Search the channel to avoid duplicates
         channel = context.env['discuss.channel'].sudo().search([('name', '=', channel_name)],limit=1,)

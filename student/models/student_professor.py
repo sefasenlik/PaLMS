@@ -18,7 +18,8 @@ class Professor(models.Model):
 
     @api.depends("professor_account")
     def _compute_name(self):
-        self.name = self.professor_account.name
+        for record in self:
+            record.name = record.professor_account.name
 
     # Computed Fields
     offered_projects = fields.Integer(string='Number of Published Projects', compute='_compute_project_count', store=True, readonly=True)

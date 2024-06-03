@@ -11,11 +11,12 @@ class Application(models.Model):
 		
 	@api.depends('applicant')
 	def _compute_student_details(self):
-		self.email = self.applicant.student_email
-		self.phone = self.applicant.student_phone
-		self.student_program = self.applicant.student_program.name
-		self.student_degree = self.applicant.progress
-		self.student_id = self.applicant.student_id
+		for applicant in self.applicant:
+			self.email = applicant.student_email
+			self.phone = applicant.student_phone
+			self.student_program = applicant.student_program.name
+			self.student_degree = applicant.progress
+			self.student_id = applicant.student_id
 
 	# Assigns the student account created for this user
 	def _default_applicant(self):
@@ -286,10 +287,10 @@ class Application(models.Model):
 			self.message_post(body=body)
 
 			# Get the Odoo Bot user
-			odoobot = self.env.ref('base.partner_root')
+			odoobot = self.env.ref('base.user_root')
 
 			# Construct the message that is to be sent to the user
 			message_text = f'<strong>Application Rejected</strong><p> This application submitted for <i>' + self.project_id.name + '</i> is automatically rejected since another one is chosen by the professor.</p>'
 
 			# Use the send_message utility function to send the message
-			self.env['student.utils'].send_message('Auto Reject', Markup(message_text), self.applicant_account, odoobot, (str(self.id),str(self.project_id.name)))
+			self.env['student.utils'].send_message('application', Markup(message_text), self.applicant_account, odoobot, (str(self.id),str(self.project_id.name)))

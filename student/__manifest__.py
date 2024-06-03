@@ -3,7 +3,7 @@
 
 {
     'name': 'PaLMS',
-    'version': '0.5.3',
+    'version': '0.5.4',
     'category': 'Academic',
     'sequence': 15,
     'summary': 'A prototype ERP solution for handling КР and ВКР submissions',

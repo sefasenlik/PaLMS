@@ -136,7 +136,7 @@ class Proposal(models.Model):
 			raise ValidationError("This student is already assigned to another project.")
 
 		if self.state == 'sent':
-			self.project_id = self.env['student.project'].create({
+			self.project_id = self.env['student.project'].sudo().create({
 				'name': self.name,
 				'description': self.description,
 				'requirements': 'Not applicable for proposed projects...',

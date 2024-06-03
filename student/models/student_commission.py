@@ -70,6 +70,12 @@ class Commission(models.Model):
     commission_head = fields.Many2one('student.professor', string='Head of the Commission', required=True)
     professor_ids = fields.Many2many('student.professor', string='Commission Members', required=True)
     additional_files = fields.Many2many(comodel_name="ir.attachment", string="Additional Files") 
+    
+    @api.onchange("additional_files")
+    def _update_additional_ownership(self):
+        # Makes the files public, may implement user-specific ownership in the future
+        for attachment in self.additional_files:
+            attachment.write({'public': True})
 
     @api.depends('commission_faculty')
     def _compute_commission_name(self):
@@ -160,15 +166,16 @@ class CommissionDefense(models.Model):
 
     @api.depends('project_id')
     def _compute_project_student(self):
-        if self.project_id:
-            if self.project_id.student_elected:
-                self.project_student = self.project_id.student_elected
-            else:
-                raise ValidationError("The chosen project is not assigned to a student.") 
+        for record in self:
+            if record.project_id:
+                if record.project_id.student_elected:
+                    record.project_student = record.project_id.student_elected
+                else:
+                    raise ValidationError("The chosen project is not assigned to a student.") 
             
     @api.onchange('final_grade')
     def _update_project_grade(self, auto = False):
-        if not auto and self.env.uid != self.commission_id.commission_head.professor_account.id:
+        if self.final_grade_lock and not auto and self.env.uid != self.commission_id.commission_head.professor_account.id:
             raise ValidationError("Only the commission head can modify the final grade.") 
         else:
             self.env['student.project'].sudo().browse(self.project_id.id).grade = self.final_grade

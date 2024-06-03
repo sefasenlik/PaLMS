@@ -15,7 +15,8 @@
         <field name="name">Applications - Kanban View</field>
         <field name="model">student.application</field>
         <field name="arch" type="xml">
-            <kanban quick_create="false" 
+            <kanban create="false"
+                    quick_create="false" 
                     records_draggable="false" 
                     default_group_by="state" 
                     class="o_res_partner_kanban" 
