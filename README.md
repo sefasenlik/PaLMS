@@ -132,9 +132,6 @@ PALMS integrates Odoo's **Discuss** module to provide:
 ## Conclusion
 PALMS represents a significant advancement in student project management for higher education institutions. By leveraging the flexibility of Odoo and the power of Flask, PALMS provides a scalable, customizable, and user-friendly solution that addresses the unique challenges of academic project management. Its low-code customization capabilities ensure that the system can adapt to evolving institutional needs, making it a sustainable and future-proof solution.
 
-## License
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
-
 ## Screenshots
 
 <img src="https://i.ibb.co/DF3BgXG/SS1.png" alt="'Project Evaluation Board' with several projects of different stages" width="750"/>
